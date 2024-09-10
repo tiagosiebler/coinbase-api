@@ -7,7 +7,7 @@ async function main() {
     product_id: 'BTC-USD',
   });
 
-  console.log(res);
+  console.log(res.pricebook);
 }
 
 main();
