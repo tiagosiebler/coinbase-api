@@ -76,9 +76,8 @@ export abstract class BaseRestClient {
   private options: RestClientOptions;
   private baseUrl: string;
   private globalRequestOptions: AxiosRequestConfig;
-  private apiKey: string | undefined;
-  private apiSecret: string | undefined;
-  private apiPassphrase: string | undefined;
+  private apiKeyName: string | undefined;
+  private apiPrivateKey: string | undefined;
 
   /** Defines the client type (affecting how requests & signatures behave) */
   abstract getClientType(): RestClientType;
@@ -125,12 +124,16 @@ export abstract class BaseRestClient {
       this.getClientType(),
     );
 
-    this.apiKey = this.options.apiKey;
-    this.apiSecret = this.options.apiSecret;
-    this.apiPassphrase = this.options.apiPassphrase;
+    this.apiKeyName = this.options.apiKeyName;
+    this.apiPrivateKey = this.options.apiPrivateKey;
+
+    if (restClientOptions.cdpApiKey) {
+      this.apiKeyName = restClientOptions.cdpApiKey.name;
+      this.apiPrivateKey = restClientOptions.cdpApiKey.privateKey;
+    }
 
     // Throw if one of the 3 values is missing, but at least one of them is set
-    const credentials = [this.apiKey, this.apiSecret, this.apiPassphrase];
+    const credentials = [this.apiKeyName, this.apiPrivateKey];
     if (
       credentials.includes(undefined) &&
       credentials.some((v) => typeof v === 'string')
@@ -249,9 +252,9 @@ export abstract class BaseRestClient {
       requestOptions: {
         ...this.options,
         // Prevent credentials from leaking into error messages
-        apiKey: 'omittedFromError',
-        apiSecret: 'omittedFromError',
-        apiPassphrase: 'omittedFromError',
+        apiKeyName: 'omittedFromError',
+        apiPrivateKey: 'omittedFromError',
+        cdpApiKey: 'omittedFromError',
       },
       requestParams,
     };
@@ -279,7 +282,7 @@ export abstract class BaseRestClient {
       queryParamsWithSign: '',
     };
 
-    if (!this.apiKey || !this.apiSecret) {
+    if (!this.apiKeyName || !this.apiPrivateKey) {
       return res;
     }
 
@@ -301,7 +304,7 @@ export abstract class BaseRestClient {
 
       res.sign = await signMessage(
         paramsStr,
-        this.apiSecret,
+        this.apiPrivateKey,
         'base64',
         'SHA-256',
       );
@@ -346,7 +349,7 @@ export abstract class BaseRestClient {
       };
     }
 
-    if (!this.apiKey || !this.apiSecret || !this.apiPassphrase) {
+    if (!this.apiKeyName || !this.apiPrivateKey) {
       throw new Error(MISSING_API_KEYS_ERROR);
     }
 
@@ -373,7 +376,7 @@ export abstract class BaseRestClient {
       }
     }
 
-    if (isPublicApi || !this.apiKey || !this.apiSecret) {
+    if (isPublicApi || !this.apiKeyName || !this.apiPrivateKey) {
       return {
         ...options,
         params: params,
@@ -389,7 +392,7 @@ export abstract class BaseRestClient {
     );
 
     const authHeaders = {
-      'KC-API-KEY': this.apiKey,
+      'KC-API-KEY': this.apiKeyName,
       'KC-API-TIMESTAMP': signResult.timestamp,
     };
 
@@ -403,8 +406,8 @@ export abstract class BaseRestClient {
       'SHA-256',
     );
     const signedPassphrase = await signMessage(
-      this.apiPassphrase!,
-      this.apiSecret,
+      this.apiKeyName!,
+      this.apiPrivateKey,
       'base64',
       'SHA-256',
     );

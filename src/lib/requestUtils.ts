@@ -23,17 +23,20 @@ const exchangeBaseURLMap = {
 } as const;
 
 export interface RestClientOptions {
-  /** Your API key */
-  apiKey?: string;
+  /** Your API key name */
+  apiKeyName?: string;
 
-  /** Your API secret */
-  apiSecret?: string;
+  /** Your API Private Key */
+  apiPrivateKey?: string;
 
-  /** Your API passphrase (can be anything) that you set when creating this API key (NOT your account password) */
-  apiPassphrase?: string;
-
-  /** The API key version. Defaults to "2" right now. You can see this in your API management page */
-  apiKeyVersion?: number | string;
+  /**
+   * Instead of passing the key name and private key,
+   * you can also parse the exported "cdp_api_key.json" into an object and pass it here.
+   */
+  cdpApiKey?: {
+    name: string;
+    privateKey: string;
+  };
 
   /**
    * Enable keep alive for REST API requests (via axios).
