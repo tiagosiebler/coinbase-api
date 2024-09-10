@@ -32,6 +32,19 @@ export interface RestClientOptions {
   /** The API key version. Defaults to "2" right now. You can see this in your API management page */
   apiKeyVersion?: number | string;
 
+  /**
+   * Enable keep alive for REST API requests (via axios).
+   * See: https://github.com/tiagosiebler/bybit-api/issues/368
+   */
+  keepAlive?: boolean;
+
+  /**
+   * When using HTTP KeepAlive, how often to send TCP KeepAlive packets over sockets being kept alive. Default = 1000.
+   * Only relevant if keepAlive is set to true.
+   * Default: 1000 (defaults comes from https agent)
+   */
+  keepAliveMsecs?: number;
+
   /** Default: false. If true, we'll throw errors if any params are undefined */
   strictParamValidation?: boolean;
 
