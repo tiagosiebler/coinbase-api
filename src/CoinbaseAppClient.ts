@@ -185,10 +185,9 @@ export class CoinbaseAppClient extends BaseRestClient {
     destination_tag?: string;
   }): Promise<{ data: Transaction }> {
     const { accountId, ...restParams } = params;
-    return this.postPrivate(
-      `/v2/accounts/${accountId}/transactions`,
-      restParams,
-    );
+    return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
+      body: restParams,
+    });
   }
 
   /**
@@ -206,10 +205,9 @@ export class CoinbaseAppClient extends BaseRestClient {
     description?: string;
   }): Promise<{ data: Transaction }> {
     const { accountId, ...restParams } = params;
-    return this.postPrivate(
-      `/v2/accounts/${accountId}/transactions`,
-      restParams,
-    );
+    return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
+      body: restParams,
+    });
   }
 
   /**
@@ -267,10 +265,10 @@ export class CoinbaseAppClient extends BaseRestClient {
     payment_method: string;
     commit?: boolean;
   }): Promise<{ data: DepositWithdrawal }> {
-    return this.postPrivate(
-      `/v2/accounts/${params.accountId}/deposits`,
-      params,
-    );
+    const { accountId, ...restParams } = params;
+    return this.postPrivate(`/v2/accounts/${accountId}/deposits`, {
+      body: restParams,
+    });
   }
 
   /**
@@ -336,10 +334,10 @@ export class CoinbaseAppClient extends BaseRestClient {
     payment_method: string;
     commit?: boolean;
   }): Promise<{ data: DepositWithdrawal }> {
-    return this.postPrivate(
-      `/v2/accounts/${params.accountId}/withdrawals`,
-      params,
-    );
+    const { accountId, ...restParams } = params;
+    return this.postPrivate(`/v2/accounts/${accountId}/withdrawals`, {
+      body: restParams,
+    });
   }
 
   /**
