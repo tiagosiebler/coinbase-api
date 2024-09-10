@@ -4,6 +4,8 @@
 export const REST_CLIENT_TYPE_ENUM = {
   /** Coinbase Advanced Trade API */
   advancedTrade: 'advancedTrade',
+  /** Coinbase App API */
+  coinbaseApp: 'coinbaseApp',
   /** Coinbase Exchange API */
   exchange: 'exchange',
   /** Coinbase Prime API */
@@ -15,6 +17,7 @@ export type RestClientType =
 
 const exchangeBaseURLMap = {
   [REST_CLIENT_TYPE_ENUM.advancedTrade]: 'https://api.coinbase.com',
+  [REST_CLIENT_TYPE_ENUM.coinbaseApp]: 'https://api.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.exchange]: 'https://api.exchange.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.prime]: 'https://api.prime.coinbase.com', // /v1
 } as const;
