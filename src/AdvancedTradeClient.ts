@@ -811,7 +811,7 @@ export class AdvancedTradeClient extends BaseRestClient {
     product_id: string;
     limit?: number;
     aggregation_price_increment?: string;
-  }): Promise<Pricebook> {
+  }): Promise<{ pricebook: Pricebook }> {
     return this.get(`/api/v3/brokerage/market/product_book`, params);
   }
 
