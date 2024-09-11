@@ -52,10 +52,6 @@ export interface Pricebook {
   time: string;
 }
 
-export interface BestBidAsk {
-  pricebooks: { [productId: string]: Pricebook };
-}
-
 interface FCMTradingSessionDetails {
   is_session_open: boolean;
   open_time: string;
@@ -175,13 +171,13 @@ interface ErrorOrderResponse {
   error_details: string;
   preview_failure_reason?: string;
   new_order_failure_reason: string;
-  order_configuration: OrderConfiguration;
 }
 
 export interface SubmitOrderResponse {
   success: boolean;
   success_response?: SuccessOrderResponse;
   error_response?: ErrorOrderResponse;
+  order_configuration: OrderConfiguration;
 }
 
 export interface CancelOrdersResponse {
@@ -411,16 +407,11 @@ interface PortfolioBalances {
 }
 
 export interface PortfolioBreakdown {
-  portfolio: {
-    name: string;
-    uuid: string;
-    type: 'UNDEFINED' | 'DEFAULT' | 'CONSUMER' | 'INTX'; // Possible values: [UNDEFINED, DEFAULT, CONSUMER, INTX]
-    deleted: boolean;
-    portfolio_balances: PortfolioBalances;
-    spot_positions: SpotPortfolioPosition[];
-    perp_positions: PerpPortfolioPosition[];
-    futures_positions: FuturesPortfolioPosition[];
-  };
+  portfolio: Portfolio;
+  portfolio_balances: PortfolioBalances;
+  spot_positions: SpotPortfolioPosition[];
+  perp_positions: PerpPortfolioPosition[];
+  futures_positions: FuturesPortfolioPosition[];
 }
 
 /**
@@ -496,13 +487,15 @@ export interface FuturesBalance {
 }
 
 export interface CurrentMarginWindow {
-  margin_window_type:
-    | 'MARGIN_WINDOW_TYPE_UNSPECIFIED'
-    | 'MARGIN_WINDOW_TYPE_OVERNIGHT'
-    | 'MARGIN_WINDOW_TYPE_WEEKEND'
-    | 'MARGIN_WINDOW_TYPE_INTRADAY'
-    | 'MARGIN_WINDOW_TYPE_TRANSITION';
-  end_time: string; // RFC3339 Timestamp
+  margin_window: {
+    margin_window_type:
+      | 'MARGIN_WINDOW_TYPE_UNSPECIFIED'
+      | 'MARGIN_WINDOW_TYPE_OVERNIGHT'
+      | 'MARGIN_WINDOW_TYPE_WEEKEND'
+      | 'MARGIN_WINDOW_TYPE_INTRADAY'
+      | 'MARGIN_WINDOW_TYPE_TRANSITION';
+    end_time: string; // RFC3339 Timestamp
+  };
   is_intraday_margin_killswitch_enabled: boolean;
   is_intraday_margin_enrollment_killswitch_enabled: boolean;
 }
@@ -536,37 +529,39 @@ export interface FuturesSweep {
  */
 
 export interface PerpetualsPortfolio {
-  portfolio_uuid: string;
-  collateral: string;
-  position_notional: string;
-  open_position_notional: string;
-  pending_fees: string;
-  borrow: string;
-  accrued_interest: string;
-  rolling_debt: string;
-  portfolio_initial_margin: string;
-  portfolio_im_notional: {
-    value: string;
-    currency: string;
-  };
-  portfolio_maintenance_margin: string;
-  portfolio_mm_notional: {
-    value: string;
-    currency: string;
-  };
-  liquidation_percentage: string;
-  liquidation_buffer: string;
-  margin_type: string;
-  margin_flags: string;
-  liquidation_status: string;
-  unrealized_pnl: {
-    value: string;
-    currency: string;
-  };
-  total_balance: {
-    value: string;
-    currency: string;
-  };
+  portfolios: {
+    portfolio_uuid: string;
+    collateral: string;
+    position_notional: string;
+    open_position_notional: string;
+    pending_fees: string;
+    borrow: string;
+    accrued_interest: string;
+    rolling_debt: string;
+    portfolio_initial_margin: string;
+    portfolio_im_notional: {
+      value: string;
+      currency: string;
+    };
+    portfolio_maintenance_margin: string;
+    portfolio_mm_notional: {
+      value: string;
+      currency: string;
+    };
+    liquidation_percentage: string;
+    liquidation_buffer: string;
+    margin_type: 'MARGIN_TYPE_UNSPECIFIED';
+    margin_flags: 'PORTFOLIO_MARGIN_FLAGS_UNSPECIFIED';
+    liquidation_status: 'PORTFOLIO_LIQUIDATION_STATUS_UNSPECIFIED';
+    unrealized_pnl: {
+      value: string;
+      currency: string;
+    };
+    total_balance: {
+      value: string;
+      currency: string;
+    };
+  }[];
   summary: {
     unrealized_pnl: {
       value: string;
@@ -635,6 +630,9 @@ export interface PerpetualsPosition {
     value: string;
     currency: string;
   };
+}
+export interface PerpetualsPositionSummary {
+  positions: PerpetualsPosition[];
   summary: {
     aggregated_pnl: {
       value: string;
@@ -653,14 +651,22 @@ export interface PerpetualsAsset {
   ecosystem_collateral_limit_breached: boolean;
   asset_icon_url: string;
   supported_networks_enabled: boolean;
-  quantity: string;
-  hold: string;
-  transfer_hold: string;
-  collateral_value: string;
-  max_withdraw_amount: string;
-  loan: string;
-  loan_collateral_requirement_usd: string;
-  pledged_quantity: string;
+}
+
+export interface PortfolioBalance {
+  portfolio_uuid: string;
+  balances: {
+    asset: PerpetualsAsset;
+    quantity: string;
+    hold: string;
+    transfer_hold: string;
+    collateral_value: string;
+    collateral_weight: string;
+    max_withdraw_amount: string;
+    loan: string;
+    loan_collateral_requirement_usd: string;
+    pledged_quantity: string;
+  }[];
   is_margin_limit_reached: boolean;
 }
 
@@ -693,6 +699,11 @@ export interface TransactionSummary {
   fee_tier: FeeTier;
   advanced_trade_only_volume: number;
   advanced_trade_only_fees: number;
+  margin_rate: number;
+  goods_and_services_tax: {
+    rate: string;
+    type: string;
+  };
   coinbase_pro_volume: number;
   coinbase_pro_fees: number;
   total_balance: string;
@@ -764,14 +775,15 @@ export interface PublicProduct {
     group_short_description: string;
     risk_managed_by: string;
     contract_expiry_type: string;
-  };
-  perpetual_details?: {
-    open_interest: string;
-    funding_rate: string;
-    funding_time: string; // RFC3339 Timestamp
-    max_leverage: string;
-    base_asset_uuid: string;
-    underlying_type: string;
+    perpetual_details?: {
+      open_interest: string;
+      funding_rate: string;
+      funding_time: string; // RFC3339 Timestamp
+      max_leverage: string;
+      base_asset_uuid: string;
+      underlying_type: string;
+    };
+
     contract_display_name: string;
     time_to_expiry_ms: number;
     non_crypto: boolean;
@@ -804,3 +816,11 @@ export interface PaymentMethod {
  * Data API Endpoints
  *
  */
+
+export interface ApiKeyPermissions {
+  can_view: boolean;
+  can_trade: boolean;
+  can_transfer: boolean;
+  portfolio_uuid: string;
+  portfolio_type: string;
+}
