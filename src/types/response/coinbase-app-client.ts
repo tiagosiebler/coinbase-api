@@ -1,3 +1,18 @@
+export interface Pagination {
+  ending_before?: string | null;
+  starting_after?: string | null;
+  limit?: number;
+  order?: string;
+  previous_uri: string | null;
+  next_uri: string | null;
+}
+
+/**
+ *
+ * Account Endpoints
+ *
+ */
+
 interface AccountCurrency {
   address_regex: string;
   asset_id: string;
@@ -29,14 +44,11 @@ export interface Account {
   ready: boolean;
 }
 
-export interface Pagination {
-  ending_before?: string | null;
-  starting_after?: string | null;
-  limit?: number;
-  order?: string;
-  previous_uri: string | null;
-  next_uri: string | null;
-}
+/**
+ *
+ * Address Endpoints
+ *
+ */
 
 export interface Address {
   id: string;
@@ -48,6 +60,12 @@ export interface Address {
   resource: string;
   resource_path: string;
 }
+
+/**
+ *
+ * Transactions Endpoints
+ *
+ */
 
 interface TransactionAmount {
   amount: string;
@@ -91,6 +109,12 @@ export interface Transaction {
   to?: TransactionTo;
   details?: TransactionDetails;
 }
+
+/**
+ *
+ * Deposits/Withdrawal Endpoints
+ *
+ */
 
 interface DepositWithdrawalPaymentMethod {
   id: string;
