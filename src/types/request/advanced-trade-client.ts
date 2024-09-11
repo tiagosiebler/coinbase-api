@@ -1,16 +1,58 @@
+import { OrderConfiguration } from 'types/shared.types';
+
 /**
  *
  * Account Endpoints
  *
  */
 
-import { OrderConfiguration } from 'types/shared.types';
-
 /**
  *
  * Products Endpoints
  *
  */
+
+export interface GetProductsRequest {
+  limit?: number;
+  offset?: number;
+  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'FUTURE' | 'SPOT';
+  product_ids?: string[];
+  contract_expiry_type?:
+    | 'UNKNOWN_CONTRACT_EXPIRY_TYPE'
+    | 'PERPETUAL'
+    | 'EXPIRING';
+  expiring_contract_status?:
+    | 'UNKNOWN_EXPIRING_CONTRACT_STATUS'
+    | 'STATUS_UNEXPIRED'
+    | 'STATUS_EXPIRED'
+    | 'STATUS_ALL';
+  get_tradability_status?: boolean;
+  get_all_products?: boolean;
+}
+
+export interface GetProductCandlesRequest {
+  product_id: string;
+  start: string;
+  end: string;
+  granularity:
+    | 'UNKNOWN_GRANULARITY'
+    | 'ONE_MINUTE'
+    | 'FIVE_MINUTE'
+    | 'FIFTEEN_MINUTE'
+    | 'THIRTY_MINUTE'
+    | 'ONE_HOUR'
+    | 'TWO_HOUR'
+    | 'SIX_HOUR'
+    | 'ONE_DAY';
+  limit?: number;
+}
+
+export interface GetMarketTradesRequest {
+  product_id: string;
+  limit: number;
+  start?: string;
+  end?: string;
+}
 
 /**
  *
@@ -26,11 +68,11 @@ export interface SubmitOrderRequest {
   order_configuration: OrderConfiguration;
   leverage?: string;
   margin_type?: 'CROSS' | 'ISOLATED';
-  retail_portfolio_id?: string;
+  retail_portfolio_id?: string; // deprecated
   preview_id?: string;
 }
 
-export interface ListOrdersParams {
+export interface GetOrdersRequest {
   order_ids?: string[];
   product_ids?: string[];
   product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
@@ -53,7 +95,28 @@ export interface ListOrdersParams {
   limit?: number;
   cursor?: string;
   sort_by?: 'UNKNOWN_SORT_BY' | 'LIMIT_PRICE' | 'LAST_FILL_TIME';
-  user_native_currency?: string;
+  user_native_currency?: string; // deprecated
+}
+
+export interface GetFillsRequest {
+  order_ids?: string[];
+  trade_ids?: string[];
+  product_ids?: string[];
+  start_sequence_timestamp?: string;
+  end_sequence_timestamp?: string;
+  retail_portfolio_id?: string;
+  limit?: number;
+  cursor?: string;
+  sort_by?: 'UNKNOWN_SORT_BY' | 'PRICE' | 'TRADE_TIME';
+}
+
+export interface PreviewOrderRequest {
+  product_id: string;
+  side: 'BUY' | 'SELL';
+  order_configuration: OrderConfiguration;
+  leverage?: string;
+  margin_type?: 'ISOLATED' | 'CROSS';
+  retail_portfolio_id?: string;
 }
 
 /**
@@ -61,6 +124,15 @@ export interface ListOrdersParams {
  * Portfolios Endpoints
  *
  */
+
+export interface MovePortfolioFundsRequest {
+  funds: {
+    value: string;
+    currency: string;
+  };
+  source_portfolio_uuid: string;
+  target_portfolio_uuid: string;
+}
 
 /**
  *
@@ -74,11 +146,23 @@ export interface ListOrdersParams {
  *
  */
 
+export interface AllocatePortfolioRequest {
+  portfolio_uuid: string;
+  symbol: string;
+  amount: string;
+  currency: string;
+}
 /**
  *
  * Fees Endpoints
  *
  */
+
+export interface GetTransactionSummaryRequest {
+  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
+  contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
+  product_venue?: 'UNKNOWN_VENUE_TYPE' | 'CBE' | 'FCM' | 'INTX';
+}
 
 /**
  *
@@ -86,12 +170,59 @@ export interface ListOrdersParams {
  *
  */
 
+export interface SubmitConvertQuoteRequest {
+  from_account: string;
+  to_account: string;
+  amount: string;
+  trade_incentive_metadata?: {
+    user_incentive_id?: string;
+    code_val?: string;
+  };
+}
+
 /**
  *
  * Public Endpoints
  *
  */
 
+export interface GetPublicProductsRequest {
+  limit?: number;
+  offset?: number;
+  product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
+  product_ids?: string[];
+  contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
+  expiring_contract_status?:
+    | 'UNKNOWN_EXPIRING_CONTRACT_STATUS'
+    | 'STATUS_UNEXPIRED'
+    | 'STATUS_EXPIRED'
+    | 'STATUS_ALL';
+  get_all_products?: boolean;
+}
+
+export interface GetPublicProductCandlesRequest {
+  product_id: string;
+  start: string;
+  end: string;
+  granularity:
+    | 'UNKNOWN_GRANULARITY'
+    | 'ONE_MINUTE'
+    | 'FIVE_MINUTE'
+    | 'FIFTEEN_MINUTE'
+    | 'THIRTY_MINUTE'
+    | 'ONE_HOUR'
+    | 'TWO_HOUR'
+    | 'SIX_HOUR'
+    | 'ONE_DAY';
+  limit?: number;
+}
+
+export interface GetPublicMarketTradesRequest {
+  product_id: string;
+  limit: number;
+  start?: string;
+  end?: string;
+}
 /**
  *
  * Payment Methods Endpoints

@@ -1,6 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
 import { nanoid } from 'nanoid';
 import {
+  DepositFundsRequest,
+  SendMoneyRequest,
+  TransferMoneyRequest,
+  WithdrawFundsRequest,
+} from 'types/request/coinbase-app-client.js';
+import {
   Account,
   Address,
   DepositWithdrawal,
@@ -56,7 +62,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of accounts.
    */
-  listAccounts(params?: { paginationURL?: string }): Promise<{
+  getAccounts(params?: { paginationURL?: string }): Promise<{
     data: Account[];
     pagination: Pagination;
   }> {
@@ -71,7 +77,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * Get a current user's account by account ID or currency string.
    */
-  showAccount(params: { accountId: string }): Promise<{
+  getAccount(params: { accountId: string }): Promise<{
     data: Account;
   }> {
     return this.getPrivate(`/v2/accounts/${params.accountId}`);
@@ -105,10 +111,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of addresses.
    */
-  listAddresses(params: {
-    accountId: string;
-    paginationURL?: string;
-  }): Promise<{
+  getAddresses(params: { accountId: string; paginationURL?: string }): Promise<{
     pagination: Pagination;
     data: Address[];
   }> {
@@ -126,7 +129,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * !! An address can only be associated with one account. See Create Address to create new addresses.
    */
-  showAddress(params: { accountId: string; addressId: string }): Promise<{
+  getAddress(params: { accountId: string; addressId: string }): Promise<{
     data: Address;
   }> {
     return this.getPrivate(
@@ -143,7 +146,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
    */
-  listAddressTransactions(params: {
+  getAddressTransactions(params: {
     accountId: string;
     addressId: string;
     paginationURL?: string;
@@ -171,19 +174,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Send funds to a network address for any Coinbase supported asset, or email address of the recipient.
    * No transaction fees are required for off-blockchain cryptocurrency transactions.
    */
-  sendMoney(params: {
-    accountId: string;
-    type: 'send';
-    to: string;
-    amount: string;
-    currency: string;
-    description?: string;
-    skip_notifications?: boolean;
-    idem?: string;
-    to_financial_institution?: boolean;
-    financial_institution_website?: string;
-    destination_tag?: string;
-  }): Promise<{ data: Transaction }> {
+  sendMoney(params: SendMoneyRequest): Promise<{ data: Transaction }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
       body: restParams,
@@ -196,14 +187,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Transfer any Coinbase supported digital asset between two of a single user's accounts.
    * Accounts must support the same currency for transfers to be successful.
    */
-  transferMoney(params: {
-    accountId: string;
-    type: 'transfer';
-    to: string;
-    amount: string;
-    currency: string;
-    description?: string;
-  }): Promise<{ data: Transaction }> {
+  transferMoney(params: TransferMoneyRequest): Promise<{ data: Transaction }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
       body: restParams,
@@ -218,7 +202,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
    */
-  listTransactions(params: {
+  getTransactions(params: {
     accountId: string;
     paginationURL?: string;
   }): Promise<{
@@ -236,7 +220,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * Get a single transaction for an account.
    */
-  showTransaction(params: {
+  getTransaction(params: {
     accountId: string;
     transactionId: string;
   }): Promise<{
@@ -258,13 +242,9 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * Deposits user-defined amount of funds to a fiat account.
    */
-  depositFunds(params: {
-    accountId: string;
-    amount: string;
-    currency: string;
-    payment_method: string;
-    commit?: boolean;
-  }): Promise<{ data: DepositWithdrawal }> {
+  depositFunds(
+    params: DepositFundsRequest,
+  ): Promise<{ data: DepositWithdrawal }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/deposits`, {
       body: restParams,
@@ -293,7 +273,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of deposits.
    */
-  listDeposits(params: { accountId: string; paginationURL?: string }): Promise<{
+  getDeposits(params: { accountId: string; paginationURL?: string }): Promise<{
     pagination: Pagination;
     data: DepositWithdrawal[];
   }> {
@@ -308,7 +288,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * Get one deposit by deposit Id.
    */
-  showDeposit(params: { accountId: string; depositId: string }): Promise<{
+  getDeposit(params: { accountId: string; depositId: string }): Promise<{
     data: DepositWithdrawal;
   }> {
     return this.getPrivate(
@@ -327,13 +307,9 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * Withdraws a user-defined amount of funds from a fiat account.
    */
-  withdrawFunds(params: {
-    accountId: string;
-    amount: string;
-    currency: string;
-    payment_method: string;
-    commit?: boolean;
-  }): Promise<{ data: DepositWithdrawal }> {
+  withdrawFunds(
+    params: WithdrawFundsRequest,
+  ): Promise<{ data: DepositWithdrawal }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/withdrawals`, {
       body: restParams,
@@ -362,7 +338,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of withdrawals.
    */
-  listWithdrawals(params: {
+  getWithdrawals(params: {
     accountId: string;
     paginationURL?: string;
   }): Promise<{
@@ -380,7 +356,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    *
    * Get a single withdrawal.
    */
-  showWithdrawal(params: { accountId: string; withdrawalId: string }): Promise<{
+  getWithdrawal(params: { accountId: string; withdrawalId: string }): Promise<{
     data: DepositWithdrawal;
   }> {
     return this.getPrivate(

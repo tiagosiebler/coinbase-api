@@ -1,10 +1,21 @@
 import { AxiosRequestConfig } from 'axios';
 import { nanoid } from 'nanoid';
 import {
-  ListOrdersParams,
+  AllocatePortfolioRequest,
+  GetFillsRequest,
+  GetMarketTradesRequest,
+  GetOrdersRequest,
+  GetProductCandlesRequest,
+  GetProductsRequest,
+  GetPublicMarketTradesRequest,
+  GetPublicProductCandlesRequest,
+  GetPublicProductsRequest,
+  GetTransactionSummaryRequest,
+  MovePortfolioFundsRequest,
+  PreviewOrderRequest,
+  SubmitConvertQuoteRequest,
   SubmitOrderRequest,
 } from 'types/request/advanced-trade-client.js';
-import { OrderConfiguration } from 'types/shared.types.js';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
@@ -15,7 +26,7 @@ import {
 import {
   Account,
   AccountsList,
-  BestBidAsk,
+  ApiKeyPermissions,
   CancelOrdersResponse,
   Candle,
   ClosePositionResponse,
@@ -30,10 +41,11 @@ import {
   Order,
   OrderPreview,
   PaymentMethod,
-  PerpetualsAsset,
   PerpetualsPortfolio,
   PerpetualsPosition,
+  PerpetualsPositionSummary,
   Portfolio,
+  PortfolioBalance,
   PortfolioBreakdown,
   Pricebook,
   Product,
@@ -80,7 +92,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get a list of authenticated accounts for the current user.
    */
-  listAccounts(params?: {
+  getAccounts(params?: {
     limit?: number;
     cursor?: string;
     retail_portfolio_id?: string; // deprecated
@@ -91,8 +103,8 @@ export class AdvancedTradeClient extends BaseRestClient {
   /**
    * Get Account
    *
-   * Get a list of information about an account, given an account UUID.
-   * Tip: Use List Accounts to find account UUIDs.
+   * Get a list of information about single account, given an account UUID.
+   * Tip: Use List Accounts (getAccounts funcion) to find account UUIDs.
    */
   getAccount(params: { account_id: string }): Promise<{
     account: Account;
@@ -111,7 +123,9 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get the best bid/ask for all products. A subset of all products can be returned instead by using the product_ids input.
    */
-  getBestBidAsk(params?: { product_ids?: string[] }): Promise<BestBidAsk> {
+  getBestBidAsk(params?: { product_ids?: string[] }): Promise<{
+    pricebooks: Pricebook[];
+  }> {
     return this.getPrivate(`/api/v3/brokerage/best_bid_ask`, params);
   }
 
@@ -124,7 +138,7 @@ export class AdvancedTradeClient extends BaseRestClient {
     product_id: string;
     limit?: number;
     aggregation_price_increment?: string;
-  }): Promise<Pricebook> {
+  }): Promise<{ pricebook: Pricebook }> {
     return this.getPrivate(`/api/v3/brokerage/product_book`, params);
   }
 
@@ -134,23 +148,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Get a list of the available currency pairs for trading.
    *
    */
-  listProducts(params?: {
-    limit?: number;
-    offset?: number;
-    product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'FUTURE' | 'SPOT';
-    product_ids?: string[];
-    contract_expiry_type?:
-      | 'UNKNOWN_CONTRACT_EXPIRY_TYPE'
-      | 'PERPETUAL'
-      | 'EXPIRING';
-    expiring_contract_status?:
-      | 'UNKNOWN_EXPIRING_CONTRACT_STATUS'
-      | 'STATUS_UNEXPIRED'
-      | 'STATUS_EXPIRED'
-      | 'STATUS_ALL';
-    get_tradability_status?: boolean;
-    get_all_products?: boolean;
-  }): Promise<{
+  getProducts(params?: GetProductsRequest): Promise<{
     products: Product[];
     num_products: number;
   }> {
@@ -178,22 +176,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get rates for a single product by product ID, grouped in buckets.
    */
-  getProductCandles(params: {
-    product_id: string;
-    start: string;
-    end: string;
-    granularity:
-      | 'UNKNOWN_GRANULARITY'
-      | 'ONE_MINUTE'
-      | 'FIVE_MINUTE'
-      | 'FIFTEEN_MINUTE'
-      | 'THIRTY_MINUTE'
-      | 'ONE_HOUR'
-      | 'TWO_HOUR'
-      | 'SIX_HOUR'
-      | 'ONE_DAY';
-    limit?: number;
-  }): Promise<{
+  getProductCandles(params: GetProductCandlesRequest): Promise<{
     candles: Candle[];
   }> {
     const { product_id, ...queryParams } = params;
@@ -208,12 +191,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get snapshot information by product ID about the last trades (ticks) and best bid/ask.
    */
-  getMarketTrades(params: {
-    product_id: string;
-    limit: number;
-    start?: string;
-    end?: string;
-  }): Promise<MarketTrades> {
+  getMarketTrades(params: GetMarketTradesRequest): Promise<MarketTrades> {
     const { product_id, ...queryParams } = params;
     return this.getPrivate(
       `/api/v3/brokerage/products/${product_id}/ticker`,
@@ -233,7 +211,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Create an order with a specified product_id (asset-pair), side (buy/sell), etc.
    *
    */
-  createOrder(params: SubmitOrderRequest): Promise<SubmitOrderResponse> {
+  submitOrder(params: SubmitOrderRequest): Promise<SubmitOrderResponse> {
     return this.postPrivate(`/api/v3/brokerage/orders`, {
       body: params,
     });
@@ -262,7 +240,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * - If you decrease the size, you keep your place in line.
    * - A client can only send an Edit Order request after the previous request for the same order has been fully processed.
    */
-  editOrder(params: {
+  updateOrder(params: {
     order_id: string;
     price?: string;
     size?: string;
@@ -278,7 +256,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Preview an edit order request with a specified new size, or new price.
    *
    */
-  editOrderPreview(params: {
+  updateOrderPreview(params: {
     order_id: string;
     price?: string;
     size?: string;
@@ -298,7 +276,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * - You cannot pair open orders with other order types.
    * - You cannot query for OPEN orders with other order types.
    */
-  listOrders(params?: ListOrdersParams): Promise<{
+  getOrders(params?: GetOrdersRequest): Promise<{
     orders: Order[];
     sequence?: number;
     has_next: boolean;
@@ -313,17 +291,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Get a list of fills filtered by optional query parameters (product_id, order_id, etc).
    *
    */
-  listFills(params?: {
-    order_ids?: string[];
-    trade_ids?: string[];
-    product_ids?: string[];
-    start_sequence_timestamp?: string;
-    end_sequence_timestamp?: string;
-    retail_portfolio_id?: string;
-    limit?: number;
-    cursor?: string;
-    sort_by?: 'UNKNOWN_SORT_BY' | 'PRICE' | 'TRADE_TIME';
-  }): Promise<{
+  getFills(params?: GetFillsRequest): Promise<{
     fills: Fill[];
     cursor?: string;
   }> {
@@ -353,14 +321,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Preview an order.
    *
    */
-  previewOrder(params: {
-    product_id: string;
-    side: 'BUY' | 'SELL';
-    order_configuration: OrderConfiguration;
-    leverage?: string;
-    margin_type?: 'ISOLATED' | 'CROSS';
-    retail_portfolio_id?: string;
-  }): Promise<OrderPreview> {
+  previewOrder(params: PreviewOrderRequest): Promise<OrderPreview> {
     return this.postPrivate(`/api/v3/brokerage/orders/preview`, {
       body: params,
     });
@@ -393,7 +354,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get all portfolios of a user.
    */
-  listPortfolios(params?: {
+  getPortfolios(params?: {
     portfolio_type?: 'UNDEFINED' | 'DEFAULT' | 'CONSUMER' | 'INTX';
   }): Promise<{
     portfolios: Portfolio[];
@@ -407,7 +368,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Create a portfolio.
    */
   createPortfolio(params: { name: string }): Promise<{
-    portfolio: Portfolio[];
+    portfolio: Portfolio;
   }> {
     return this.postPrivate(`/api/v3/brokerage/portfolios`, {
       body: params,
@@ -419,14 +380,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Move funds between portfolios.
    */
-  movePortfolioFunds(params: {
-    funds: {
-      value: string;
-      currency: string;
-    };
-    source_portfolio_uuid: string;
-    target_portfolio_uuid: string;
-  }): Promise<{
+  movePortfolioFunds(params: MovePortfolioFundsRequest): Promise<{
     source_portfolio_uuid: string;
     target_portfolio_uuid: string;
   }> {
@@ -467,7 +421,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Edit a portfolio.
    *
    */
-  editPortfolio(params: {
+  updatePortfolio(params: {
     portfolio_uuid: string;
     name: string;
   }): Promise<{ portfolio: Portfolio }> {
@@ -542,7 +496,7 @@ export class AdvancedTradeClient extends BaseRestClient {
       | 'MARGIN_PROFILE_TYPE_UNSPECIFIED'
       | 'MARGIN_PROFILE_TYPE_RETAIL_REGULAR'
       | 'MARGIN_PROFILE_TYPE_RETAIL_INTRADAY_MARGIN_1';
-  }): Promise<{ margin_window: CurrentMarginWindow }> {
+  }): Promise<CurrentMarginWindow> {
     return this.getPrivate(
       `/api/v3/brokerage/cfm/intraday/current_margin_window`,
       params,
@@ -554,7 +508,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get a list of positions in CFM products.
    */
-  listFuturesPositions(): Promise<{ positions: FuturesPosition[] }> {
+  getFuturesPositions(): Promise<{ positions: FuturesPosition[] }> {
     return this.getPrivate(`/api/v3/brokerage/cfm/positions`);
   }
 
@@ -601,7 +555,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * - A processing sweep is a sweep that is currently being processed and cannot be cancelled.
    * - Once a sweep is complete, it no longer appears in the list of sweeps.
    */
-  listFuturesSweeps(): Promise<{ sweeps: FuturesSweep[] }> {
+  getFuturesSweeps(): Promise<{ sweeps: FuturesSweep[] }> {
     return this.getPrivate(`/api/v3/brokerage/cfm/sweeps`);
   }
 
@@ -626,12 +580,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Allocate portfolio funds to a sub-portfolio on Intx Portfolio.
    *
    */
-  allocatePortfolio(params: {
-    portfolio_uuid: string;
-    symbol: string;
-    amount: string;
-    currency: string;
-  }): Promise<any> {
+  allocatePortfolio(params: AllocatePortfolioRequest): Promise<any> {
     return this.postPrivate(`/api/v3/brokerage/intx/allocate`, {
       body: params,
     });
@@ -644,7 +593,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    */
   getPerpetualsPortfolioSummary(params: {
     portfolio_uuid: string;
-  }): Promise<{ portfolios: PerpetualsPortfolio[] }> {
+  }): Promise<PerpetualsPortfolio> {
     const { portfolio_uuid } = params;
     return this.getPrivate(
       `/api/v3/brokerage/intx/portfolio/${portfolio_uuid}`,
@@ -656,9 +605,9 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get a list of open positions in your Perpetuals portfolio.
    */
-  listPerpetualsPositions(params: {
+  getPerpetualsPositions(params: {
     portfolio_uuid: string;
-  }): Promise<{ positions: PerpetualsPosition[] }> {
+  }): Promise<PerpetualsPositionSummary> {
     const { portfolio_uuid } = params;
     return this.getPrivate(
       `/api/v3/brokerage/intx/positions/${portfolio_uuid}`,
@@ -687,10 +636,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Get a list of asset balances on Intx for a given Portfolio.
    */
   getPortfoliosBalances(params: { portfolio_uuid: string }): Promise<{
-    portfolio_uuid: string;
-    balances: {
-      asset: PerpetualsAsset;
-    }[];
+    portfolio_balances: PortfolioBalance[];
   }> {
     const { portfolio_uuid } = params;
     return this.getPrivate(`/api/v3/brokerage/intx/balances/${portfolio_uuid}`);
@@ -701,7 +647,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Enable or Disable Multi Asset Collateral for a given Portfolio.
    */
-  optInOrOutMultiAssetCollateral(params?: {
+  updateMultiAssetCollateral(params?: {
     portfolio_uuid?: string;
     multi_asset_collateral_enabled?: boolean;
   }): Promise<{ multi_asset_collateral_enabled: boolean }> {
@@ -721,11 +667,9 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get a summary of transactions with fee tiers, total volume, and fees.
    */
-  getTransactionSummary(params?: {
-    product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
-    contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
-    product_venue?: 'UNKNOWN_VENUE_TYPE' | 'CBE' | 'FCM' | 'INTX';
-  }): Promise<TransactionSummary> {
+  getTransactionSummary(
+    params?: GetTransactionSummaryRequest,
+  ): Promise<TransactionSummary> {
     return this.getPrivate(`/api/v3/brokerage/transaction_summary`, params);
   }
 
@@ -741,15 +685,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Create a convert quote with a specified source account, target account, and amount.
    * Convert is applicable for USDC-USD and EURC-EUR conversion.
    */
-  createConvertQuote(params: {
-    from_account: string;
-    to_account: string;
-    amount: string;
-    trade_incentive_metadata?: {
-      user_incentive_id?: string;
-      code_val?: string;
-    };
-  }): Promise<any> {
+  submitConvertQuote(params: SubmitConvertQuoteRequest): Promise<any> {
     return this.postPrivate(`/api/v3/brokerage/convert/quote`, {
       body: params,
     });
@@ -820,19 +756,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get a list of the available currency pairs for trading.
    */
-  listPublicProducts(params?: {
-    limit?: number;
-    offset?: number;
-    product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
-    product_ids?: string[];
-    contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
-    expiring_contract_status?:
-      | 'UNKNOWN_EXPIRING_CONTRACT_STATUS'
-      | 'STATUS_UNEXPIRED'
-      | 'STATUS_EXPIRED'
-      | 'STATUS_ALL';
-    get_all_products?: boolean;
-  }): Promise<{
+  getPublicProducts(params?: GetPublicProductsRequest): Promise<{
     products: PublicProduct[];
     num_products: number;
   }> {
@@ -854,22 +778,9 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get rates for a single product by product ID, grouped in buckets.
    */
-  getPublicProductCandles(params: {
-    product_id: string;
-    start: string;
-    end: string;
-    granularity:
-      | 'UNKNOWN_GRANULARITY'
-      | 'ONE_MINUTE'
-      | 'FIVE_MINUTE'
-      | 'FIFTEEN_MINUTE'
-      | 'THIRTY_MINUTE'
-      | 'ONE_HOUR'
-      | 'TWO_HOUR'
-      | 'SIX_HOUR'
-      | 'ONE_DAY';
-    limit?: number;
-  }): Promise<{ candles: Candle[] }> {
+  getPublicProductCandles(
+    params: GetPublicProductCandlesRequest,
+  ): Promise<{ candles: Candle[] }> {
     const { product_id, ...queryParams } = params;
     return this.get(
       `/api/v3/brokerage/market/products/${product_id}/candles`,
@@ -882,12 +793,9 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get snapshot information by product ID about the last trades (ticks) and best bid/ask.
    */
-  getPublicMarketTrades(params: {
-    product_id: string;
-    limit: number;
-    start?: string;
-    end?: string;
-  }): Promise<MarketTrades> {
+  getPublicMarketTrades(
+    params: GetPublicMarketTradesRequest,
+  ): Promise<MarketTrades> {
     const { product_id, ...queryParams } = params;
     return this.get(
       `/api/v3/brokerage/market/products/${product_id}/ticker`,
@@ -906,7 +814,7 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    * Get a list of payment methods for the current user.
    */
-  listPaymentMethods(): Promise<{
+  getPaymentMethods(): Promise<{
     payment_methods: PaymentMethod[];
   }> {
     return this.getPrivate(`/api/v3/brokerage/payment_methods`);
@@ -931,4 +839,13 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Data API Endpoints
    *
    */
+
+  /**
+   * Get API Key Permissions
+   *
+   * Get information about your CDP API key permissions.
+   */
+  getApiKeyPermissions(): Promise<ApiKeyPermissions> {
+    return this.getPrivate(`/api/v3/brokerage/key_permissions`);
+  }
 }
