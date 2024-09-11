@@ -8,8 +8,8 @@ describe('REST PRIVATE', () => {
   };
 
   const rest = new AdvancedTradeClient({
-    apiKey: account.key,
-    apiSecret: account.secret,
+    apiKeyName: account.key,
+    apiPrivateKey: account.secret,
     apiPassphrase: account.passphrase,
   });
 

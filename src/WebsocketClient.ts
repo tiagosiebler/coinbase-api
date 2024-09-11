@@ -1,5 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { AdvancedTradeClient } from './AdvancedTradeClient.js';
-import { FuturesClient } from './FuturesClient.js';
 import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
 import { neverGuard } from './lib/misc-util.js';
 import {
@@ -9,8 +9,7 @@ import {
   WsTopicRequest,
 } from './lib/websocket/websocket-util.js';
 import { WSConnectedResult } from './lib/websocket/WsStore.types.js';
-import { APISuccessResponse } from './types/response/shared.types.js';
-import { WsConnectionInfo } from './types/response/ws.js';
+import { APISuccessResponse } from './types/shared.types.js';
 import { WsMarket } from './types/websockets/client.js';
 import {
   WsOperation,
@@ -46,56 +45,41 @@ export const PUBLIC_WS_KEYS: WsKey[] = [
 type WsTopic = string;
 
 export class WebsocketClient extends BaseWebsocketClient<WsKey> {
-  private RESTClientCache: Record<
-    WsMarket,
-    AdvancedTradeClient | FuturesClient | undefined
-  > = {
-    spot: undefined,
-    futures: undefined,
+  private RESTClientCache: Record<WsMarket, AdvancedTradeClient | undefined> = {
+    advancedTrade: undefined,
   };
 
-  private getRESTClient(wsKey: WsKey): AdvancedTradeClient | FuturesClient {
+  private getRESTClient(wsKey: WsKey): AdvancedTradeClient {
     if (wsKey === 'spotPublicV1' || wsKey === 'spotPrivateV1') {
-      const clientType = 'spot';
+      const clientType = 'advancedTrade';
       if (this.RESTClientCache[clientType]) {
         return this.RESTClientCache[clientType];
       }
 
       this.RESTClientCache[clientType] = new AdvancedTradeClient({
-        apiKey: this.options.apiKey,
-        apiSecret: this.options.apiSecret,
-        apiPassphrase: this.options.apiPassphrase,
+        apiKeyName: this.options.apiKey,
+        apiPrivateKey: this.options.apiSecret,
       });
       return this.RESTClientCache[clientType];
     }
 
-    if (wsKey === 'futuresPublicV1' || wsKey === 'futuresPrivateV1') {
-      const clientType = 'futures';
-      if (this.RESTClientCache[clientType]) {
-        return this.RESTClientCache[clientType];
-      }
-
-      this.RESTClientCache[clientType] = new FuturesClient({
-        apiKey: this.options.apiKey,
-        apiSecret: this.options.apiSecret,
-        apiPassphrase: this.options.apiPassphrase,
-      });
+    const clientType = 'advancedTrade';
+    if (this.RESTClientCache[clientType]) {
       return this.RESTClientCache[clientType];
     }
 
+    this.RESTClientCache[clientType] = new AdvancedTradeClient({
+      apiKeyName: this.options.apiKey,
+      apiPrivateKey: this.options.apiSecret,
+    });
+    return this.RESTClientCache[clientType];
     throw new Error(`Unhandled WsKey: "${wsKey}"`);
   }
 
   private async getWSConnectionInfo(
-    wsKey: WsKey,
-  ): Promise<APISuccessResponse<WsConnectionInfo>> {
-    const restClient = this.getRESTClient(wsKey);
-
-    if (wsKey === 'spotPrivateV1' || wsKey === 'futuresPrivateV1') {
-      return restClient.getPrivateWSConnectionToken();
-    }
-
-    return restClient.getPublicWSConnectionToken();
+    _wsKey: WsKey,
+  ): Promise<APISuccessResponse<{}>> {
+    throw new Error('not used');
   }
 
   /**
@@ -217,24 +201,26 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       ...connectionInfo,
     });
 
-    const server = connectionInfo.data.instanceServers[0];
-    if (!server) {
-      this.logger.error(
-        `No servers returned by connection info response?`,
-        JSON.stringify(
-          {
-            wsKey,
-            connectionInfo,
-          },
-          null,
-          2,
-        ),
-      );
-      throw new Error(`No servers returned by connection info response?`);
-    }
+    return '';
 
-    const connectionUrl = `${server.endpoint}?token=${connectionInfo.data.token}`;
-    return connectionUrl;
+    // const server = connectionInfo.data.instanceServers[0];
+    // if (!server) {
+    //   this.logger.error(
+    //     `No servers returned by connection info response?`,
+    //     JSON.stringify(
+    //       {
+    //         wsKey,
+    //         connectionInfo,
+    //       },
+    //       null,
+    //       2,
+    //     ),
+    //   );
+    //   throw new Error(`No servers returned by connection info response?`);
+    // }
+
+    // const connectionUrl = `${server.endpoint}?token=${connectionInfo.data.token}`;
+    // return connectionUrl;
   }
 
   protected sendPingEvent(wsKey: WsKey) {
@@ -392,10 +378,10 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
   protected getWsKeyForMarket(market: WsMarket, isPrivate: boolean): WsKey {
     return isPrivate
-      ? market === 'spot'
+      ? market === 'advancedTrade'
         ? WS_KEY_MAP.spotPrivateV1
         : WS_KEY_MAP.futuresPrivateV1
-      : market === 'spot'
+      : market === 'advancedTrade'
         ? WS_KEY_MAP.spotPublicV1
         : WS_KEY_MAP.futuresPublicV1;
   }
@@ -404,11 +390,11 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     switch (key) {
       case 'futuresPrivateV1':
       case 'futuresPublicV1': {
-        return 'futures';
+        return 'advancedTrade';
       }
       case 'spotPrivateV1':
       case 'spotPublicV1': {
-        return 'spot';
+        return 'advancedTrade';
       }
       default: {
         throw neverGuard(key, `Unhandled ws key "${key}"`);

@@ -23,17 +23,33 @@ const exchangeBaseURLMap = {
 } as const;
 
 export interface RestClientOptions {
-  /** Your API key */
-  apiKey?: string;
+  /** Your API key name */
+  apiKeyName?: string;
 
-  /** Your API secret */
-  apiSecret?: string;
+  /** Your API Private Key */
+  apiPrivateKey?: string;
 
-  /** Your API passphrase (can be anything) that you set when creating this API key (NOT your account password) */
-  apiPassphrase?: string;
+  /**
+   * Instead of passing the key name and private key,
+   * you can also parse the exported "cdp_api_key.json" into an object and pass it here.
+   */
+  cdpApiKey?: {
+    name: string;
+    privateKey: string;
+  };
 
-  /** The API key version. Defaults to "2" right now. You can see this in your API management page */
-  apiKeyVersion?: number | string;
+  /**
+   * Enable keep alive for REST API requests (via axios).
+   * See: https://github.com/tiagosiebler/bybit-api/issues/368
+   */
+  keepAlive?: boolean;
+
+  /**
+   * When using HTTP KeepAlive, how often to send TCP KeepAlive packets over sockets being kept alive. Default = 1000.
+   * Only relevant if keepAlive is set to true.
+   * Default: 1000 (defaults comes from https agent)
+   */
+  keepAliveMsecs?: number;
 
   /** Default: false. If true, we'll throw errors if any params are undefined */
   strictParamValidation?: boolean;

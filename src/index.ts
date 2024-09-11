@@ -2,8 +2,6 @@ export * from './AdvancedTradeClient.js';
 export * from './lib/websocket/logger.js';
 export * from './lib/websocket/websocket-util.js';
 export * from './types/request/advanced-trade-client.js';
-export * from './types/response/shared.types.js';
-export * from './types/response/spot-trading.js';
 export * from './types/websockets/client.js';
 export * from './types/websockets/events.js';
 export * from './types/websockets/requests.js';
