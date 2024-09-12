@@ -173,6 +173,10 @@ export abstract class BaseRestClient {
     return this._call('PUT', endpoint, params, false);
   }
 
+  patchPrivate(endpoint: string, params?: any) {
+    return this._call('PATCH', endpoint, params, false);
+  }
+
   /**
    * @private Make a HTTP request to a specific endpoint. Private endpoint API calls are automatically signed.
    */
