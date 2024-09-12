@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import https from 'https';
 
+import { signJWT } from './jwtNode.js';
 import { neverGuard } from './misc-util.js';
 import {
   getRestBaseUrl,
@@ -77,7 +79,7 @@ export abstract class BaseRestClient {
   private baseUrl: string;
   private globalRequestOptions: AxiosRequestConfig;
   private apiKeyName: string | undefined;
-  private apiPrivateKey: string | undefined;
+  private apiKeySecret: string | undefined;
 
   /** Defines the client type (affecting how requests & signatures behave) */
   abstract getClientType(): RestClientType;
@@ -97,6 +99,9 @@ export abstract class BaseRestClient {
       ...restClientOptions,
     };
 
+    const VERSION = '0.1.0';
+    const USER_AGENT = `coinbase-api-node/${VERSION}`;
+
     this.globalRequestOptions = {
       /** in ms == 5 minutes by default */
       timeout: 1000 * 60 * 5,
@@ -105,6 +110,7 @@ export abstract class BaseRestClient {
       headers: {
         'Content-Type': 'application/json',
         locale: 'en-US',
+        'User-Agent': USER_AGENT,
       },
     };
 
@@ -125,15 +131,15 @@ export abstract class BaseRestClient {
     );
 
     this.apiKeyName = this.options.apiKeyName;
-    this.apiPrivateKey = this.options.apiPrivateKey;
+    this.apiKeySecret = this.options.apiPrivateKey;
 
     if (restClientOptions.cdpApiKey) {
       this.apiKeyName = restClientOptions.cdpApiKey.name;
-      this.apiPrivateKey = restClientOptions.cdpApiKey.privateKey;
+      this.apiKeySecret = restClientOptions.cdpApiKey.privateKey;
     }
 
     // Throw if one of the 3 values is missing, but at least one of them is set
-    const credentials = [this.apiKeyName, this.apiPrivateKey];
+    const credentials = [this.apiKeyName, this.apiKeySecret];
     if (
       credentials.includes(undefined) &&
       credentials.some((v) => typeof v === 'string')
@@ -265,7 +271,8 @@ export abstract class BaseRestClient {
    */
   private async signRequest<T extends object | undefined = {}>(
     data: T,
-    endpoint: string,
+    url: string,
+    _endpoint: string,
     method: Method,
     signMethod: SignMethod,
   ): Promise<SignedRequest<T>> {
@@ -282,7 +289,10 @@ export abstract class BaseRestClient {
       queryParamsWithSign: '',
     };
 
-    if (!this.apiKeyName || !this.apiPrivateKey) {
+    const apiKey = this.apiKeyName;
+    const apiSecret = this.apiKeySecret;
+
+    if (!apiKey || !apiSecret) {
       return res;
     }
 
@@ -300,15 +310,7 @@ export abstract class BaseRestClient {
             )
           : JSON.stringify(data) || '';
 
-      const paramsStr = `${timestamp}${method}/${endpoint}${signRequestParams}`;
-
-      res.sign = await signMessage(
-        paramsStr,
-        this.apiPrivateKey,
-        'base64',
-        'SHA-256',
-      );
-
+      res.sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
       res.queryParamsWithSign = signRequestParams;
       return res;
     }
@@ -323,6 +325,7 @@ export abstract class BaseRestClient {
 
   private async prepareSignParams<TParams extends object | undefined>(
     method: Method,
+    url: string,
     endpoint: string,
     signMethod: SignMethod,
     params?: TParams,
@@ -330,6 +333,7 @@ export abstract class BaseRestClient {
   ): Promise<UnsignedRequest<TParams>>;
   private async prepareSignParams<TParams extends object | undefined>(
     method: Method,
+    url: string,
     endpoint: string,
     signMethod: SignMethod,
     params?: TParams,
@@ -337,6 +341,7 @@ export abstract class BaseRestClient {
   ): Promise<SignedRequest<TParams>>;
   private async prepareSignParams<TParams extends object | undefined>(
     method: Method,
+    url: string,
     endpoint: string,
     signMethod: SignMethod,
     params?: TParams,
@@ -349,11 +354,11 @@ export abstract class BaseRestClient {
       };
     }
 
-    if (!this.apiKeyName || !this.apiPrivateKey) {
+    if (!this.apiKeyName || !this.apiKeySecret) {
       throw new Error(MISSING_API_KEYS_ERROR);
     }
 
-    return this.signRequest(params, endpoint, method, signMethod);
+    return this.signRequest(params, url, endpoint, method, signMethod);
   }
 
   /** Returns an axios request object. Handles signing process automatically if this is a private API call */
@@ -376,7 +381,7 @@ export abstract class BaseRestClient {
       }
     }
 
-    if (isPublicApi || !this.apiKeyName || !this.apiPrivateKey) {
+    if (isPublicApi || !this.apiKeyName || !this.apiKeySecret) {
       return {
         ...options,
         params: params,
@@ -385,32 +390,24 @@ export abstract class BaseRestClient {
 
     const signResult = await this.prepareSignParams(
       method,
+      url,
       endpoint,
       'coinbase',
       params,
       isPublicApi,
     );
 
+    // console.log(`signResult: `, {
+    //   method,
+    //   url,
+    //   endpoint,
+    //   params,
+    //   token: signResult,
+    // });
+
     const authHeaders = {
-      'KC-API-KEY': this.apiKeyName,
-      'KC-API-TIMESTAMP': signResult.timestamp,
+      Authorization: `Bearer ${signResult.sign}`,
     };
-
-    const partnerSignParam = `${authHeaders['KC-API-TIMESTAMP']}${authHeaders['KC-API-KEY']}`;
-    const partnerSign = 'sadfasdf';
-
-    const partnerSignResult = await signMessage(
-      partnerSignParam,
-      partnerSign,
-      'base64',
-      'SHA-256',
-    );
-    const signedPassphrase = await signMessage(
-      this.apiKeyName!,
-      this.apiPrivateKey,
-      'base64',
-      'SHA-256',
-    );
 
     if (method === 'GET') {
       return {
@@ -418,9 +415,6 @@ export abstract class BaseRestClient {
         headers: {
           ...authHeaders,
           ...options.headers,
-          'KC-API-SIGN': signResult.sign,
-          'KC-API-PARTNER-SIGN': partnerSignResult,
-          'KC-API-PASSPHRASE': signedPassphrase,
         },
         url: options.url + signResult.queryParamsWithSign,
       };
@@ -431,9 +425,6 @@ export abstract class BaseRestClient {
       headers: {
         ...authHeaders,
         ...options.headers,
-        'KC-API-SIGN': signResult.sign,
-        'KC-API-PARTNER-SIGN': partnerSignResult,
-        'KC-API-PASSPHRASE': signedPassphrase,
       },
       data: params,
     };
