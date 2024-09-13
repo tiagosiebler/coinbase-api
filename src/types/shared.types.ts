@@ -68,4 +68,4 @@ export interface OrderConfiguration {
   trigger_bracket_gtd?: TriggerBracketGTD;
 }
 
-export type CustomOrderIdProperty = 'client_order_id';
+export type CustomOrderIdProperty = 'client_order_id' | 'client_oid';

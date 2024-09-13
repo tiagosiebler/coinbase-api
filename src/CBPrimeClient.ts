@@ -393,6 +393,7 @@ export class CBPrimeClient extends BaseRestClient {
    * Create an order for a given portfolio.
    */
   submitOrder(params: SubmitPrimeOrderRequest): Promise<any> {
+    this.validateOrderId(params, 'client_order_id');
     const { portfolio_id, ...body } = params;
     return this.postPrivate(`/v1/portfolios/${portfolio_id}/order`, {
       body: body,
