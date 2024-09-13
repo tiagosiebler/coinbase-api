@@ -1,7 +1,7 @@
-import { CoinbaseAppClient } from '../src/index.js';
+import { CBAppClient } from '../src/index.js';
 
 async function main() {
-  const client = new CoinbaseAppClient({
+  const client = new CBAppClient({
     // cdpApiKey: credsTradePermission,
     apiKeyName: '',
     apiPrivateKey: '',

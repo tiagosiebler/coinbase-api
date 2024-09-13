@@ -1,6 +1,6 @@
-import { AdvancedTradeClient } from '../src/AdvancedTradeClient.js';
+import { CBAdvancedTradeClient } from '../src/index.js';
 
-const advancedTradeClient = new AdvancedTradeClient({});
+const advancedTradeClient = new CBAdvancedTradeClient({});
 
 async function main() {
   try {

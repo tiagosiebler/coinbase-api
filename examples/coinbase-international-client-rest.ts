@@ -1,6 +1,6 @@
-import { CoinbaseInternational } from '../src/CoinbaseInternational.js';
+import { CBInternationalClient } from '../src/index.js';
 
-const coinbaseInternational = new CoinbaseInternational({});
+const coinbaseInternational = new CBInternationalClient({});
 
 async function main() {
   try {
