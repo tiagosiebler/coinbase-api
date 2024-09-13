@@ -1,5 +1,4 @@
 import { AxiosRequestConfig } from 'axios';
-import { nanoid } from 'nanoid';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
@@ -54,16 +53,6 @@ export class CBExchangeClient extends BaseRestClient {
 
   getClientType(): RestClientType {
     return REST_CLIENT_TYPE_ENUM.exchange;
-  }
-
-  /**
-   *
-   * Misc Utility Methods
-   *
-   */
-
-  generateNewOrderID(): string {
-    return nanoid(32);
   }
 
   /**

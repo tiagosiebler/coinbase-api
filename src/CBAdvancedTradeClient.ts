@@ -1,5 +1,4 @@
 import { AxiosRequestConfig } from 'axios';
-import { nanoid } from 'nanoid';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
@@ -70,16 +69,6 @@ export class CBAdvancedTradeClient extends BaseRestClient {
 
   getClientType(): RestClientType {
     return REST_CLIENT_TYPE_ENUM.advancedTrade;
-  }
-
-  /**
-   *
-   * Misc Utility Methods
-   *
-   */
-
-  generateNewOrderID(): string {
-    return nanoid(32);
   }
 
   /**

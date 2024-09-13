@@ -1,5 +1,4 @@
 import { AxiosRequestConfig } from 'axios';
-import { nanoid } from 'nanoid';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
@@ -36,16 +35,6 @@ export class CBAppClient extends BaseRestClient {
 
   getClientType(): RestClientType {
     return REST_CLIENT_TYPE_ENUM.coinbaseApp;
-  }
-
-  /**
-   *
-   * Misc Utility Methods
-   *
-   */
-
-  generateNewOrderID(): string {
-    return nanoid(32);
   }
 
   /**
