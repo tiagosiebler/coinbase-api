@@ -248,7 +248,7 @@ export abstract class BaseRestClient {
     // Dispatch request
     return axios(options)
       .then((response) => {
-        if (response.status == 200) {
+        if (response.status >= 200 && response.status <= 204) {
           // Throw if API returns an error (e.g. insufficient balance)
           if (
             typeof response.data?.code === 'string' &&
