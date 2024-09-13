@@ -1,10 +1,10 @@
-import { OrderConfiguration } from 'types/shared.types';
-
 /**
  *
  * Account Endpoints
  *
  */
+
+import { OrderConfiguration } from '../shared.types.js';
 
 /**
  *

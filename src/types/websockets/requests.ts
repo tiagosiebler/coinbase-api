@@ -1,4 +1,4 @@
-export type WsOperation = 'TODO:';
+export type WsOperation = 'subscribe' | 'unsubscribe';
 
 export interface WsRequestOperation<TWSTopic extends string> {
   id: number;

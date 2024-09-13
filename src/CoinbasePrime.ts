@@ -1,5 +1,12 @@
 import { AxiosRequestConfig } from 'axios';
 import { nanoid } from 'nanoid';
+
+import { BaseRestClient } from './lib/BaseRestClient.js';
+import {
+  REST_CLIENT_TYPE_ENUM,
+  RestClientOptions,
+  RestClientType,
+} from './lib/requestUtils.js';
 import {
   CreatePrimeAddressBookEntryRequest,
   CreatePrimeConversionRequest,
@@ -25,14 +32,7 @@ import {
   GetPrimeWalletTransactionsRequest,
   GetPrimeWeb3WalletBalancesRequest,
   SubmitPrimeOrderRequest,
-} from 'types/request/coinbase-prime.js';
-
-import { BaseRestClient } from './lib/BaseRestClient.js';
-import {
-  REST_CLIENT_TYPE_ENUM,
-  RestClientOptions,
-  RestClientType,
-} from './lib/requestUtils.js';
+} from './types/request/coinbase-prime.js';
 
 /**
  * REST client for Coinbase Prime API:
