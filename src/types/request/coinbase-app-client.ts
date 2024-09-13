@@ -65,3 +65,27 @@ export interface CBAppWithdrawFundsRequest {
   payment_method: string;
   commit?: boolean;
 }
+
+/**
+ *
+ * DATA - Currencies Endpoints
+ *
+ */
+
+/**
+ *
+ * DATA- Exchange rates Endpoints
+ *
+ */
+
+/**
+ *
+ * DATA - Prices Endpoints
+ *
+ */
+
+/**
+ *
+ * DATA - Time Endpoints
+ *
+ */
