@@ -60,9 +60,13 @@ export interface GetAdvTradeMarketTradesRequest {
  *
  */
 
-// Create order request type
+/**
+ * Note: client_order_id is optional, because the SDK will automatically generate a value for you during the request.
+ *
+ * If you are generating your own, make sure you either use the client.generateNewOrderId() method or make sure to prefix your value with "cbnode". The SDK will automatically do this, if the prefix is missing.
+ */
 export interface SubmitAdvTradeOrderRequest {
-  client_order_id: string;
+  client_order_id?: string;
   product_id: string;
   side: 'BUY' | 'SELL';
   order_configuration: OrderConfiguration;
