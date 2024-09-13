@@ -62,7 +62,7 @@ export interface GetAdvTradeMarketTradesRequest {
 
 // Create order request type
 export interface SubmitAdvTradeOrderRequest {
-  client_order_id: string;
+  client_order_id?: string;
   product_id: string;
   side: 'BUY' | 'SELL';
   order_configuration: OrderConfiguration;

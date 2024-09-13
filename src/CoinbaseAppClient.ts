@@ -97,10 +97,9 @@ export class CoinbaseAppClient extends BaseRestClient {
   createAddress(params: { accountId: string; name?: string }): Promise<{
     data: CBAppAddress;
   }> {
-    return this.postPrivate(
-      `/v2/accounts/${params.accountId}/addresses`,
-      params,
-    );
+    return this.postPrivate(`/v2/accounts/${params.accountId}/addresses`, {
+      body: params,
+    });
   }
 
   /**
