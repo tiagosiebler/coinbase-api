@@ -8,20 +8,20 @@ import {
   RestClientType,
 } from './lib/requestUtils.js';
 import {
-  CancelOrdersRequest,
-  GetAggregatedCandlesData,
-  GetDailyTradingVolumes,
-  GetFillsByPortfoliosRequest,
-  GetMatchingTransfersRequest,
-  GetOpenOrdersRequest,
-  GetPortfolioFillsRequest,
-  SubmitOrderRequest,
-  TransferFundsBetweenPortfoliosRequest,
-  TransferPositionsBetweenPortfoliosRequest,
-  UpdateOpenOrderRequest,
-  UpdatePortfolioParametersRequest,
-  WithdrawToCounterpartyIdRequest,
-  WithdrawToCryptoAddressRequest,
+  CancelINTXOrdersRequest,
+  GetINTXAggregatedCandlesData,
+  GetINTXDailyTradingVolumes,
+  GetINTXFillsByPortfoliosRequest,
+  GetINTXMatchingTransfersRequest,
+  GetINTXOpenOrdersRequest,
+  GetINTXPortfolioFillsRequest,
+  INTXWithdrawToCounterpartyIdRequest,
+  INTXWithdrawToCryptoAddressRequest,
+  SubmitINTXOrderRequest,
+  TransferINTXFundsBetweenPortfoliosRequest,
+  TransferINTXPositionsBetweenPortfoliosRequest,
+  UpdateINTXOpenOrderRequest,
+  UpdateINTXPortfolioParametersRequest,
 } from './types/request/coinbase-international.js';
 
 /**
@@ -122,7 +122,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Retrieves the trading volumes for each instrument separated by day.
    */
-  getDailyTradingVolumes(params: GetDailyTradingVolumes): Promise<any> {
+  getDailyTradingVolumes(params: GetINTXDailyTradingVolumes): Promise<any> {
     return this.get('/api/v1/instruments/volumes/daily', params);
   }
 
@@ -131,7 +131,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Retrieves a list of aggregated candles data for a given instrument, granularity, and time range.
    */
-  getAggregatedCandlesData(params: GetAggregatedCandlesData): Promise<any> {
+  getAggregatedCandlesData(params: GetINTXAggregatedCandlesData): Promise<any> {
     const { instrument, ...query } = params;
     return this.get(`/api/v1/instruments/${instrument}/candles`, query);
   }
@@ -176,7 +176,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Creates a new order.
    */
-  submitOrder(params: SubmitOrderRequest): Promise<any> {
+  submitOrder(params: SubmitINTXOrderRequest): Promise<any> {
     return this.postPrivate('/api/v1/orders', { body: params });
   }
 
@@ -186,7 +186,7 @@ export class CoinbaseInternational extends BaseRestClient {
    * Returns a list of active orders resting on the order book matching the requested criteria.
    * Does not return any rejected, cancelled, or fully filled orders as they are not active.
    */
-  getOpenOrders(params?: GetOpenOrdersRequest): Promise<any> {
+  getOpenOrders(params?: GetINTXOpenOrdersRequest): Promise<any> {
     return this.getPrivate('/api/v1/orders', params);
   }
 
@@ -195,7 +195,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Cancels all orders matching the requested criteria.
    */
-  cancelOrders(params: CancelOrdersRequest): Promise<any> {
+  cancelOrders(params: CancelINTXOrdersRequest): Promise<any> {
     return this.deletePrivate('/api/v1/orders', params);
   }
 
@@ -204,7 +204,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Modifies an open order.
    */
-  updateOpenOrder(params: UpdateOpenOrderRequest): Promise<any> {
+  updateOpenOrder(params: UpdateINTXOpenOrderRequest): Promise<any> {
     const { id, ...body } = params;
     return this.putPrivate(`/api/v1/orders/${id}`, { body: body });
   }
@@ -259,7 +259,7 @@ export class CoinbaseInternational extends BaseRestClient {
    * Update parameters for existing portfolio.
    */
   updatePortfolioParameters(
-    params: UpdatePortfolioParametersRequest,
+    params: UpdateINTXPortfolioParametersRequest,
   ): Promise<any> {
     return this.patchPrivate('/api/v1/portfolios', { body: params });
   }
@@ -352,7 +352,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Returns fills for specified portfolios or fills for all portfolios if none are provided.
    */
-  getFillsByPortfolios(params?: GetFillsByPortfoliosRequest): Promise<any> {
+  getFillsByPortfolios(params?: GetINTXFillsByPortfoliosRequest): Promise<any> {
     return this.getPrivate('/api/v1/portfolios/fills', params);
   }
 
@@ -361,7 +361,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * Returns all of the fills for a given portfolio.
    */
-  getPortfolioFills(params: GetPortfolioFillsRequest): Promise<any> {
+  getPortfolioFills(params: GetINTXPortfolioFillsRequest): Promise<any> {
     const { portfolio, ...query } = params;
     return this.getPrivate(`/api/v1/portfolios/${portfolio}/fills`, query);
   }
@@ -414,7 +414,7 @@ export class CoinbaseInternational extends BaseRestClient {
    * Transfer assets from one portfolio to another.
    */
   transferFundsBetweenPortfolios(
-    params: TransferFundsBetweenPortfoliosRequest,
+    params: TransferINTXFundsBetweenPortfoliosRequest,
   ): Promise<any> {
     return this.postPrivate('/api/v1/portfolios/transfer', { body: params });
   }
@@ -426,7 +426,7 @@ export class CoinbaseInternational extends BaseRestClient {
    * Additionally, organization-level requirements must be satisfied when evaluating the outcome of the position transfer.
    */
   transferPositionsBetweenPortfolios(
-    params: TransferPositionsBetweenPortfoliosRequest,
+    params: TransferINTXPositionsBetweenPortfoliosRequest,
   ): Promise<any> {
     return this.postPrivate('/api/v1/portfolios/transfer-position', {
       body: params,
@@ -471,7 +471,7 @@ export class CoinbaseInternational extends BaseRestClient {
    *
    * List matching transfers.
    */
-  getMatchingTransfers(params?: GetMatchingTransfersRequest): Promise<any> {
+  getMatchingTransfers(params?: GetINTXMatchingTransfersRequest): Promise<any> {
     return this.getPrivate('/api/v1/transfers', params);
   }
 
@@ -490,7 +490,7 @@ export class CoinbaseInternational extends BaseRestClient {
    * Withdraw to crypto address.
    */
   withdrawToCryptoAddress(
-    params: WithdrawToCryptoAddressRequest,
+    params: INTXWithdrawToCryptoAddressRequest,
   ): Promise<any> {
     return this.postPrivate('/api/v1/transfers/withdraw', { body: params });
   }
@@ -536,7 +536,7 @@ export class CoinbaseInternational extends BaseRestClient {
    * Withdraw to counterparty Id.
    */
   withdrawToCounterpartyId(
-    params: WithdrawToCounterpartyIdRequest,
+    params: INTXWithdrawToCounterpartyIdRequest,
   ): Promise<any> {
     return this.postPrivate('/api/v1/transfers/withdraw/counterparty', {
       body: params,

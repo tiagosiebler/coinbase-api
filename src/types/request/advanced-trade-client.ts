@@ -12,7 +12,7 @@ import { OrderConfiguration } from 'types/shared.types';
  *
  */
 
-export interface GetProductsRequest {
+export interface GetAdvTradeProductsRequest {
   limit?: number;
   offset?: number;
   product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'FUTURE' | 'SPOT';
@@ -30,7 +30,7 @@ export interface GetProductsRequest {
   get_all_products?: boolean;
 }
 
-export interface GetProductCandlesRequest {
+export interface GetAdvTradeProductCandlesRequest {
   product_id: string;
   start: string;
   end: string;
@@ -47,7 +47,7 @@ export interface GetProductCandlesRequest {
   limit?: number;
 }
 
-export interface GetMarketTradesRequest {
+export interface GetAdvTradeMarketTradesRequest {
   product_id: string;
   limit: number;
   start?: string;
@@ -61,7 +61,7 @@ export interface GetMarketTradesRequest {
  */
 
 // Create order request type
-export interface SubmitOrderRequest {
+export interface SubmitAdvTradeOrderRequest {
   client_order_id: string;
   product_id: string;
   side: 'BUY' | 'SELL';
@@ -72,7 +72,7 @@ export interface SubmitOrderRequest {
   preview_id?: string;
 }
 
-export interface GetOrdersRequest {
+export interface GetAdvTradeOrdersRequest {
   order_ids?: string[];
   product_ids?: string[];
   product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
@@ -98,7 +98,7 @@ export interface GetOrdersRequest {
   user_native_currency?: string; // deprecated
 }
 
-export interface GetFillsRequest {
+export interface GetAdvTradeFillsRequest {
   order_ids?: string[];
   trade_ids?: string[];
   product_ids?: string[];
@@ -110,7 +110,7 @@ export interface GetFillsRequest {
   sort_by?: 'UNKNOWN_SORT_BY' | 'PRICE' | 'TRADE_TIME';
 }
 
-export interface PreviewOrderRequest {
+export interface PreviewAdvTradeOrderRequest {
   product_id: string;
   side: 'BUY' | 'SELL';
   order_configuration: OrderConfiguration;
@@ -125,7 +125,7 @@ export interface PreviewOrderRequest {
  *
  */
 
-export interface MovePortfolioFundsRequest {
+export interface MoveAdvTradePortfolioFundsRequest {
   funds: {
     value: string;
     currency: string;
@@ -146,7 +146,7 @@ export interface MovePortfolioFundsRequest {
  *
  */
 
-export interface AllocatePortfolioRequest {
+export interface AllocateAdvTradePortfolioRequest {
   portfolio_uuid: string;
   symbol: string;
   amount: string;
@@ -158,7 +158,7 @@ export interface AllocatePortfolioRequest {
  *
  */
 
-export interface GetTransactionSummaryRequest {
+export interface GetAdvTradeTransactionSummaryRequest {
   product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
   contract_expiry_type?: 'UNKNOWN_CONTRACT_EXPIRY_TYPE' | 'SPOT' | 'FUTURE';
   product_venue?: 'UNKNOWN_VENUE_TYPE' | 'CBE' | 'FCM' | 'INTX';
@@ -170,7 +170,7 @@ export interface GetTransactionSummaryRequest {
  *
  */
 
-export interface SubmitConvertQuoteRequest {
+export interface SubmitAdvTradeConvertQuoteRequest {
   from_account: string;
   to_account: string;
   amount: string;
@@ -186,7 +186,7 @@ export interface SubmitConvertQuoteRequest {
  *
  */
 
-export interface GetPublicProductsRequest {
+export interface GetAdvTradePublicProductsRequest {
   limit?: number;
   offset?: number;
   product_type?: 'UNKNOWN_PRODUCT_TYPE' | 'SPOT' | 'FUTURE';
@@ -200,7 +200,7 @@ export interface GetPublicProductsRequest {
   get_all_products?: boolean;
 }
 
-export interface GetPublicProductCandlesRequest {
+export interface GetAdvTradePublicProductCandlesRequest {
   product_id: string;
   start: string;
   end: string;
@@ -217,7 +217,7 @@ export interface GetPublicProductCandlesRequest {
   limit?: number;
 }
 
-export interface GetPublicMarketTradesRequest {
+export interface GetAdvTradePublicMarketTradesRequest {
   product_id: string;
   limit: number;
   start?: string;
