@@ -1,3 +1,5 @@
+import { CustomOrderIdProperty } from '../types/shared.types.js';
+
 /**
  * Used to switch how authentication/requests work under the hood
  */
@@ -97,6 +99,18 @@ export function serializeParams<T extends Record<string, any> | undefined = {}>(
 }
 
 export const APIIDPrefix = 'cbnode';
+
+export function logInvalidOrderId(
+  orderIdProperty: CustomOrderIdProperty,
+  expectedOrderIdPrefix: string,
+  params: unknown,
+) {
+  console.error(
+    `'${orderIdProperty}' must be prefixed with ${expectedOrderIdPrefix}. Use the 'client.generateNewOrderId()' REST client utility method to generate a fresh order ID on demand. Original request: ${JSON.stringify(
+      params,
+    )}`,
+  );
+}
 
 export function getRestBaseUrl(
   useTestnet: boolean,

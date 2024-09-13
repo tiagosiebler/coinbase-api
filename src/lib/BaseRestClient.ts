@@ -1,11 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import https from 'https';
+import { nanoid } from 'nanoid';
 
+import { SubmitAdvTradeOrderRequest } from '../types/request/advanced-trade-client.js';
+import { CustomOrderIdProperty } from '../types/shared.types.js';
 import { signJWT } from './jwtNode.js';
 import { neverGuard } from './misc-util.js';
 import {
+  APIIDPrefix,
   getRestBaseUrl,
+  logInvalidOrderId,
   RestClientOptions,
   RestClientType,
   serializeParams,
@@ -31,6 +36,14 @@ interface UnsignedRequest<T extends object | undefined = {}> {
 }
 
 type SignMethod = 'coinbase';
+
+/**
+ * Some requests require some params to be in the query string and some in the body.
+ * This type anticipates both are possible in any combination.
+ *
+ * The request builder will automatically handle where parameters should go.
+ */
+type ParamsInQueryAndOrBody = { query?: object; body?: object };
 
 const ENABLE_HTTP_TRACE =
   typeof process === 'object' &&
@@ -72,6 +85,22 @@ if (ENABLE_HTTP_TRACE) {
     });
     return response;
   });
+}
+
+/**
+ * Impure, mutates params to remove any values that have a key but are undefined.
+ */
+function deleteUndefinedValues(params?: any): void {
+  if (!params) {
+    return;
+  }
+
+  for (const key in params) {
+    const value = params[key];
+    if (typeof value === 'undefined') {
+      delete params[key];
+    }
+  }
 }
 
 export abstract class BaseRestClient {
@@ -155,31 +184,31 @@ export abstract class BaseRestClient {
     return Date.now();
   }
 
-  get(endpoint: string, params?: any) {
+  get(endpoint: string, params?: object) {
     return this._call('GET', endpoint, params, true);
   }
 
-  post(endpoint: string, params?: any) {
+  post(endpoint: string, params?: ParamsInQueryAndOrBody) {
     return this._call('POST', endpoint, params, true);
   }
 
-  getPrivate(endpoint: string, params?: any) {
+  getPrivate(endpoint: string, params?: object) {
     return this._call('GET', endpoint, params, false);
   }
 
-  postPrivate(endpoint: string, params?: any) {
+  postPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
     return this._call('POST', endpoint, params, false);
   }
 
-  deletePrivate(endpoint: string, params?: any) {
+  deletePrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
     return this._call('DELETE', endpoint, params, false);
   }
 
-  putPrivate(endpoint: string, params?: any) {
+  putPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
     return this._call('PUT', endpoint, params, false);
   }
 
-  patchPrivate(endpoint: string, params?: any) {
+  patchPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
     return this._call('PATCH', endpoint, params, false);
   }
 
@@ -189,7 +218,7 @@ export abstract class BaseRestClient {
   private async _call(
     method: Method,
     endpoint: string,
-    params?: any,
+    params?: ParamsInQueryAndOrBody,
     isPublicApi?: boolean,
   ): Promise<any> {
     // Sanity check to make sure it's only ever prefixed by one forward slash
@@ -229,6 +258,35 @@ export abstract class BaseRestClient {
       .catch((e) =>
         this.parseException(e, { method, endpoint, requestUrl, params }),
       );
+  }
+
+  public generateNewOrderId(): string {
+    return APIIDPrefix + nanoid(16);
+  }
+
+  /**
+   * Validate syntax meets requirements set by binance. Log warning if not.
+   */
+  protected validateOrderId(
+    params: SubmitAdvTradeOrderRequest,
+    orderIdProperty: CustomOrderIdProperty,
+  ): void {
+    if (!params[orderIdProperty]) {
+      params[orderIdProperty] = this.generateNewOrderId();
+      return;
+    }
+
+    if (!params[orderIdProperty].startsWith(APIIDPrefix)) {
+      logInvalidOrderId(orderIdProperty, APIIDPrefix, params);
+
+      const previousValue = params[orderIdProperty];
+      const newValue = APIIDPrefix + params[orderIdProperty];
+      console.warn(
+        `WARNING: "${orderIdProperty}" was automatically prefixed. Changed from "${previousValue}" to "${newValue}". To avoid this, apply the prefix before submitting an order or use the client.generateNewOrderId() utility method.`,
+      );
+
+      params[orderIdProperty] = newValue;
+    }
   }
 
   /**
@@ -273,7 +331,7 @@ export abstract class BaseRestClient {
   /**
    * @private sign request and set recv window
    */
-  private async signRequest<T extends object | undefined = {}>(
+  private async signRequest<T extends ParamsInQueryAndOrBody | undefined = {}>(
     data: T,
     url: string,
     _endpoint: string,
@@ -303,16 +361,20 @@ export abstract class BaseRestClient {
     const strictParamValidation = this.options.strictParamValidation;
     const encodeQueryStringValues = true;
 
+    const requestBodyToSign = res.originalParams?.body
+      ? JSON.stringify(res.originalParams?.body)
+      : '';
+
     if (signMethod === 'coinbase') {
       const signRequestParams =
-        method === 'GET' || method === 'DELETE'
+        method === 'GET'
           ? serializeParams(
-              data,
+              data?.query || data,
               strictParamValidation,
               encodeQueryStringValues,
               '?',
             )
-          : JSON.stringify(data) || '';
+          : JSON.stringify(data?.body || data) || '';
 
       res.sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
       res.queryParamsWithSign = signRequestParams;
@@ -379,11 +441,9 @@ export abstract class BaseRestClient {
       method: method,
     };
 
-    for (const key in params) {
-      if (typeof params[key] === 'undefined') {
-        delete params[key];
-      }
-    }
+    deleteUndefinedValues(params);
+    deleteUndefinedValues(params?.body);
+    deleteUndefinedValues(params?.query);
 
     if (isPublicApi || !this.apiKeyName || !this.apiKeySecret) {
       return {
@@ -401,26 +461,21 @@ export abstract class BaseRestClient {
       isPublicApi,
     );
 
-    // console.log(`signResult: `, {
-    //   method,
-    //   url,
-    //   endpoint,
-    //   params,
-    //   token: signResult,
-    // });
-
     const authHeaders = {
       Authorization: `Bearer ${signResult.sign}`,
     };
 
-    if (method === 'GET') {
+    const urlWithQueryParams =
+      options.url + '?' + signResult.queryParamsWithSign;
+
+    if (method === 'GET' || !params?.body) {
       return {
         ...options,
         headers: {
           ...authHeaders,
           ...options.headers,
         },
-        url: options.url + signResult.queryParamsWithSign,
+        url: urlWithQueryParams,
       };
     }
 
@@ -430,7 +485,8 @@ export abstract class BaseRestClient {
         ...authHeaders,
         ...options.headers,
       },
-      data: params,
+      url: params?.query ? urlWithQueryParams : options.url,
+      data: signResult.originalParams.body,
     };
   }
 }

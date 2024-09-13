@@ -67,3 +67,5 @@ export interface OrderConfiguration {
   trigger_bracket_gtc?: TriggerBracketGTC;
   trigger_bracket_gtd?: TriggerBracketGTD;
 }
+
+export type CustomOrderIdProperty = 'client_order_id';

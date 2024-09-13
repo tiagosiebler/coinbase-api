@@ -216,6 +216,7 @@ export class AdvancedTradeClient extends BaseRestClient {
   submitOrder(
     params: SubmitAdvTradeOrderRequest,
   ): Promise<AdvTradeSubmitOrderResponse> {
+    this.validateOrderId(params, 'client_order_id');
     return this.postPrivate(`/api/v3/brokerage/orders`, {
       body: params,
     });
@@ -342,10 +343,12 @@ export class AdvancedTradeClient extends BaseRestClient {
    *
    */
   closePosition(params: {
+    // TODO: extract type
     client_order_id: string;
     product_id: string;
     size?: string;
   }): Promise<AdvTradeClosePositionResponse> {
+    this.validateOrderId(params as any, 'client_order_id');
     return this.postPrivate(`/api/v3/brokerage/orders/close_position`, {
       body: params,
     });
