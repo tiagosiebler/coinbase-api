@@ -1,4 +1,7 @@
 export * from './AdvancedTradeClient.js';
+export * from './CoinbaseAppClient.js';
+export * from './CoinbaseInternational.js';
+export * from './CoinbasePrime.js';
 export * from './lib/websocket/logger.js';
 export * from './lib/websocket/websocket-util.js';
 export * from './types/request/advanced-trade-client.js';

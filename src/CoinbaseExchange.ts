@@ -414,7 +414,7 @@ export class CoinbaseExchange extends BaseRestClient {
     profile_id?: string;
     product_id?: string;
   }): Promise<any> {
-    return this.deletePrivate('/orders', params);
+    return this.deletePrivate('/orders', { query: params });
   }
 
   /**
@@ -442,7 +442,9 @@ export class CoinbaseExchange extends BaseRestClient {
    * Cancel a single open order by id.
    */
   cancelOrder(params: CancelCBExchOrderRequest): Promise<any> {
-    return this.deletePrivate(`/orders/${params.order_id}`, params);
+    return this.deletePrivate(`/orders/${params.order_id}`, {
+      query: params,
+    });
   }
 
   /**
