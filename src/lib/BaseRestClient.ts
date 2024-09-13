@@ -149,6 +149,15 @@ export abstract class BaseRestClient {
       },
     };
 
+    if (restClientOptions.localisation) {
+      if (!this.globalRequestOptions.headers) {
+        this.globalRequestOptions.headers = {};
+      }
+
+      this.globalRequestOptions.headers['Accept-Language'] =
+        restClientOptions.localisation;
+    }
+
     // If enabled, configure a https agent with keepAlive enabled
     if (this.options.keepAlive) {
       // For more advanced configuration, raise an issue on GitHub or use the "networkOptions"

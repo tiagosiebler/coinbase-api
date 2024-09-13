@@ -45,6 +45,26 @@ export interface RestClientOptions {
   };
 
   /**
+   * https://docs.cdp.coinbase.com/coinbase-app/docs/localization
+   *
+   * The Coinbase App API supports localization for error messages and other strings.
+   * Localization is defined in each request with Accept-Language header.
+   *
+   * Accepted values are currently as below. Note: this may not work for all coinbase product groups.
+   */
+  localisation?:
+    | 'de'
+    | 'en'
+    | 'es'
+    | 'es-mx'
+    | 'fr'
+    | 'id'
+    | 'it'
+    | 'nl'
+    | 'pt'
+    | 'pt-br';
+
+  /**
    * Enable keep alive for REST API requests (via axios).
    * See: https://github.com/tiagosiebler/bybit-api/issues/368
    */
