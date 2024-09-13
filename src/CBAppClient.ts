@@ -15,7 +15,9 @@ import {
 import {
   CBAppAccount,
   CBAppAddress,
+  CBAppCryptocurrency,
   CBAppDepositWithdrawal,
+  CBAppFiatCurrency,
   CBAppPagination,
   CBAppTransaction,
 } from './types/response/coinbase-app-client.js';
@@ -354,5 +356,126 @@ export class CBAppClient extends BaseRestClient {
     return this.getPrivate(
       `/v2/accounts/${params.accountId}/withdrawals/${params.withdrawalId}`,
     );
+  }
+
+  /**
+   *
+   * DATA - Currencies Endpoints
+   *
+   */
+
+  /**
+   * Get Fiat Currencies
+   *
+   * Lists known fiat currencies. Currency codes conform to the ISO 4217 standard where possible.
+   * Currencies with no representation in ISO 4217 may use a custom code.
+   */
+  getFiatCurrencies(): Promise<{
+    data: CBAppFiatCurrency[];
+  }> {
+    return this.get('/v2/currencies');
+  }
+
+  /**
+   * Get Cryptocurrencies
+   *
+   * Lists known cryptocurrencies.
+   */
+  getCryptocurrencies(): Promise<CBAppCryptocurrency[]> {
+    return this.get('/v2/currencies/crypto');
+  }
+
+  /**
+   *
+   * DATA- Exchange rates Endpoints
+   *
+   */
+
+  /**
+   * Get Exchange Rates
+   *
+   * Get current exchange rates. Default base currency is USD but it can be defined as any supported currency.
+   * Returned rates will define the exchange rate for one unit of the base currency.
+   */
+  getExchangeRates(params?: { currency?: string }): Promise<{
+    data: {
+      currency: string;
+      rates: { [key: string]: string };
+    };
+  }> {
+    return this.get(`/v2/exchange-rates`, params);
+  }
+
+  /**
+   *
+   * DATA - Prices Endpoints
+   *
+   */
+
+  /**
+   * Get Buy Price
+   *
+   * Get the total price to buy one bitcoin or ether.
+   * This endpoint doesn't require authentication.
+   */
+  getBuyPrice(params: { currencyPair: string }): Promise<{
+    data: {
+      amount: string;
+      currency: string;
+    };
+  }> {
+    return this.get(`/v2/prices/${params.currencyPair}/buy`);
+  }
+
+  /**
+   * Get Sell Price
+   *
+   * Get the total price to sell one bitcoin or ether.
+   * This endpoint doesn't require authentication.
+   */
+  getSellPrice(params: { currencyPair: string }): Promise<{
+    data: {
+      amount: string;
+      currency: string;
+    };
+  }> {
+    return this.get(`/v2/prices/${params.currencyPair}/sell`);
+  }
+
+  /**
+   * Get Spot Price
+   *
+   * Get the current market price for bitcoin. This is usually somewhere in between the buy and sell price.
+   * This endpoint doesn't require authentication.
+   */
+  getSpotPrice(params: { currencyPair: string; date?: string }): Promise<{
+    data: {
+      amount: string;
+      currency: string;
+    };
+  }> {
+    const { currencyPair, ...query } = params;
+    return this.get(`/v2/prices/${currencyPair}/spot`, query);
+  }
+
+  /**
+   *
+   * DATA - Time Endpoints
+   *
+   */
+
+  /**
+   * Get Current Time
+   *
+   * Get the API server time.
+   * This endpoint doesn't require authentication.
+   */
+  getCurrentTime(): Promise<{
+    data: {
+      iso: string;
+      epoch: number;
+    };
+  }> {
+    return this.get('/v2/time');
   }
 }

@@ -148,3 +148,44 @@ export interface CBAppDepositWithdrawal {
   fee: DepositWithdrawalAmountCurrency;
   payout_at: string;
 }
+
+/**
+ *
+ * DATA - Currencies Endpoints
+ *
+ */
+
+export interface CBAppFiatCurrency {
+  id: string;
+  name: string;
+  min_size: string;
+}
+
+export interface CBAppCryptocurrency {
+  code: string;
+  name: string;
+  color: string;
+  sort_index: number;
+  exponent: number;
+  type: string;
+  address_regex: string;
+  asset_id: string;
+}
+
+/**
+ *
+ * DATA- Exchange rates Endpoints
+ *
+ */
+
+/**
+ *
+ * DATA - Prices Endpoints
+ *
+ */
+
+/**
+ *
+ * DATA - Time Endpoints
+ *
+ */
