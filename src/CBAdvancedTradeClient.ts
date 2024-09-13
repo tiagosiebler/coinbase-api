@@ -58,7 +58,7 @@ import {
  * REST client for Coinbase's Advanced Trade API:
  * https://docs.cdp.coinbase.com/advanced-trade/docs/api-overview/
  */
-export class AdvancedTradeClient extends BaseRestClient {
+export class CBAdvancedTradeClient extends BaseRestClient {
   constructor(
     restClientOptions: RestClientOptions = {},
     requestOptions: AxiosRequestConfig = {},

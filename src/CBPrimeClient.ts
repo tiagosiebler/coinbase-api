@@ -38,7 +38,7 @@ import {
  * REST client for Coinbase Prime API:
  * https://docs.cdp.coinbase.com/prime/docs/welcome
  */
-export class CoinbasePrime extends BaseRestClient {
+export class CBPrimeClient extends BaseRestClient {
   constructor(
     restClientOptions: RestClientOptions = {},
     requestOptions: AxiosRequestConfig = {},
