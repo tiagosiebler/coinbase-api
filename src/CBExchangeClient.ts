@@ -413,6 +413,7 @@ export class CBExchangeClient extends BaseRestClient {
    * Once an order is placed, your account funds will be put on hold for the duration of the order.
    */
   submitOrder(params: SubmitCBExchOrderRequest): Promise<any> {
+    this.validateOrderId(params, 'client_oid');
     return this.postPrivate('/orders', { body: params });
   }
 

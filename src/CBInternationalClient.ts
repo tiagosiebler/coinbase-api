@@ -166,6 +166,7 @@ export class CBInternationalClient extends BaseRestClient {
    * Creates a new order.
    */
   submitOrder(params: SubmitINTXOrderRequest): Promise<any> {
+    this.validateOrderId(params, 'client_order_id');
     return this.postPrivate('/api/v1/orders', { body: params });
   }
 

@@ -172,7 +172,7 @@ export interface SubmitPrimeOrderRequest {
   portfolio_id: string;
   product_id: string;
   side: 'BUY' | 'SELL';
-  client_order_id: string;
+  client_order_id?: string;
   type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT';
   base_quantity?: string;
   quote_value?: string;
