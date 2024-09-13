@@ -8,35 +8,35 @@ import {
   RestClientType,
 } from './lib/requestUtils.js';
 import {
-  CancelOrderRequest,
-  ConvertCurrencyRequest,
-  CreateNewCryptoAddress,
-  CreateReport,
-  DepositFromCoinbaseAccount,
-  DepositFromPaymentMethod,
-  GetAccountHoldsRequest,
-  GetAccountLedgerRequest,
-  GetAccountTransfersRequest,
-  GetAddressBookRequest,
-  GetAllReports,
-  GetAllStakeWraps,
-  GetCryptoWithdrawalFeeEstimate,
-  GetFillsRequest,
-  GetOrdersRequest,
-  GetPrincipalRepaymentPreview,
-  GetProductCandles,
-  GetProductTrades,
-  GetTransfersRequest,
-  GetTravelRuleInformation,
-  RepayLoanInterest,
-  RepayLoanPrincipal,
-  SubmitNewLoan,
-  SubmitOrderRequest,
-  SubmitTravelInformation,
-  TransferFundsBetweenProfiles,
-  WithdrawToCBAccount,
-  WithdrawToCryptoAddress,
-  WithdrawToPaymentMethod,
+  CancelCBExchOrderRequest,
+  CBExchDepositFromCoinbaseAccount,
+  CBExchDepositFromPaymentMethod,
+  CBExchGetCryptoWithdrawalFeeEstimate,
+  CBExchGetTransfersRequest,
+  CBExchWithdrawToCBAccount,
+  CBExchWithdrawToCryptoAddress,
+  CBExchWithdrawToPaymentMethod,
+  ConvertCBExchCurrencyRequest,
+  CreateCBExchNewCryptoAddress,
+  CreateCBExchReport,
+  GetAllCBExchReports,
+  GetCBExchAccountHoldsRequest,
+  GetCBExchAccountLedgerRequest,
+  GetCBExchAccountTransfersRequest,
+  GetCBExchAddressBookRequest,
+  GetCBExchAllStakeWraps,
+  GetCBExchFillsRequest,
+  GetCBExchOrdersRequest,
+  GetCBExchPrincipalRepaymentPreview,
+  GetCBExchProductCandles,
+  GetCBExchProductTrades,
+  GetCBExchTravelRuleInformation,
+  RepayCBExchLoanInterest,
+  RepayCBExchLoanPrincipal,
+  SubmitCBExchNewLoan,
+  SubmitCBExchOrderRequest,
+  SubmitCBExchTravelInformation,
+  TransferCBExchFundsBetweenProfiles,
 } from './types/request/coinbase-exchange.js';
 
 /**
@@ -98,7 +98,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * pending withdraw requests. As an order is filled, the hold amount is updated.
    * If an order is canceled, any remaining hold is removed. For withdrawals, the hold is removed after it is completed.
    */
-  getAccountHolds(params: GetAccountHoldsRequest): Promise<any> {
+  getAccountHolds(params: GetCBExchAccountHoldsRequest): Promise<any> {
     const { account_id, ...query } = params;
     return this.getPrivate(`/accounts/${account_id}/holds`, query);
   }
@@ -117,7 +117,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * - rebate: Fee rebate as per our fee schedule
    * - conversion: Funds converted between fiat currency and a stablecoin
    */
-  getAccountLedger(params: GetAccountLedgerRequest): Promise<any> {
+  getAccountLedger(params: GetCBExchAccountLedgerRequest): Promise<any> {
     const { account_id, ...query } = params;
     return this.getPrivate(`/accounts/${account_id}/ledger`, query);
   }
@@ -127,7 +127,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Lists past withdrawals and deposits for an account.
    */
-  getAccountTransfers(params: GetAccountTransfersRequest): Promise<any> {
+  getAccountTransfers(params: GetCBExchAccountTransfersRequest): Promise<any> {
     const { account_id, ...query } = params;
     return this.getPrivate(`/accounts/${account_id}/transfers`, query);
   }
@@ -152,7 +152,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Add new addresses to address book.
    */
-  addAddresses(params: GetAddressBookRequest): Promise<any> {
+  addAddresses(params: GetCBExchAddressBookRequest): Promise<any> {
     return this.postPrivate('/address-book', { body: params });
   }
 
@@ -185,7 +185,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Generates a one-time crypto address for depositing crypto.
    */
-  createNewCryptoAddress(params: CreateNewCryptoAddress): Promise<any> {
+  createNewCryptoAddress(params: CreateCBExchNewCryptoAddress): Promise<any> {
     const { account_id, ...body } = params;
     return this.postPrivate(`/coinbase-accounts/${account_id}/addresses`, {
       body: body,
@@ -203,7 +203,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Converts funds from one currency to another. Funds are converted on the from account in the profile_id profile.
    */
-  convertCurrency(params: ConvertCurrencyRequest): Promise<any> {
+  convertCurrency(params: ConvertCBExchCurrencyRequest): Promise<any> {
     return this.postPrivate('/conversions', { body: params });
   }
 
@@ -264,7 +264,9 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Deposits funds from a www.coinbase.com wallet to the specified profile_id.
    */
-  depositFromCoinbaseAccount(params: DepositFromCoinbaseAccount): Promise<any> {
+  depositFromCoinbaseAccount(
+    params: CBExchDepositFromCoinbaseAccount,
+  ): Promise<any> {
     return this.postPrivate('/deposits/coinbase-account', {
       body: params,
     });
@@ -276,7 +278,9 @@ export class CoinbaseExchange extends BaseRestClient {
    * Deposits funds from a linked external payment method to the specified profile_id.
    * See Get all payment methods. The SEPA payment method is not allowed for depositing funds because it is a push payment method.
    */
-  depositFromPaymentMethod(params: DepositFromPaymentMethod): Promise<any> {
+  depositFromPaymentMethod(
+    params: CBExchDepositFromPaymentMethod,
+  ): Promise<any> {
     return this.postPrivate('/deposits/payment-method', { body: params });
   }
 
@@ -294,7 +298,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Gets a list of in-progress and completed transfers of funds in/out of any of the user's accounts.
    */
-  getTransfers(params?: GetTransfersRequest): Promise<any> {
+  getTransfers(params?: CBExchGetTransfersRequest): Promise<any> {
     return this.getPrivate('/transfers', params);
   }
 
@@ -312,7 +316,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Submit travel information for a transfer.
    */
-  submitTravelInformation(params: SubmitTravelInformation): Promise<any> {
+  submitTravelInformation(params: SubmitCBExchTravelInformation): Promise<any> {
     const { transfer_id, ...body } = params;
     return this.postPrivate(`/transfers/${transfer_id}/travel-rules`, {
       body: body,
@@ -326,7 +330,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * You can move funds between your Coinbase accounts and your Coinbase Exchange trading accounts within your daily limits. Moving funds between Coinbase and Coinbase Exchange is instant and free.
    * See the Coinbase Accounts section for retrieving your Coinbase accounts.
    */
-  withdrawToCoinbaseAccount(params: WithdrawToCBAccount): Promise<any> {
+  withdrawToCoinbaseAccount(params: CBExchWithdrawToCBAccount): Promise<any> {
     return this.postPrivate('/withdrawals/coinbase-account', { body: params });
   }
 
@@ -335,7 +339,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Withdraws funds from the specified profile_id to an external crypto address.
    */
-  withdrawToCryptoAddress(params: WithdrawToCryptoAddress): Promise<any> {
+  withdrawToCryptoAddress(params: CBExchWithdrawToCryptoAddress): Promise<any> {
     return this.postPrivate('/withdrawals/crypto', { body: params });
   }
 
@@ -345,7 +349,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Gets the fee estimate for the crypto withdrawal to a crypto address.
    */
   getCryptoWithdrawalFeeEstimate(
-    params: GetCryptoWithdrawalFeeEstimate,
+    params: CBExchGetCryptoWithdrawalFeeEstimate,
   ): Promise<any> {
     return this.getPrivate('/withdrawals/fee-estimate', params);
   }
@@ -356,7 +360,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Withdraws funds from the specified profile_id to a linked external payment method.
    * See the Payment Methods section for retrieving your payment methods.
    */
-  withdrawToPaymentMethod(params: WithdrawToPaymentMethod): Promise<any> {
+  withdrawToPaymentMethod(params: CBExchWithdrawToPaymentMethod): Promise<any> {
     return this.postPrivate('/withdrawals/payment-method', { body: params });
   }
 
@@ -387,7 +391,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Get a list of recent fills of the API key's profile. A fill is a partial or complete match on a specific order.
    */
-  getFills(params?: GetFillsRequest): Promise<any> {
+  getFills(params?: GetCBExchFillsRequest): Promise<any> {
     return this.getPrivate('/fills', params);
   }
 
@@ -397,7 +401,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * List your current open orders. Only open or un-settled orders are returned by default. As soon as an order is no longer open and settled, it will no longer appear in the default request.
    * Open orders may change state between the request and the response depending on market conditions.
    */
-  getOrders(params?: GetOrdersRequest): Promise<any> {
+  getOrders(params?: GetCBExchOrdersRequest): Promise<any> {
     return this.getPrivate('/orders', params);
   }
 
@@ -419,7 +423,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Create an order. You can place two types of orders: limit and market. Orders can only be placed if your account has sufficient funds.
    * Once an order is placed, your account funds will be put on hold for the duration of the order.
    */
-  submitOrder(params: SubmitOrderRequest): Promise<any> {
+  submitOrder(params: SubmitCBExchOrderRequest): Promise<any> {
     return this.postPrivate('/orders', { body: params });
   }
 
@@ -437,7 +441,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Cancel a single open order by id.
    */
-  cancelOrder(params: CancelOrderRequest): Promise<any> {
+  cancelOrder(params: CancelCBExchOrderRequest): Promise<any> {
     return this.deletePrivate(`/orders/${params.order_id}`, params);
   }
 
@@ -524,7 +528,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * This API triggers a loan open request. Funding is not necessarily instantaneous and there is no SLA.
    * You are notified when funds have settled in your Exchange account. Loan open requests, once initiated, cannot be canceled.
    */
-  submitNewLoan(params: SubmitNewLoan): Promise<any> {
+  submitNewLoan(params: SubmitCBExchNewLoan): Promise<any> {
     return this.postPrivate('/loans/open', { body: params });
   }
 
@@ -542,7 +546,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Submit an interest repayment for a loan.
    */
-  repayLoanInterest(params: RepayLoanInterest): Promise<any> {
+  repayLoanInterest(params: RepayCBExchLoanInterest): Promise<any> {
     return this.postPrivate('/loans/repay-interest', { body: params });
   }
 
@@ -551,7 +555,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Submit a principal repayment for a loan.
    */
-  repayLoanPrincipal(params: RepayLoanPrincipal): Promise<any> {
+  repayLoanPrincipal(params: RepayCBExchLoanPrincipal): Promise<any> {
     return this.postPrivate('/loans/repay-principal', { body: params });
   }
 
@@ -562,7 +566,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Like the Get lending overview API, all values are notional except available_per_asset which returns both notional and native values per currency.
    */
   getPrincipalRepaymentPreview(
-    params: GetPrincipalRepaymentPreview,
+    params: GetCBExchPrincipalRepaymentPreview,
   ): Promise<any> {
     return this.getPrivate('/loans/repayment-preview', params);
   }
@@ -633,7 +637,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Historic rates for a product. Rates are returned in grouped buckets.
    * Candle schema is of the form [timestamp, price_low, price_high, price_open, price_close].
    */
-  getProductCandles(params: GetProductCandles): Promise<any> {
+  getProductCandles(params: GetCBExchProductCandles): Promise<any> {
     const { product_id, ...query } = params;
     return this.get(`/products/${product_id}/candles`, query);
   }
@@ -661,7 +665,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Gets a list of the latest trades for a product.
    */
-  getProductTrades(params: GetProductTrades): Promise<any> {
+  getProductTrades(params: GetCBExchProductTrades): Promise<any> {
     const { product_id, ...query } = params;
     return this.get(`/products/${product_id}/trades`, query);
   }
@@ -696,7 +700,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Transfer an amount of currency from one profile to another.
    */
   transferFundsBetweenProfiles(
-    params: TransferFundsBetweenProfiles,
+    params: TransferCBExchFundsBetweenProfiles,
   ): Promise<any> {
     return this.postPrivate('/profiles/transfer', { body: params });
   }
@@ -748,7 +752,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Gets a list of all user-generated reports.
    */
-  getAllReports(params?: GetAllReports): Promise<any> {
+  getAllReports(params?: GetAllCBExchReports): Promise<any> {
     return this.getPrivate('/reports', params);
   }
 
@@ -758,7 +762,7 @@ export class CoinbaseExchange extends BaseRestClient {
    * Generates a report. You can create reports with historical data for all report types.
    * Balance reports can be snapshots of historical or current data.
    */
-  createReport(params: CreateReport): Promise<any> {
+  createReport(params: CreateCBExchReport): Promise<any> {
     return this.postPrivate('/reports', { body: params });
   }
 
@@ -782,7 +786,9 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Return a list of all stored travel rule information.
    */
-  getTravelRuleInformation(params?: GetTravelRuleInformation): Promise<any> {
+  getTravelRuleInformation(
+    params?: GetCBExchTravelRuleInformation,
+  ): Promise<any> {
     return this.getPrivate('/travel-rules', params);
   }
 
@@ -867,7 +873,7 @@ export class CoinbaseExchange extends BaseRestClient {
    *
    * Get details for all stake-wraps in the profile associated with the API key.
    */
-  getAllStakeWraps(params?: GetAllStakeWraps): Promise<any> {
+  getAllStakeWraps(params?: GetCBExchAllStakeWraps): Promise<any> {
     return this.getPrivate('/wrapped-assets/stake-wrap', params);
   }
 

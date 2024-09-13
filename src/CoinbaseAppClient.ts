@@ -1,17 +1,17 @@
 import { AxiosRequestConfig } from 'axios';
 import { nanoid } from 'nanoid';
 import {
-  DepositFundsRequest,
-  SendMoneyRequest,
-  TransferMoneyRequest,
-  WithdrawFundsRequest,
+  CBAppDepositFundsRequest,
+  CBAppSendMoneyRequest,
+  CBAppTransferMoneyRequest,
+  CBAppWithdrawFundsRequest,
 } from 'types/request/coinbase-app-client.js';
 import {
-  Account,
-  Address,
-  DepositWithdrawal,
-  Pagination,
-  Transaction,
+  CBAppAccount,
+  CBAppAddress,
+  CBAppDepositWithdrawal,
+  CBAppPagination,
+  CBAppTransaction,
 } from 'types/response/coinbase-app-client.js';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
@@ -63,8 +63,8 @@ export class CoinbaseAppClient extends BaseRestClient {
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of accounts.
    */
   getAccounts(params?: { paginationURL?: string }): Promise<{
-    data: Account[];
-    pagination: Pagination;
+    data: CBAppAccount[];
+    pagination: CBAppPagination;
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
@@ -78,7 +78,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Get a current user's account by account ID or currency string.
    */
   getAccount(params: { accountId: string }): Promise<{
-    data: Account;
+    data: CBAppAccount;
   }> {
     return this.getPrivate(`/v2/accounts/${params.accountId}`);
   }
@@ -95,7 +95,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Creates a new address for an account. Addresses can be created for wallet account types.
    */
   createAddress(params: { accountId: string; name?: string }): Promise<{
-    data: Address;
+    data: CBAppAddress;
   }> {
     return this.postPrivate(
       `/v2/accounts/${params.accountId}/addresses`,
@@ -112,8 +112,8 @@ export class CoinbaseAppClient extends BaseRestClient {
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of addresses.
    */
   getAddresses(params: { accountId: string; paginationURL?: string }): Promise<{
-    pagination: Pagination;
-    data: Address[];
+    pagination: CBAppPagination;
+    data: CBAppAddress[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
@@ -130,7 +130,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * !! An address can only be associated with one account. See Create Address to create new addresses.
    */
   getAddress(params: { accountId: string; addressId: string }): Promise<{
-    data: Address;
+    data: CBAppAddress;
   }> {
     return this.getPrivate(
       `/v2/accounts/${params.accountId}/addresses/${params.addressId}`,
@@ -151,8 +151,8 @@ export class CoinbaseAppClient extends BaseRestClient {
     addressId: string;
     paginationURL?: string;
   }): Promise<{
-    pagination: Pagination;
-    data: Transaction[];
+    pagination: CBAppPagination;
+    data: CBAppTransaction[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
@@ -174,7 +174,9 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Send funds to a network address for any Coinbase supported asset, or email address of the recipient.
    * No transaction fees are required for off-blockchain cryptocurrency transactions.
    */
-  sendMoney(params: SendMoneyRequest): Promise<{ data: Transaction }> {
+  sendMoney(
+    params: CBAppSendMoneyRequest,
+  ): Promise<{ data: CBAppTransaction }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
       body: restParams,
@@ -187,7 +189,9 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Transfer any Coinbase supported digital asset between two of a single user's accounts.
    * Accounts must support the same currency for transfers to be successful.
    */
-  transferMoney(params: TransferMoneyRequest): Promise<{ data: Transaction }> {
+  transferMoney(
+    params: CBAppTransferMoneyRequest,
+  ): Promise<{ data: CBAppTransaction }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
       body: restParams,
@@ -206,8 +210,8 @@ export class CoinbaseAppClient extends BaseRestClient {
     accountId: string;
     paginationURL?: string;
   }): Promise<{
-    pagination: Pagination;
-    data: Transaction[];
+    pagination: CBAppPagination;
+    data: CBAppTransaction[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
@@ -224,7 +228,7 @@ export class CoinbaseAppClient extends BaseRestClient {
     accountId: string;
     transactionId: string;
   }): Promise<{
-    data: Transaction;
+    data: CBAppTransaction;
   }> {
     return this.getPrivate(
       `/v2/accounts/${params.accountId}/transactions/${params.transactionId}`,
@@ -243,8 +247,8 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Deposits user-defined amount of funds to a fiat account.
    */
   depositFunds(
-    params: DepositFundsRequest,
-  ): Promise<{ data: DepositWithdrawal }> {
+    params: CBAppDepositFundsRequest,
+  ): Promise<{ data: CBAppDepositWithdrawal }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/deposits`, {
       body: restParams,
@@ -259,7 +263,7 @@ export class CoinbaseAppClient extends BaseRestClient {
   commitDeposit(params: {
     accountId: string;
     depositId: string;
-  }): Promise<{ data: DepositWithdrawal }> {
+  }): Promise<{ data: CBAppDepositWithdrawal }> {
     return this.postPrivate(
       `/v2/accounts/${params.accountId}/deposits/${params.depositId}/commit`,
     );
@@ -274,8 +278,8 @@ export class CoinbaseAppClient extends BaseRestClient {
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of deposits.
    */
   getDeposits(params: { accountId: string; paginationURL?: string }): Promise<{
-    pagination: Pagination;
-    data: DepositWithdrawal[];
+    pagination: CBAppPagination;
+    data: CBAppDepositWithdrawal[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
@@ -289,7 +293,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Get one deposit by deposit Id.
    */
   getDeposit(params: { accountId: string; depositId: string }): Promise<{
-    data: DepositWithdrawal;
+    data: CBAppDepositWithdrawal;
   }> {
     return this.getPrivate(
       `/v2/accounts/${params.accountId}/deposits/${params.depositId}`,
@@ -308,8 +312,8 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Withdraws a user-defined amount of funds from a fiat account.
    */
   withdrawFunds(
-    params: WithdrawFundsRequest,
-  ): Promise<{ data: DepositWithdrawal }> {
+    params: CBAppWithdrawFundsRequest,
+  ): Promise<{ data: CBAppDepositWithdrawal }> {
     const { accountId, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${accountId}/withdrawals`, {
       body: restParams,
@@ -324,7 +328,7 @@ export class CoinbaseAppClient extends BaseRestClient {
   commitWithdrawal(params: {
     accountId: string;
     withdrawalId: string;
-  }): Promise<{ data: DepositWithdrawal }> {
+  }): Promise<{ data: CBAppDepositWithdrawal }> {
     return this.postPrivate(
       `/v2/accounts/${params.accountId}/withdrawals/${params.withdrawalId}/commit`,
     );
@@ -342,8 +346,8 @@ export class CoinbaseAppClient extends BaseRestClient {
     accountId: string;
     paginationURL?: string;
   }): Promise<{
-    pagination: Pagination;
-    data: DepositWithdrawal[];
+    pagination: CBAppPagination;
+    data: CBAppDepositWithdrawal[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
@@ -357,7 +361,7 @@ export class CoinbaseAppClient extends BaseRestClient {
    * Get a single withdrawal.
    */
   getWithdrawal(params: { accountId: string; withdrawalId: string }): Promise<{
-    data: DepositWithdrawal;
+    data: CBAppDepositWithdrawal;
   }> {
     return this.getPrivate(
       `/v2/accounts/${params.accountId}/withdrawals/${params.withdrawalId}`,

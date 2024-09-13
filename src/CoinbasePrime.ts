@@ -1,30 +1,30 @@
 import { AxiosRequestConfig } from 'axios';
 import { nanoid } from 'nanoid';
 import {
-  CreateAddressBookEntryRequest,
-  CreateConversionRequest,
-  CreatePortfolioAllocationsRequest,
-  CreatePortfolioNetAllocationsRequest,
-  CreateTransferRequest,
-  CreateWalletRequest,
-  CreateWithdrawalRequest,
-  GetActivitiesRequest,
-  GetAddressBookRequest,
-  GetInvoicesRequest,
-  GetOpenOrdersRequest,
-  GetOrderFillsRequest,
-  GetOrderPreviewRequest,
-  GetPortfolioAllocationsRequest,
-  GetPortfolioOrdersRequest,
-  GetPortfolioProductsRequest,
-  GetPortfolioTransactionsRequest,
-  GetPortfolioUsersRequest,
-  GetPortfolioWalletsRequest,
-  GetUsersRequest,
-  GetWalletDepositInstructionsRequest,
-  GetWalletTransactionsRequest,
-  GetWeb3WalletBalancesRequest,
-  SubmitOrderRequest,
+  CreatePrimeAddressBookEntryRequest,
+  CreatePrimeConversionRequest,
+  CreatePrimePortfolioAllocationsRequest,
+  CreatePrimePortfolioNetAllocationsRequest,
+  CreatePrimeTransferRequest,
+  CreatePrimeWalletRequest,
+  CreatePrimeWithdrawalRequest,
+  GetPrimeActivitiesRequest,
+  GetPrimeAddressBookRequest,
+  GetPrimeInvoicesRequest,
+  GetPrimeOpenOrdersRequest,
+  GetPrimeOrderFillsRequest,
+  GetPrimeOrderPreviewRequest,
+  GetPrimePortfolioAllocationsRequest,
+  GetPrimePortfolioOrdersRequest,
+  GetPrimePortfolioProductsRequest,
+  GetPrimePortfolioTransactionsRequest,
+  GetPrimePortfolioUsersRequest,
+  GetPrimePortfolioWalletsRequest,
+  GetPrimeUsersRequest,
+  GetPrimeWalletDepositInstructionsRequest,
+  GetPrimeWalletTransactionsRequest,
+  GetPrimeWeb3WalletBalancesRequest,
+  SubmitPrimeOrderRequest,
 } from 'types/request/coinbase-prime.js';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
@@ -73,7 +73,7 @@ export class CoinbasePrime extends BaseRestClient {
    * Create allocation for a given portfolio.
    */
   createPortfolioAllocations(
-    params: CreatePortfolioAllocationsRequest,
+    params: CreatePrimePortfolioAllocationsRequest,
   ): Promise<any> {
     return this.postPrivate('/v1/allocations', { body: params });
   }
@@ -84,7 +84,7 @@ export class CoinbasePrime extends BaseRestClient {
    * Create net allocation for a given portfolio.
    */
   createPortfolioNetAllocations(
-    params: CreatePortfolioNetAllocationsRequest,
+    params: CreatePrimePortfolioNetAllocationsRequest,
   ): Promise<any> {
     return this.postPrivate('/v1/allocations/net', { body: params });
   }
@@ -95,7 +95,7 @@ export class CoinbasePrime extends BaseRestClient {
    * Retrieve historical allocations for a given portfolio.
    */
   getPortfolioAllocations(
-    params: GetPortfolioAllocationsRequest,
+    params: GetPrimePortfolioAllocationsRequest,
   ): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/allocations`, query);
@@ -142,7 +142,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Retrieve a list of invoices belonging to an entity.
    */
-  getInvoices(params: GetInvoicesRequest): Promise<any> {
+  getInvoices(params: GetPrimeInvoicesRequest): Promise<any> {
     const { entity_id, ...query } = params;
     return this.getPrivate(`/v1/entities/${entity_id}/invoices`, query);
   }
@@ -203,7 +203,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List all users associated with a given entity.
    */
-  getUsers(params: GetUsersRequest): Promise<any> {
+  getUsers(params: GetPrimeUsersRequest): Promise<any> {
     const { entity_id, ...query } = params;
     return this.getPrivate(`/v1/entities/${entity_id}/users`, query);
   }
@@ -213,7 +213,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List all users associated with a given portfolio.
    */
-  getPortfolioUsers(params: GetPortfolioUsersRequest): Promise<any> {
+  getPortfolioUsers(params: GetPrimePortfolioUsersRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/users`, query);
   }
@@ -264,7 +264,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List all activities associated with a given entity.
    */
-  getActivities(params: GetActivitiesRequest): Promise<any> {
+  getActivities(params: GetPrimeActivitiesRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/activities`, query);
   }
@@ -295,7 +295,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Gets a list of address book addresses.
    */
-  getAddressBook(params: GetAddressBookRequest): Promise<any> {
+  getAddressBook(params: GetPrimeAddressBookRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(
       `/v1/portfolios/${portfolio_id}/address_book`,
@@ -308,7 +308,9 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Creates an entry for a portfolio's trusted addresses.
    */
-  createAddressBookEntry(params: CreateAddressBookEntryRequest): Promise<any> {
+  createAddressBookEntry(
+    params: CreatePrimeAddressBookEntryRequest,
+  ): Promise<any> {
     const { portfolio_id, ...body } = params;
     return this.postPrivate(`/v1/portfolios/${portfolio_id}/address_book`, {
       body: body,
@@ -355,7 +357,9 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Query balances for a specific web3 wallet.
    */
-  getWeb3WalletBalances(params: GetWeb3WalletBalancesRequest): Promise<any> {
+  getWeb3WalletBalances(
+    params: GetPrimeWeb3WalletBalancesRequest,
+  ): Promise<any> {
     const { portfolio_id, wallet_id, ...query } = params;
     return this.getPrivate(
       `/v1/portfolios/${portfolio_id}/wallets/${wallet_id}/web3_balances`,
@@ -389,7 +393,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List all open orders for a given portfolio.
    */
-  getOpenOrders(params: GetOpenOrdersRequest): Promise<any> {
+  getOpenOrders(params: GetPrimeOpenOrdersRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/open_orders`, query);
   }
@@ -399,7 +403,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Create an order for a given portfolio.
    */
-  submitOrder(params: SubmitOrderRequest): Promise<any> {
+  submitOrder(params: SubmitPrimeOrderRequest): Promise<any> {
     const { portfolio_id, ...body } = params;
     return this.postPrivate(`/v1/portfolios/${portfolio_id}/order`, {
       body: body,
@@ -411,7 +415,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Retrieve an order preview for a given portfolio.
    */
-  getOrderPreview(params: GetOrderPreviewRequest): Promise<any> {
+  getOrderPreview(params: GetPrimeOrderPreviewRequest): Promise<any> {
     const { portfolio_id, ...body } = params;
     return this.postPrivate(`/v1/portfolios/${portfolio_id}/order_preview`, {
       body: body,
@@ -423,7 +427,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List historical orders for a given portfolio.
    */
-  getPortfolioOrders(params: GetPortfolioOrdersRequest): Promise<any> {
+  getPortfolioOrders(params: GetPrimePortfolioOrdersRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/orders`, query);
   }
@@ -461,7 +465,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Retrieve fills on a given order.
    */
-  getOrderFills(params: GetOrderFillsRequest): Promise<any> {
+  getOrderFills(params: GetPrimeOrderFillsRequest): Promise<any> {
     const { portfolio_id, order_id, ...query } = params;
     return this.getPrivate(
       `/v1/portfolios/${portfolio_id}/orders/${order_id}/fills`,
@@ -480,7 +484,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List tradable products for a given portfolio.
    */
-  getPortfolioProducts(params: GetPortfolioProductsRequest): Promise<any> {
+  getPortfolioProducts(params: GetPrimePortfolioProductsRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/products`, query);
   }
@@ -497,7 +501,7 @@ export class CoinbasePrime extends BaseRestClient {
    * List transactions for a given portfolio (only transactions that affect balances are accessible).
    */
   getPortfolioTransactions(
-    params: GetPortfolioTransactionsRequest,
+    params: GetPrimePortfolioTransactionsRequest,
   ): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(
@@ -526,7 +530,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Perform a conversion between 2 assets.
    */
-  createConversion(params: CreateConversionRequest): Promise<any> {
+  createConversion(params: CreatePrimeConversionRequest): Promise<any> {
     const { portfolio_id, wallet_id, ...body } = params;
     return this.postPrivate(
       `/v1/portfolios/${portfolio_id}/wallets/${wallet_id}/conversion`,
@@ -539,7 +543,9 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Retrieve transactions for a given wallet (only transactions that affect balances are accessible).
    */
-  getWalletTransactions(params: GetWalletTransactionsRequest): Promise<any> {
+  getWalletTransactions(
+    params: GetPrimeWalletTransactionsRequest,
+  ): Promise<any> {
     const { portfolio_id, wallet_id, ...query } = params;
     return this.getPrivate(
       `/v1/portfolios/${portfolio_id}/wallets/${wallet_id}/transactions`,
@@ -552,7 +558,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Create a wallet transfer.
    */
-  createTransfer(params: CreateTransferRequest): Promise<any> {
+  createTransfer(params: CreatePrimeTransferRequest): Promise<any> {
     const { portfolio_id, wallet_id, ...body } = params;
     return this.postPrivate(
       `/v1/portfolios/${portfolio_id}/wallets/${wallet_id}/transfers`,
@@ -565,7 +571,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Create a withdrawal.
    */
-  createWithdrawal(params: CreateWithdrawalRequest): Promise<any> {
+  createWithdrawal(params: CreatePrimeWithdrawalRequest): Promise<any> {
     const { portfolio_id, wallet_id, ...body } = params;
     return this.postPrivate(
       `/v1/portfolios/${portfolio_id}/wallets/${wallet_id}/withdrawals`,
@@ -584,7 +590,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * List all wallets associated with a given portfolio.
    */
-  getPortfolioWallets(params: GetPortfolioWalletsRequest): Promise<any> {
+  getPortfolioWallets(params: GetPrimePortfolioWalletsRequest): Promise<any> {
     const { portfolio_id, ...query } = params;
     return this.getPrivate(`/v1/portfolios/${portfolio_id}/wallets`, query);
   }
@@ -594,7 +600,7 @@ export class CoinbasePrime extends BaseRestClient {
    *
    * Create a wallet.
    */
-  createWallet(params: CreateWalletRequest): Promise<any> {
+  createWallet(params: CreatePrimeWalletRequest): Promise<any> {
     const { portfolio_id, ...body } = params;
     return this.postPrivate(`/v1/portfolios/${portfolio_id}/wallets`, {
       body: body,
@@ -622,7 +628,7 @@ export class CoinbasePrime extends BaseRestClient {
    * Retrieve a specific wallet's deposit instructions.
    */
   getWalletDepositInstructions(
-    params: GetWalletDepositInstructionsRequest,
+    params: GetPrimeWalletDepositInstructionsRequest,
   ): Promise<any> {
     const { portfolio_id, wallet_id, ...query } = params;
     return this.getPrivate(

@@ -4,7 +4,7 @@
  *
  */
 
-export interface CreatePortfolioAllocationsRequest {
+export interface CreatePrimePortfolioAllocationsRequest {
   allocation_id?: string;
   source_portfolio_id?: string;
   product_id?: string;
@@ -18,7 +18,7 @@ export interface CreatePortfolioAllocationsRequest {
   remainder_destination_portfolio?: string;
 }
 
-export interface CreatePortfolioNetAllocationsRequest {
+export interface CreatePrimePortfolioNetAllocationsRequest {
   netting_id?: string;
   source_portfolio_id?: string;
   product_id?: string;
@@ -32,7 +32,7 @@ export interface CreatePortfolioNetAllocationsRequest {
   remainder_destination_portfolio?: string;
 }
 
-export interface GetPortfolioAllocationsRequest {
+export interface GetPrimePortfolioAllocationsRequest {
   portfolio_id: string;
   product_ids?: string[];
   order_side?: 'BUY' | 'SELL';
@@ -48,7 +48,7 @@ export interface GetPortfolioAllocationsRequest {
  *
  */
 
-export interface GetInvoicesRequest {
+export interface GetPrimeInvoicesRequest {
   entity_id: string;
   states?: string[];
   billing_year?: number;
@@ -74,14 +74,14 @@ export interface GetInvoicesRequest {
  *
  */
 
-export interface GetUsersRequest {
+export interface GetPrimeUsersRequest {
   entity_id: string;
   cursor?: string;
   limit?: number;
   sort_direction?: 'ASC' | 'DESC';
 }
 
-export interface GetPortfolioUsersRequest {
+export interface GetPrimePortfolioUsersRequest {
   portfolio_id: string;
   cursor?: string;
   limit?: number;
@@ -99,7 +99,7 @@ export interface GetPortfolioUsersRequest {
  *
  */
 
-export interface GetActivitiesRequest {
+export interface GetPrimeActivitiesRequest {
   portfolio_id: string;
   symbols?: string[];
   categories?: string[];
@@ -116,7 +116,7 @@ export interface GetActivitiesRequest {
  *
  */
 
-export interface GetAddressBookRequest {
+export interface GetPrimeAddressBookRequest {
   portfolio_id: string;
   currency_symbol?: string;
   search?: string;
@@ -125,7 +125,7 @@ export interface GetAddressBookRequest {
   sort_direction?: 'DESC' | 'ASC';
 }
 
-export interface CreateAddressBookEntryRequest {
+export interface CreatePrimeAddressBookEntryRequest {
   portfolio_id: string;
   address: string;
   currency_symbol: string;
@@ -138,7 +138,7 @@ export interface CreateAddressBookEntryRequest {
  *
  */
 
-export interface GetWeb3WalletBalancesRequest {
+export interface GetPrimeWeb3WalletBalancesRequest {
   portfolio_id: string;
   wallet_id: string;
   visibility_statuses?: string[];
@@ -158,7 +158,7 @@ export interface GetWeb3WalletBalancesRequest {
  *
  */
 
-export interface GetOpenOrdersRequest {
+export interface GetPrimeOpenOrdersRequest {
   portfolio_id: string;
   product_ids?: string[];
   order_type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
@@ -168,7 +168,7 @@ export interface GetOpenOrdersRequest {
   end_date?: string;
 }
 
-export interface SubmitOrderRequest {
+export interface SubmitPrimeOrderRequest {
   portfolio_id: string;
   product_id: string;
   side: 'BUY' | 'SELL';
@@ -192,7 +192,7 @@ export interface SubmitOrderRequest {
   historical_pov?: string;
 }
 
-export interface GetOrderPreviewRequest {
+export interface GetPrimeOrderPreviewRequest {
   portfolio_id: string;
   product_id: string;
   side: 'BUY' | 'SELL';
@@ -212,7 +212,7 @@ export interface GetOrderPreviewRequest {
   historical_pov?: string;
 }
 
-export interface GetPortfolioOrdersRequest {
+export interface GetPrimePortfolioOrdersRequest {
   portfolio_id: string;
   order_statuses?: (
     | 'FILLED'
@@ -231,7 +231,7 @@ export interface GetPortfolioOrdersRequest {
   end_date?: string;
 }
 
-export interface GetOrderFillsRequest {
+export interface GetPrimeOrderFillsRequest {
   portfolio_id: string;
   order_id: string;
   cursor?: string;
@@ -244,7 +244,7 @@ export interface GetOrderFillsRequest {
  *
  */
 
-export interface GetPortfolioProductsRequest {
+export interface GetPrimePortfolioProductsRequest {
   portfolio_id: string;
   cursor?: string;
   limit?: number;
@@ -257,7 +257,7 @@ export interface GetPortfolioProductsRequest {
  *
  */
 
-export interface GetPortfolioTransactionsRequest {
+export interface GetPrimePortfolioTransactionsRequest {
   portfolio_id: string;
   symbols?: string[];
   types?: string[];
@@ -268,7 +268,7 @@ export interface GetPortfolioTransactionsRequest {
   sort_direction?: 'DESC' | 'ASC';
 }
 
-export interface CreateConversionRequest {
+export interface CreatePrimeConversionRequest {
   portfolio_id: string;
   wallet_id: string;
   amount: string;
@@ -278,7 +278,7 @@ export interface CreateConversionRequest {
   destination_symbol: string;
 }
 
-export interface GetWalletTransactionsRequest {
+export interface GetPrimeWalletTransactionsRequest {
   portfolio_id: string;
   wallet_id: string;
   types?: string[];
@@ -289,7 +289,7 @@ export interface GetWalletTransactionsRequest {
   sort_direction?: 'DESC' | 'ASC';
 }
 
-export interface CreateTransferRequest {
+export interface CreatePrimeTransferRequest {
   portfolio_id: string;
   wallet_id: string;
   amount: string;
@@ -298,7 +298,7 @@ export interface CreateTransferRequest {
   currency_symbol: string;
 }
 
-export interface CreateWithdrawalRequest {
+export interface CreatePrimeWithdrawalRequest {
   portfolio_id: string;
   wallet_id: string;
   amount: string;
@@ -319,7 +319,7 @@ export interface CreateWithdrawalRequest {
  *
  */
 
-export interface GetPortfolioWalletsRequest {
+export interface GetPrimePortfolioWalletsRequest {
   portfolio_id: string;
   type: 'VAULT' | 'TRADING' | 'WALLET_TYPE_OTHER' | 'WEB3';
   cursor?: string;
@@ -328,14 +328,14 @@ export interface GetPortfolioWalletsRequest {
   symbols?: string[];
 }
 
-export interface CreateWalletRequest {
+export interface CreatePrimeWalletRequest {
   portfolio_id: string;
   name: string;
   symbol: string;
   wallet_type: 'VAULT' | 'TRADING' | 'WALLET_TYPE_OTHER' | 'WEB3';
 }
 
-export interface GetWalletDepositInstructionsRequest {
+export interface GetPrimeWalletDepositInstructionsRequest {
   portfolio_id: string;
   wallet_id: string;
   deposit_type?:

@@ -11,7 +11,7 @@ interface Balance {
   currency: string;
 }
 
-export interface Account {
+export interface AdvTradeAccount {
   uuid: string;
   name: string;
   currency: string;
@@ -27,8 +27,8 @@ export interface Account {
   retail_portfolio_id: string;
 }
 
-export interface AccountsList {
-  accounts: Account[];
+export interface AdvTradeAccountsList {
+  accounts: AdvTradeAccount[];
   has_next: boolean;
   cursor: string;
   size: number;
@@ -45,7 +45,7 @@ interface PriceLevel {
   size: string;
 }
 
-export interface Pricebook {
+export interface AdvTradePricebook {
   product_id: string;
   bids: PriceLevel[];
   asks: PriceLevel[];
@@ -87,7 +87,7 @@ interface FutureProductDetails {
   contract_expiry_name: string;
 }
 
-export interface Product {
+export interface AdvTradeProduct {
   product_id: string;
   price: string;
   price_percentage_change_24h: string;
@@ -127,7 +127,7 @@ export interface Product {
   future_product_details: FutureProductDetails;
 }
 
-export interface Candle {
+export interface AdvTradeCandle {
   start: string;
   low: string;
   high: string;
@@ -145,7 +145,7 @@ interface Trade {
   side: 'BUY' | 'SELL';
 }
 
-export interface MarketTrades {
+export interface AdvTradeMarketTrades {
   trades: Trade[];
   best_bid: string;
   best_ask: string;
@@ -173,14 +173,14 @@ interface ErrorOrderResponse {
   new_order_failure_reason: string;
 }
 
-export interface SubmitOrderResponse {
+export interface AdvTradeSubmitOrderResponse {
   success: boolean;
   success_response?: SuccessOrderResponse;
   error_response?: ErrorOrderResponse;
   order_configuration: OrderConfiguration;
 }
 
-export interface CancelOrdersResponse {
+export interface AdvTradeCancelOrdersResponse {
   results: {
     success: boolean;
     failure_reason: string;
@@ -188,7 +188,7 @@ export interface CancelOrdersResponse {
   }[];
 }
 
-export interface EditOrderResponse {
+export interface AdvTradeEditOrderResponse {
   success: boolean;
   success_response?: {
     order_id: string;
@@ -203,7 +203,7 @@ export interface EditOrderResponse {
   };
 }
 
-export interface EditOrderPreviewResponse {
+export interface AdvTradeEditOrderPreviewResponse {
   errors?: {
     edit_failure_reason?: string;
     preview_failure_reason?: string;
@@ -218,7 +218,7 @@ export interface EditOrderPreviewResponse {
   average_filled_price?: string;
 }
 
-export interface Order {
+export interface AdvTradeOrder {
   order_id: string;
   product_id: string;
   user_id: string;
@@ -260,7 +260,7 @@ export interface Order {
   retail_portfolio_id?: string;
 }
 
-export interface Fill {
+export interface AdvTradeFill {
   entry_id: string;
   trade_id: string;
   order_id: string;
@@ -278,7 +278,7 @@ export interface Fill {
   retail_portfolio_id: string;
 }
 
-export interface OrderPreview {
+export interface AdvTradeOrderPreview {
   order_total: string;
   commission_total: string;
   errs: string[];
@@ -299,7 +299,7 @@ export interface OrderPreview {
   max_leverage?: string;
 }
 
-export interface ClosePositionResponse {
+export interface AdvTradeClosePositionResponse {
   success: boolean;
   success_response?: {
     order_id: string;
@@ -322,19 +322,19 @@ export interface ClosePositionResponse {
  *
  */
 
-export interface Portfolio {
+export interface AdvTradePortfolio {
   name: string;
   uuid: string;
   type: 'UNDEFINED' | 'DEFAULT' | 'CONSUMER' | 'INTX';
   deleted: boolean;
 }
 
-export interface MonetaryAmount {
+export interface AdvTradeMonetaryAmount {
   value: string;
   currency: string;
 }
 
-export interface SpotPortfolioPosition {
+export interface SpotAdvTradePortfolioPosition {
   asset: string;
   account_uuid: string;
   total_balance_fiat: number;
@@ -342,19 +342,19 @@ export interface SpotPortfolioPosition {
   available_to_trade_fiat: number;
   allocation: number;
   one_day_change: number;
-  cost_basis: MonetaryAmount;
+  cost_basis: AdvTradeMonetaryAmount;
   asset_img_url: string;
   is_cash: boolean;
 }
 
-export interface PerpPortfolioPosition {
+export interface PerpAdvTradePortfolioPosition {
   product_id: string;
   product_uuid: string;
   symbol: string;
   asset_image_url: string;
-  vwap: MonetaryAmount;
-  userNativeCurrency: MonetaryAmount;
-  rawCurrency: MonetaryAmount;
+  vwap: AdvTradeMonetaryAmount;
+  userNativeCurrency: AdvTradeMonetaryAmount;
+  rawCurrency: AdvTradeMonetaryAmount;
   position_side:
     | 'FUTURES_POSITION_SIDE_UNSPECIFIED'
     | 'FUTURES_POSITION_SIDE_LONG'
@@ -363,13 +363,13 @@ export interface PerpPortfolioPosition {
   buy_order_size: string;
   sell_order_size: string;
   im_contribution: string;
-  unrealized_pnl: MonetaryAmount;
-  mark_price: MonetaryAmount;
-  liquidation_price: MonetaryAmount;
+  unrealized_pnl: AdvTradeMonetaryAmount;
+  mark_price: AdvTradeMonetaryAmount;
+  liquidation_price: AdvTradeMonetaryAmount;
   leverage: string;
-  im_notional: MonetaryAmount;
-  mm_notional: MonetaryAmount;
-  position_notional: MonetaryAmount;
+  im_notional: AdvTradeMonetaryAmount;
+  mm_notional: AdvTradeMonetaryAmount;
+  position_notional: AdvTradeMonetaryAmount;
   margin_type:
     | 'MARGIN_TYPE_UNSPECIFIED'
     | 'MARGIN_TYPE_CROSS'
@@ -378,7 +378,7 @@ export interface PerpPortfolioPosition {
   liquidation_percentage: string;
 }
 
-export interface FuturesPortfolioPosition {
+export interface FuturesAdvTradePortfolioPosition {
   product_id: string;
   contract_size: string;
   side:
@@ -398,20 +398,20 @@ export interface FuturesPortfolioPosition {
 }
 
 interface PortfolioBalances {
-  total_balance: MonetaryAmount;
-  total_futures_balance: MonetaryAmount;
-  total_cash_equivalent_balance: MonetaryAmount;
-  total_crypto_balance: MonetaryAmount;
-  futures_unrealized_pnl: MonetaryAmount;
-  perp_unrealized_pnl: MonetaryAmount;
+  total_balance: AdvTradeMonetaryAmount;
+  total_futures_balance: AdvTradeMonetaryAmount;
+  total_cash_equivalent_balance: AdvTradeMonetaryAmount;
+  total_crypto_balance: AdvTradeMonetaryAmount;
+  futures_unrealized_pnl: AdvTradeMonetaryAmount;
+  perp_unrealized_pnl: AdvTradeMonetaryAmount;
 }
 
-export interface PortfolioBreakdown {
-  portfolio: Portfolio;
+export interface AdvTradePortfolioBreakdown {
+  portfolio: AdvTradePortfolio;
   portfolio_balances: PortfolioBalances;
-  spot_positions: SpotPortfolioPosition[];
-  perp_positions: PerpPortfolioPosition[];
-  futures_positions: FuturesPortfolioPosition[];
+  spot_positions: SpotAdvTradePortfolioPosition[];
+  perp_positions: PerpAdvTradePortfolioPosition[];
+  futures_positions: FuturesAdvTradePortfolioPosition[];
 }
 
 /**
@@ -420,7 +420,7 @@ export interface PortfolioBreakdown {
  *
  */
 
-export interface FuturesBalance {
+export interface AdvTradeFuturesBalance {
   futures_buying_power: {
     value: string;
     currency: string;
@@ -486,7 +486,7 @@ export interface FuturesBalance {
   };
 }
 
-export interface CurrentMarginWindow {
+export interface AdvTradeCurrentMarginWindow {
   margin_window: {
     margin_window_type:
       | 'MARGIN_WINDOW_TYPE_UNSPECIFIED'
@@ -500,7 +500,7 @@ export interface CurrentMarginWindow {
   is_intraday_margin_enrollment_killswitch_enabled: boolean;
 }
 
-export interface FuturesPosition {
+export interface AdvTradeFuturesPosition {
   product_id: string;
   expiration_time: string; // RFC3339 Timestamp
   side: 'UNKNOWN' | 'LONG' | 'SHORT';
@@ -511,7 +511,7 @@ export interface FuturesPosition {
   daily_realized_pnl: string;
 }
 
-export interface FuturesSweep {
+export interface AdvTradeFuturesSweep {
   id: string;
   requested_amount: {
     value: string;
@@ -528,7 +528,7 @@ export interface FuturesSweep {
  *
  */
 
-export interface PerpetualsPortfolio {
+export interface AdvTradePerpetualsPortfolio {
   portfolios: {
     portfolio_uuid: string;
     collateral: string;
@@ -582,7 +582,7 @@ export interface PerpetualsPortfolio {
   };
 }
 
-export interface PerpetualsPosition {
+export interface AdvTradePerpetualsPosition {
   product_id: string;
   product_uuid: string;
   portfolio_uuid: string;
@@ -631,8 +631,8 @@ export interface PerpetualsPosition {
     currency: string;
   };
 }
-export interface PerpetualsPositionSummary {
-  positions: PerpetualsPosition[];
+export interface AdvTradePerpetualsPositionSummary {
+  positions: AdvTradePerpetualsPosition[];
   summary: {
     aggregated_pnl: {
       value: string;
@@ -641,7 +641,7 @@ export interface PerpetualsPositionSummary {
   };
 }
 
-export interface PerpetualsAsset {
+export interface AdvTradePerpetualsAsset {
   asset_id: string;
   asset_uuid: string;
   asset_name: string;
@@ -653,10 +653,10 @@ export interface PerpetualsAsset {
   supported_networks_enabled: boolean;
 }
 
-export interface PortfolioBalance {
+export interface AdvTradePortfolioBalance {
   portfolio_uuid: string;
   balances: {
-    asset: PerpetualsAsset;
+    asset: AdvTradePerpetualsAsset;
     quantity: string;
     hold: string;
     transfer_hold: string;
@@ -676,7 +676,7 @@ export interface PortfolioBalance {
  *
  */
 
-export interface FeeTier {
+export interface AdvTradeFeeTier {
   pricing_tier: string;
   usd_from: string;
   usd_to: string;
@@ -693,10 +693,10 @@ export interface FeeTier {
   };
 }
 
-export interface TransactionSummary {
+export interface AdvTradeTransactionSummary {
   total_volume: number;
   total_fees: number;
-  fee_tier: FeeTier;
+  fee_tier: AdvTradeFeeTier;
   advanced_trade_only_volume: number;
   advanced_trade_only_fees: number;
   margin_rate: number;
@@ -721,7 +721,7 @@ export interface TransactionSummary {
  *
  */
 
-export interface PublicProduct {
+export interface AdvTradePublicProduct {
   product_id: string;
   price: string;
   price_percentage_change_24h: string;
@@ -797,7 +797,7 @@ export interface PublicProduct {
  *
  */
 
-export interface PaymentMethod {
+export interface AdvTradePaymentMethod {
   id: string;
   type: string;
   name: string;
@@ -817,7 +817,7 @@ export interface PaymentMethod {
  *
  */
 
-export interface ApiKeyPermissions {
+export interface AdvTradeApiKeyPermissions {
   can_view: boolean;
   can_trade: boolean;
   can_transfer: boolean;

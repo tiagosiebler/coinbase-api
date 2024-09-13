@@ -3,13 +3,13 @@
  * Accounts Endpoints
  *
  */
-export interface GetAccountHoldsRequest {
+export interface GetCBExchAccountHoldsRequest {
   account_id: string;
   before?: string;
   after?: string;
   limit?: number;
 }
-export interface GetAccountLedgerRequest {
+export interface GetCBExchAccountLedgerRequest {
   account_id: string;
   start_date?: string;
   end_date?: string;
@@ -19,7 +19,7 @@ export interface GetAccountLedgerRequest {
   profile_id?: string;
 }
 
-export interface GetAccountTransfersRequest {
+export interface GetCBExchAccountTransfersRequest {
   account_id: string;
   before?: string;
   after?: string;
@@ -33,7 +33,7 @@ export interface GetAccountTransfersRequest {
  *
  */
 
-export interface GetAddressBookRequest {
+export interface GetCBExchAddressBookRequest {
   addresses: {
     currency: string;
     to: {
@@ -52,7 +52,7 @@ export interface GetAddressBookRequest {
  *
  */
 
-export interface CreateNewCryptoAddress {
+export interface CreateCBExchNewCryptoAddress {
   account_id: string;
   profile_id?: string;
   network?: string;
@@ -64,7 +64,7 @@ export interface CreateNewCryptoAddress {
  *
  */
 
-export interface ConvertCurrencyRequest {
+export interface ConvertCBExchCurrencyRequest {
   profile_id: string;
   from: string;
   to: string;
@@ -84,21 +84,21 @@ export interface ConvertCurrencyRequest {
  *
  */
 
-export interface DepositFromCoinbaseAccount {
+export interface CBExchDepositFromCoinbaseAccount {
   profile_id: string;
   amount: string;
   coinbase_account_id: string;
   currency: string;
 }
 
-export interface DepositFromPaymentMethod {
+export interface CBExchDepositFromPaymentMethod {
   profile_id: string;
   amount: string;
   payment_method_id: string;
   currency: string;
 }
 
-export interface GetTransfersRequest {
+export interface CBExchGetTransfersRequest {
   profile_id?: string;
   before?: string;
   after?: string;
@@ -109,20 +109,20 @@ export interface GetTransfersRequest {
   currency?: string;
 }
 
-export interface SubmitTravelInformation {
+export interface SubmitCBExchTravelInformation {
   transfer_id: string;
   originator_name: string;
   originator_country: string;
 }
 
-export interface WithdrawToCBAccount {
+export interface CBExchWithdrawToCBAccount {
   profile_id: string;
   amount: string;
   coinbase_account_id: string;
   currency: string;
 }
 
-export interface WithdrawToCryptoAddress {
+export interface CBExchWithdrawToCryptoAddress {
   profile_id: string;
   amount: string;
   currency: string;
@@ -137,13 +137,13 @@ export interface WithdrawToCryptoAddress {
   travel_rule_data?: object;
 }
 
-export interface GetCryptoWithdrawalFeeEstimate {
+export interface CBExchGetCryptoWithdrawalFeeEstimate {
   currency: string;
   crypto_address: string;
   network?: string;
 }
 
-export interface WithdrawToPaymentMethod {
+export interface CBExchWithdrawToPaymentMethod {
   profile_id: string;
   amount: string;
   payment_method_id: string;
@@ -162,7 +162,7 @@ export interface WithdrawToPaymentMethod {
  *
  */
 
-export interface GetFillsRequest {
+export interface GetCBExchFillsRequest {
   order_id?: string;
   product_id?: string;
   limit?: number;
@@ -173,7 +173,7 @@ export interface GetFillsRequest {
   end_date?: string;
 }
 
-export interface GetOrdersRequest {
+export interface GetCBExchOrdersRequest {
   profile_id?: string;
   product_id?: string;
   sortedBy?: string;
@@ -187,7 +187,7 @@ export interface GetOrdersRequest {
   market_type?: string;
 }
 
-export interface SubmitOrderRequest {
+export interface SubmitCBExchOrderRequest {
   profile_id?: string;
   type: string;
   side: string;
@@ -206,7 +206,7 @@ export interface SubmitOrderRequest {
   stop_limit_price?: string;
 }
 
-export interface CancelOrderRequest {
+export interface CancelCBExchOrderRequest {
   order_id: string;
   profile_id?: string;
   product_id?: string;
@@ -218,7 +218,7 @@ export interface CancelOrderRequest {
  *
  */
 
-export interface SubmitNewLoan {
+export interface SubmitCBExchNewLoan {
   loan_id: string;
   currency: string;
   native_amount: string;
@@ -228,14 +228,14 @@ export interface SubmitNewLoan {
   profile_id: string;
 }
 
-export interface RepayLoanInterest {
+export interface RepayCBExchLoanInterest {
   idem: string;
   from_profile_id: string;
   currency: string;
   native_amount: string;
 }
 
-export interface RepayLoanPrincipal {
+export interface RepayCBExchLoanPrincipal {
   loan_id: string;
   idem: string;
   from_profile_id: string;
@@ -243,7 +243,7 @@ export interface RepayLoanPrincipal {
   native_amount: string;
 }
 
-export interface GetPrincipalRepaymentPreview {
+export interface GetCBExchPrincipalRepaymentPreview {
   loan_id: string;
   currency: string;
   native_amount: string;
@@ -260,14 +260,14 @@ export interface GetPrincipalRepaymentPreview {
  *
  */
 
-export interface GetProductCandles {
+export interface GetCBExchProductCandles {
   product_id: string;
   granularity: number;
   start?: string;
   end?: string;
 }
 
-export interface GetProductTrades {
+export interface GetCBExchProductTrades {
   product_id: string;
   limit?: number;
   before?: string;
@@ -280,7 +280,7 @@ export interface GetProductTrades {
  *
  */
 
-export interface TransferFundsBetweenProfiles {
+export interface TransferCBExchFundsBetweenProfiles {
   from: string;
   to: string;
   currency: string;
@@ -293,7 +293,7 @@ export interface TransferFundsBetweenProfiles {
  *
  */
 
-export interface GetAllReports {
+export interface GetAllCBExchReports {
   profile_id?: string;
   after?: string;
   limit?: number;
@@ -301,7 +301,7 @@ export interface GetAllReports {
   ignore_expired?: boolean;
 }
 
-export interface CreateReport {
+export interface CreateCBExchReport {
   type: string;
   year?: string;
   format?: string;
@@ -325,7 +325,7 @@ export interface CreateReport {
  *
  */
 
-export interface GetTravelRuleInformation {
+export interface GetCBExchTravelRuleInformation {
   before?: string;
   after?: string;
   limit?: number;
@@ -343,7 +343,7 @@ export interface GetTravelRuleInformation {
  *
  */
 
-export interface GetAllStakeWraps {
+export interface GetCBExchAllStakeWraps {
   before?: string;
   after?: string;
   limit?: number;

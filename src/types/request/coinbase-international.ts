@@ -10,7 +10,7 @@
  *
  */
 
-export interface GetDailyTradingVolumes {
+export interface GetINTXDailyTradingVolumes {
   instruments: string;
   result_limit?: number;
   result_offset?: number;
@@ -18,7 +18,7 @@ export interface GetDailyTradingVolumes {
   show_other?: boolean;
 }
 
-export interface GetAggregatedCandlesData {
+export interface GetINTXAggregatedCandlesData {
   instrument: string;
   granularity: string;
   start: string;
@@ -36,7 +36,7 @@ export interface GetAggregatedCandlesData {
  *
  */
 
-export interface SubmitOrderRequest {
+export interface SubmitINTXOrderRequest {
   client_order_id: string;
   side: string;
   size: string;
@@ -54,7 +54,7 @@ export interface SubmitOrderRequest {
   close_only?: boolean;
 }
 
-export interface GetOpenOrdersRequest {
+export interface GetINTXOpenOrdersRequest {
   portfolio?: string;
   instrument?: string;
   instrument_type?: string;
@@ -67,14 +67,14 @@ export interface GetOpenOrdersRequest {
   result_offset?: number;
 }
 
-export interface CancelOrdersRequest {
+export interface CancelINTXOrdersRequest {
   portfolio: string;
   instrument?: string;
   side?: string;
   instrument_type?: string;
 }
 
-export interface UpdateOpenOrderRequest {
+export interface UpdateINTXOpenOrderRequest {
   id: string;
   client_order_id?: string;
   portfolio?: string;
@@ -89,7 +89,7 @@ export interface UpdateOpenOrderRequest {
  *
  */
 
-export interface UpdatePortfolioParametersRequest {
+export interface UpdateINTXPortfolioParametersRequest {
   auto_margin_enabled?: boolean;
   cross_collateral_enabled?: boolean;
   position_offsets_enabled?: boolean;
@@ -97,7 +97,7 @@ export interface UpdatePortfolioParametersRequest {
   portfolio_name?: string;
 }
 
-export interface GetFillsByPortfoliosRequest {
+export interface GetINTXFillsByPortfoliosRequest {
   portfolios?: string;
   order_id?: string;
   client_order_id?: string;
@@ -107,7 +107,7 @@ export interface GetFillsByPortfoliosRequest {
   time_from?: string;
 }
 
-export interface GetPortfolioFillsRequest {
+export interface GetINTXPortfolioFillsRequest {
   portfolio: string;
   order_id?: string;
   client_order_id?: string;
@@ -117,14 +117,14 @@ export interface GetPortfolioFillsRequest {
   time_from?: string;
 }
 
-export interface TransferFundsBetweenPortfoliosRequest {
+export interface TransferINTXFundsBetweenPortfoliosRequest {
   from: string;
   to: string;
   asset: string;
   amount: string;
 }
 
-export interface TransferPositionsBetweenPortfoliosRequest {
+export interface TransferINTXPositionsBetweenPortfoliosRequest {
   from: string;
   to: string;
   instrument: string;
@@ -144,7 +144,7 @@ export interface TransferPositionsBetweenPortfoliosRequest {
  *
  */
 
-export interface GetMatchingTransfersRequest {
+export interface GetINTXMatchingTransfersRequest {
   portfolio?: string;
   portfolios?: string;
   time_from?: string;
@@ -155,7 +155,7 @@ export interface GetMatchingTransfersRequest {
   type?: string;
 }
 
-export interface WithdrawToCryptoAddressRequest {
+export interface INTXWithdrawToCryptoAddressRequest {
   portfolio: string;
   asset: string;
   amount: string;
@@ -165,7 +165,7 @@ export interface WithdrawToCryptoAddressRequest {
   nonce: number;
 }
 
-export interface WithdrawToCounterpartyIdRequest {
+export interface INTXWithdrawToCounterpartyIdRequest {
   portfolio: string;
   counterparty_id: string;
   asset: string;

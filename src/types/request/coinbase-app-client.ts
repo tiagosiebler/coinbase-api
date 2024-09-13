@@ -16,7 +16,7 @@
  *
  */
 
-export interface SendMoneyRequest {
+export interface CBAppSendMoneyRequest {
   accountId: string;
   type: 'send';
   to: string;
@@ -30,7 +30,7 @@ export interface SendMoneyRequest {
   destination_tag?: string;
 }
 
-export interface TransferMoneyRequest {
+export interface CBAppTransferMoneyRequest {
   accountId: string;
   type: 'transfer';
   to: string;
@@ -44,7 +44,7 @@ export interface TransferMoneyRequest {
  *
  */
 
-export interface DepositFundsRequest {
+export interface CBAppDepositFundsRequest {
   accountId: string;
   amount: string;
   currency: string;
@@ -58,7 +58,7 @@ export interface DepositFundsRequest {
  *
  */
 
-export interface WithdrawFundsRequest {
+export interface CBAppWithdrawFundsRequest {
   accountId: string;
   amount: string;
   currency: string;

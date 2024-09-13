@@ -1,4 +1,4 @@
-export interface Pagination {
+export interface CBAppPagination {
   ending_before?: string | null;
   starting_after?: string | null;
   limit?: number;
@@ -30,7 +30,7 @@ interface AccountBalance {
   currency: string;
 }
 
-export interface Account {
+export interface CBAppAccount {
   id: string;
   name: string;
   primary: boolean;
@@ -50,7 +50,7 @@ export interface Account {
  *
  */
 
-export interface Address {
+export interface CBAppAddress {
   id: string;
   address: string;
   name?: string;
@@ -93,7 +93,7 @@ interface TransactionDetails {
   subtitle: string;
 }
 
-export interface Transaction {
+export interface CBAppTransaction {
   id: string;
   type: string;
   status: string;
@@ -133,7 +133,7 @@ interface DepositWithdrawalAmountCurrency {
   currency: string;
 }
 
-export interface DepositWithdrawal {
+export interface CBAppDepositWithdrawal {
   id: string;
   status: string;
   payment_method: DepositWithdrawalPaymentMethod;
