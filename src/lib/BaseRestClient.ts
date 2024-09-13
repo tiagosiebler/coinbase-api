@@ -261,7 +261,7 @@ export abstract class BaseRestClient {
   }
 
   public generateNewOrderId(): string {
-    return APIIDPrefix + nanoid(16);
+    return APIIDPrefix + nanoid(30);
   }
 
   /**
