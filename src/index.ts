@@ -1,4 +1,4 @@
-export * from './AdvancedTradeClient.js';
+export * from './CBAdvancedTradeClient.js';
 export * from './CoinbaseAppClient.js';
 export * from './CoinbaseInternational.js';
 export * from './CoinbasePrime.js';

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AdvancedTradeClient } from './AdvancedTradeClient.js';
+import { AdvancedTradeClient } from './CBAdvancedTradeClient.js';
 import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
 import { neverGuard } from './lib/misc-util.js';
 import {
