@@ -335,7 +335,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   closePosition(
     params: CloseAdvTradePositionRequest,
   ): Promise<AdvTradeClosePositionResponse> {
-    this.validateOrderId(params as any, 'client_order_id');
+    this.validateOrderId(params, 'client_order_id');
     return this.postPrivate(`/api/v3/brokerage/orders/close_position`, {
       body: params,
     });
