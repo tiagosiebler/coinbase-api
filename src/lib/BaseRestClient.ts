@@ -3,7 +3,10 @@ import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import https from 'https';
 import { nanoid } from 'nanoid';
 
-import { SubmitAdvTradeOrderRequest } from '../types/request/advanced-trade-client.js';
+import {
+  CloseAdvTradePositionRequest,
+  SubmitAdvTradeOrderRequest,
+} from '../types/request/advanced-trade-client.js';
 import { CustomOrderIdProperty } from '../types/shared.types.js';
 import { signJWT } from './jwtNode.js';
 import { neverGuard } from './misc-util.js';
@@ -268,7 +271,7 @@ export abstract class BaseRestClient {
    * Validate syntax meets requirements set by binance. Log warning if not.
    */
   protected validateOrderId(
-    params: SubmitAdvTradeOrderRequest,
+    params: SubmitAdvTradeOrderRequest | CloseAdvTradePositionRequest,
     orderIdProperty: CustomOrderIdProperty,
   ): void {
     if (!params[orderIdProperty]) {

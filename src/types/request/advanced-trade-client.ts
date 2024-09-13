@@ -63,7 +63,8 @@ export interface GetAdvTradeMarketTradesRequest {
 /**
  * Note: client_order_id is optional, because the SDK will automatically generate a value for you during the request.
  *
- * If you are generating your own, make sure you either use the client.generateNewOrderId() method or make sure to prefix your value with "cbnode". The SDK will automatically do this, if the prefix is missing.
+ * If you are generating your own, make sure you either use the client.generateNewOrderId() method or make sure to prefix your value with "cbnode".
+ * The SDK will automatically add the prefix if the prefix is missing.
  */
 export interface SubmitAdvTradeOrderRequest {
   client_order_id?: string;
@@ -121,6 +122,18 @@ export interface PreviewAdvTradeOrderRequest {
   leverage?: string;
   margin_type?: 'ISOLATED' | 'CROSS';
   retail_portfolio_id?: string;
+}
+
+/**
+ * Note: client_order_id is optional, because the SDK will automatically generate a value for you during the request.
+ *
+ * If you are generating your own, make sure you either use the client.generateNewOrderId() method or make sure to prefix your value with "cbnode".
+ * The SDK will automatically add the prefix if the prefix is missing.
+ */
+export interface CloseAdvTradePositionRequest {
+  client_order_id?: string;
+  product_id: string;
+  size?: string;
 }
 
 /**

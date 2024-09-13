@@ -1,5 +1,4 @@
 import { AxiosRequestConfig } from 'axios';
-import { nanoid } from 'nanoid';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
@@ -9,6 +8,7 @@ import {
 } from './lib/requestUtils.js';
 import {
   AllocateAdvTradePortfolioRequest,
+  CloseAdvTradePositionRequest,
   GetAdvTradeFillsRequest,
   GetAdvTradeMarketTradesRequest,
   GetAdvTradeOrdersRequest,
@@ -69,16 +69,6 @@ export class CBAdvancedTradeClient extends BaseRestClient {
 
   getClientType(): RestClientType {
     return REST_CLIENT_TYPE_ENUM.advancedTrade;
-  }
-
-  /**
-   *
-   * Misc Utility Methods
-   *
-   */
-
-  generateNewOrderID(): string {
-    return nanoid(32);
   }
 
   /**
@@ -342,13 +332,10 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * Places an order to close any open positions for a specified product_id.
    *
    */
-  closePosition(params: {
-    // TODO: extract type
-    client_order_id: string;
-    product_id: string;
-    size?: string;
-  }): Promise<AdvTradeClosePositionResponse> {
-    this.validateOrderId(params as any, 'client_order_id');
+  closePosition(
+    params: CloseAdvTradePositionRequest,
+  ): Promise<AdvTradeClosePositionResponse> {
+    this.validateOrderId(params, 'client_order_id');
     return this.postPrivate(`/api/v3/brokerage/orders/close_position`, {
       body: params,
     });
