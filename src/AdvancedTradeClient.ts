@@ -9,6 +9,7 @@ import {
 } from './lib/requestUtils.js';
 import {
   AllocateAdvTradePortfolioRequest,
+  CloseAdvTradePositionRequest,
   GetAdvTradeFillsRequest,
   GetAdvTradeMarketTradesRequest,
   GetAdvTradeOrdersRequest,
@@ -342,12 +343,9 @@ export class AdvancedTradeClient extends BaseRestClient {
    * Places an order to close any open positions for a specified product_id.
    *
    */
-  closePosition(params: {
-    // TODO: extract type
-    client_order_id: string;
-    product_id: string;
-    size?: string;
-  }): Promise<AdvTradeClosePositionResponse> {
+  closePosition(
+    params: CloseAdvTradePositionRequest,
+  ): Promise<AdvTradeClosePositionResponse> {
     this.validateOrderId(params as any, 'client_order_id');
     return this.postPrivate(`/api/v3/brokerage/orders/close_position`, {
       body: params,
