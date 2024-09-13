@@ -37,7 +37,7 @@ export interface GetINTXAggregatedCandlesData {
  */
 
 export interface SubmitINTXOrderRequest {
-  client_order_id: string;
+  client_order_id?: string;
   side: string;
   size: string;
   tif: string;

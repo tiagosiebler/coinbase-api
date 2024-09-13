@@ -7,6 +7,9 @@ import {
   CloseAdvTradePositionRequest,
   SubmitAdvTradeOrderRequest,
 } from '../types/request/advanced-trade-client.js';
+import { SubmitCBExchOrderRequest } from '../types/request/coinbase-exchange.js';
+import { SubmitINTXOrderRequest } from '../types/request/coinbase-international.js';
+import { SubmitPrimeOrderRequest } from '../types/request/coinbase-prime.js';
 import { CustomOrderIdProperty } from '../types/shared.types.js';
 import { signJWT } from './jwtNode.js';
 import { neverGuard } from './misc-util.js';
@@ -264,31 +267,39 @@ export abstract class BaseRestClient {
   }
 
   public generateNewOrderId(): string {
-    return APIIDPrefix + nanoid(30);
+    return APIIDPrefix + nanoid(14);
   }
 
   /**
-   * Validate syntax meets requirements set by binance. Log warning if not.
+   * Validate syntax meets requirements set by coinbase. Log warning if not.
    */
   protected validateOrderId(
-    params: SubmitAdvTradeOrderRequest | CloseAdvTradePositionRequest,
+    params:
+      | SubmitAdvTradeOrderRequest
+      | CloseAdvTradePositionRequest
+      | SubmitCBExchOrderRequest
+      | SubmitINTXOrderRequest
+      | SubmitPrimeOrderRequest,
     orderIdProperty: CustomOrderIdProperty,
   ): void {
-    if (!params[orderIdProperty]) {
-      params[orderIdProperty] = this.generateNewOrderId();
+    // Not the cleanest but strict checks aren't quite necessary here either
+    const requestParams = params as any;
+
+    if (!requestParams[orderIdProperty]) {
+      requestParams[orderIdProperty] = this.generateNewOrderId();
       return;
     }
 
-    if (!params[orderIdProperty].startsWith(APIIDPrefix)) {
+    if (!requestParams[orderIdProperty].startsWith(APIIDPrefix)) {
       logInvalidOrderId(orderIdProperty, APIIDPrefix, params);
 
-      const previousValue = params[orderIdProperty];
-      const newValue = APIIDPrefix + params[orderIdProperty];
+      const previousValue = requestParams[orderIdProperty];
+      const newValue = APIIDPrefix + requestParams[orderIdProperty];
       console.warn(
         `WARNING: "${orderIdProperty}" was automatically prefixed. Changed from "${previousValue}" to "${newValue}". To avoid this, apply the prefix before submitting an order or use the client.generateNewOrderId() utility method.`,
       );
 
-      params[orderIdProperty] = newValue;
+      requestParams[orderIdProperty] = newValue;
     }
   }
 
