@@ -43,7 +43,7 @@ import {
  * REST client for Coinbase's Institutional Exchange API:
  * https://docs.cdp.coinbase.com/exchange/docs/welcome
  */
-export class CoinbaseExchange extends BaseRestClient {
+export class CBExchangeClient extends BaseRestClient {
   constructor(
     restClientOptions: RestClientOptions = {},
     requestOptions: AxiosRequestConfig = {},

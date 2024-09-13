@@ -25,7 +25,7 @@ import {
  * REST client for Coinbase's Coinbase App API:
  * https://docs.cdp.coinbase.com/coinbase-app/docs/welcome
  */
-export class CoinbaseAppClient extends BaseRestClient {
+export class CBAppClient extends BaseRestClient {
   constructor(
     restClientOptions: RestClientOptions = {},
     requestOptions: AxiosRequestConfig = {},
