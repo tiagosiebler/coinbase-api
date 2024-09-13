@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { AdvancedTradeClient } from './CBAdvancedTradeClient.js';
+import { CBAdvancedTradeClient } from './CBAdvancedTradeClient.js';
 import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
 import { neverGuard } from './lib/misc-util.js';
 import {
@@ -44,18 +44,19 @@ export const PUBLIC_WS_KEYS: WsKey[] = [
 type WsTopic = string;
 
 export class WebsocketClient extends BaseWebsocketClient<WsKey> {
-  private RESTClientCache: Record<WsMarket, AdvancedTradeClient | undefined> = {
-    advancedTrade: undefined,
-  };
+  private RESTClientCache: Record<WsMarket, CBAdvancedTradeClient | undefined> =
+    {
+      advancedTrade: undefined,
+    };
 
-  private getRESTClient(wsKey: WsKey): AdvancedTradeClient {
+  private getRESTClient(wsKey: WsKey): CBAdvancedTradeClient {
     if (wsKey === 'spotPublicV1' || wsKey === 'spotPrivateV1') {
       const clientType = 'advancedTrade';
       if (this.RESTClientCache[clientType]) {
         return this.RESTClientCache[clientType];
       }
 
-      this.RESTClientCache[clientType] = new AdvancedTradeClient({
+      this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
         apiKeyName: this.options.apiKey,
         apiPrivateKey: this.options.apiSecret,
       });
@@ -67,7 +68,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       return this.RESTClientCache[clientType];
     }
 
-    this.RESTClientCache[clientType] = new AdvancedTradeClient({
+    this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
       apiKeyName: this.options.apiKey,
       apiPrivateKey: this.options.apiSecret,
     });

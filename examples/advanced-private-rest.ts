@@ -1,7 +1,7 @@
-import { AdvancedTradeClient } from '../src/index.js';
+import { CBAdvancedTradeClient } from '../src/index.js';
 
 async function main() {
-  const client = new AdvancedTradeClient({
+  const client = new CBAdvancedTradeClient({
     // cdpApiKey: credsTradePermission,
     apiKeyName: '',
     apiPrivateKey: '',
