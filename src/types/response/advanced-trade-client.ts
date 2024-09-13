@@ -4,7 +4,7 @@
  *
  */
 
-import { OrderConfiguration } from 'types/shared.types';
+import { OrderConfiguration } from '../shared.types.js';
 
 interface Balance {
   value: string;

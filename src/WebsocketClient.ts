@@ -9,7 +9,6 @@ import {
   WsTopicRequest,
 } from './lib/websocket/websocket-util.js';
 import { WSConnectedResult } from './lib/websocket/WsStore.types.js';
-import { APISuccessResponse } from './types/shared.types.js';
 import { WsMarket } from './types/websockets/client.js';
 import {
   WsOperation,
@@ -76,9 +75,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     throw new Error(`Unhandled WsKey: "${wsKey}"`);
   }
 
-  private async getWSConnectionInfo(
-    _wsKey: WsKey,
-  ): Promise<APISuccessResponse<{}>> {
+  private async getWSConnectionInfo(_wsKey: WsKey): Promise<{}> {
     throw new Error('not used');
   }
 

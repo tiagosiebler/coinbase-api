@@ -1,18 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
 import { nanoid } from 'nanoid';
-import {
-  CBAppDepositFundsRequest,
-  CBAppSendMoneyRequest,
-  CBAppTransferMoneyRequest,
-  CBAppWithdrawFundsRequest,
-} from 'types/request/coinbase-app-client.js';
-import {
-  CBAppAccount,
-  CBAppAddress,
-  CBAppDepositWithdrawal,
-  CBAppPagination,
-  CBAppTransaction,
-} from 'types/response/coinbase-app-client.js';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
@@ -20,6 +7,19 @@ import {
   RestClientOptions,
   RestClientType,
 } from './lib/requestUtils.js';
+import {
+  CBAppDepositFundsRequest,
+  CBAppSendMoneyRequest,
+  CBAppTransferMoneyRequest,
+  CBAppWithdrawFundsRequest,
+} from './types/request/coinbase-app-client.js';
+import {
+  CBAppAccount,
+  CBAppAddress,
+  CBAppDepositWithdrawal,
+  CBAppPagination,
+  CBAppTransaction,
+} from './types/response/coinbase-app-client.js';
 
 /**
  * REST client for Coinbase's Coinbase App API:
