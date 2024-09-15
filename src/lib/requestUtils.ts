@@ -14,6 +14,8 @@ export const REST_CLIENT_TYPE_ENUM = {
   prime: 'prime',
   /** Coinbase International API */
   international: 'international',
+  /** Coinbase Commerce API */
+  commerce: 'commerce',
 } as const;
 
 export type RestClientType =
@@ -26,6 +28,7 @@ const exchangeBaseURLMap = {
   [REST_CLIENT_TYPE_ENUM.prime]: 'https://api.prime.coinbase.com', // /v1
   [REST_CLIENT_TYPE_ENUM.international]:
     'https://api.international.coinbase.com',
+  [REST_CLIENT_TYPE_ENUM.commerce]: 'https://api.commerce.coinbase.com',
 } as const;
 
 export interface RestClientOptions {
