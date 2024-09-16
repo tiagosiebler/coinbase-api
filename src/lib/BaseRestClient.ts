@@ -17,6 +17,7 @@ import {
   APIIDPrefix,
   getRestBaseUrl,
   logInvalidOrderId,
+  REST_CLIENT_TYPE_ENUM,
   RestClientOptions,
   RestClientType,
   serializeParams,
@@ -44,12 +45,16 @@ interface UnsignedRequest<T extends object | undefined = {}> {
 type SignMethod = 'coinbase';
 
 /**
- * Some requests require some params to be in the query string and some in the body.
- * This type anticipates both are possible in any combination.
+ * Some requests require some params to be in the query string, some in the body, some even in the headers.
+ * This type anticipates either are possible in any combination.
  *
  * The request builder will automatically handle where parameters should go.
  */
-type ParamsInQueryAndOrBody = { query?: object; body?: object };
+type ParamsInRequest = {
+  query?: object;
+  body?: object;
+  headers?: object;
+};
 
 const ENABLE_HTTP_TRACE =
   typeof process === 'object' &&
@@ -203,7 +208,7 @@ export abstract class BaseRestClient {
     return this._call('GET', endpoint, params, true);
   }
 
-  post(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  post(endpoint: string, params?: ParamsInRequest) {
     return this._call('POST', endpoint, params, true);
   }
 
@@ -211,19 +216,19 @@ export abstract class BaseRestClient {
     return this._call('GET', endpoint, params, false);
   }
 
-  postPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  postPrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('POST', endpoint, params, false);
   }
 
-  deletePrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  deletePrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('DELETE', endpoint, params, false);
   }
 
-  putPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  putPrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('PUT', endpoint, params, false);
   }
 
-  patchPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  patchPrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('PATCH', endpoint, params, false);
   }
 
@@ -233,7 +238,7 @@ export abstract class BaseRestClient {
   private async _call(
     method: Method,
     endpoint: string,
-    params?: ParamsInQueryAndOrBody,
+    params?: ParamsInRequest,
     isPublicApi?: boolean,
   ): Promise<any> {
     // Sanity check to make sure it's only ever prefixed by one forward slash
@@ -354,7 +359,7 @@ export abstract class BaseRestClient {
   /**
    * @private sign request and set recv window
    */
-  private async signRequest<T extends ParamsInQueryAndOrBody | undefined = {}>(
+  private async signRequest<T extends ParamsInRequest | undefined = {}>(
     data: T,
     url: string,
     _endpoint: string,
@@ -389,19 +394,38 @@ export abstract class BaseRestClient {
       : '';
 
     if (signMethod === 'coinbase') {
-      const signRequestParams =
-        method === 'GET'
-          ? serializeParams(
-              data?.query || data,
-              strictParamValidation,
-              encodeQueryStringValues,
-              '?',
-            )
-          : JSON.stringify(data?.body || data) || '';
+      const clientType = this.getClientType();
 
-      res.sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
-      res.queryParamsWithSign = signRequestParams;
-      return res;
+      switch (clientType) {
+        case REST_CLIENT_TYPE_ENUM.advancedTrade: {
+          const signRequestParams =
+            method === 'GET'
+              ? serializeParams(
+                  data?.query || data,
+                  strictParamValidation,
+                  encodeQueryStringValues,
+                  '?',
+                )
+              : JSON.stringify(data?.body || data) || '';
+
+          res.sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
+          res.queryParamsWithSign = signRequestParams;
+          return res;
+        }
+        case REST_CLIENT_TYPE_ENUM.coinbaseApp: {
+          // tODO:
+          return res;
+        }
+        default: {
+          console.error(
+            new Date(),
+            neverGuard(
+              clientType,
+              `Unhandled sign client type : "${clientType}"`,
+            ),
+          );
+        }
+      }
     }
 
     console.error(
@@ -467,6 +491,7 @@ export abstract class BaseRestClient {
     deleteUndefinedValues(params);
     deleteUndefinedValues(params?.body);
     deleteUndefinedValues(params?.query);
+    deleteUndefinedValues(params?.headers);
 
     if (isPublicApi || !this.apiKeyName || !this.apiKeySecret) {
       return {
@@ -484,8 +509,10 @@ export abstract class BaseRestClient {
       isPublicApi,
     );
 
-    const authHeaders = {
+    const requestHeaders = {
       Authorization: `Bearer ${signResult.sign}`,
+      ...params.headers,
+      ...options.headers,
     };
 
     const urlWithQueryParams =
@@ -494,20 +521,14 @@ export abstract class BaseRestClient {
     if (method === 'GET' || !params?.body) {
       return {
         ...options,
-        headers: {
-          ...authHeaders,
-          ...options.headers,
-        },
+        headers: requestHeaders,
         url: urlWithQueryParams,
       };
     }
 
     return {
       ...options,
-      headers: {
-        ...authHeaders,
-        ...options.headers,
-      },
+      headers: requestHeaders,
       url: params?.query ? urlWithQueryParams : options.url,
       data: signResult.originalParams.body,
     };
