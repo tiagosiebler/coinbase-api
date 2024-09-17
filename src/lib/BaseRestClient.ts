@@ -119,8 +119,9 @@ export abstract class BaseRestClient {
   private options: RestClientOptions;
   private baseUrl: string;
   private globalRequestOptions: AxiosRequestConfig;
-  private apiKeyName: string | undefined;
-  private apiKeySecret: string | undefined;
+  private apiKey: string | undefined;
+  private apiSecret: string | undefined;
+  private apiPassphrase: string | undefined;
 
   /** Defines the client type (affecting how requests & signatures behave) */
   abstract getClientType(): RestClientType;
@@ -141,7 +142,7 @@ export abstract class BaseRestClient {
     };
 
     const VERSION = '0.1.0';
-    const USER_AGENT = `coinbase-api-node/${VERSION}`;
+    const USER_AGENT = `${APIIDPrefix}/${VERSION}`;
 
     this.globalRequestOptions = {
       /** in ms == 5 minutes by default */
@@ -180,17 +181,21 @@ export abstract class BaseRestClient {
       this.getClientType(),
     );
 
-    this.apiKeyName = this.options.apiKey;
-    this.apiKeySecret = this.options.apiSecret;
+    this.apiKey = this.options.apiKey;
+    this.apiSecret = this.options.apiSecret;
+    this.apiPassphrase = this.options.apiPassphrase;
 
     if (restClientOptions.cdpApiKey) {
-      this.apiKeyName = restClientOptions.cdpApiKey.name;
-      this.apiKeySecret = restClientOptions.cdpApiKey.privateKey;
+      this.apiKey = restClientOptions.cdpApiKey.name;
+      this.apiSecret = restClientOptions.cdpApiKey.privateKey;
     }
 
-    // Throw if one of the 3 values is missing, but at least one of them is set
-    const credentials = [this.apiKeyName, this.apiKeySecret];
+    // Throw if one of these values is missing, and at least one of them is set
+
+    const credentials = [this.apiKey, this.apiSecret];
     if (
+      // commerce only needs keys, not key and secret
+      this.getClientType() !== REST_CLIENT_TYPE_ENUM.commerce &&
       credentials.includes(undefined) &&
       credentials.some((v) => typeof v === 'string')
     ) {
@@ -363,36 +368,38 @@ export abstract class BaseRestClient {
   private async signRequest<T extends ParamsInRequest | undefined = {}>(
     data: T,
     url: string,
-    _endpoint: string,
+    endpoint: string,
     method: Method,
     signMethod: SignMethod,
   ): Promise<SignedRequest<T>> {
-    const timestamp = this.getSignTimestampMs();
+    const timestampInMs = this.getSignTimestampMs();
 
     const res: SignedRequest<T> = {
       originalParams: {
         ...data,
       },
       sign: '',
-      timestamp,
+      timestamp: timestampInMs,
       recvWindow: 0,
       serializedParams: '',
       queryParamsWithSign: '',
       headers: {},
     };
 
-    const apiKey = this.apiKeyName;
-    const apiSecret = this.apiKeySecret;
+    const apiKey = this.apiKey;
+    const apiSecret = this.apiSecret;
+    const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
 
-    if (!apiKey || !apiSecret) {
+    if (!apiKey) {
       return res;
     }
 
     const strictParamValidation = this.options.strictParamValidation;
     const encodeQueryStringValues = true;
 
-    const requestBodyToSign = res.originalParams?.body
-      ? JSON.stringify(res.originalParams?.body)
+    const requestBody = data?.body || data;
+    const requestBodyString = requestBody
+      ? JSON.stringify(data?.body || data)
       : '';
 
     if (signMethod === 'coinbase') {
@@ -406,7 +413,7 @@ export abstract class BaseRestClient {
               encodeQueryStringValues,
               '?',
             )
-          : JSON.stringify(data?.body || data) || '';
+          : requestBodyString;
 
       // https://docs.cdp.coinbase.com/product-apis/docs/welcome
       switch (clientType) {
@@ -415,7 +422,21 @@ export abstract class BaseRestClient {
           // Both adv trade & app API use the same JWT auth mechanism
           // Advanced Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/rest-api-auth
           // App: https://docs.cdp.coinbase.com/coinbase-app/docs/api-key-authentication
-          const sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot prepare JWT.`);
+          }
+
+          const sign = signJWT({
+            url,
+            method,
+            algorithm: 'ES256',
+            timestampMs: timestampInMs,
+            jwtExpiresSeconds,
+            apiPubKey: apiKey,
+            apiPrivKey: apiSecret,
+          });
+
           return {
             ...res,
             sign: sign,
@@ -429,35 +450,105 @@ export abstract class BaseRestClient {
           // Docs: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-integration
           // See: https://github.com/tiagosiebler/coinbase-api/issues/24
         }
+
         case REST_CLIENT_TYPE_ENUM.exchange: {
-          // TODO: hmac
           // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
+          const timestampInSeconds = timestampInMs / 1000;
+
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!this.apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+          );
+
           const headers = {
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
             'CB-ACCESS-KEY': apiKey,
-            'CB-ACCESS-SIGN': 'sign TODO:',
-            'CB-ACCESS-TIMESTAMP': 'TODO:',
-            'CB-ACCESS-PASSPHRASE': 'TODO:',
+          };
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
           };
 
           // TODO: is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
-          return res;
         }
-        case REST_CLIENT_TYPE_ENUM.international: {
-          // TODO: hmac
-          // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
-          // TODO: is there demand for FIX
-          // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
-          return res;
-        }
+
+        // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
+        case REST_CLIENT_TYPE_ENUM.international:
+
+        // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
         case REST_CLIENT_TYPE_ENUM.prime: {
-          // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
-          // TODO: is there demand for FIX
+          const timestampInSeconds = String(Math.floor(timestampInMs / 1000));
+
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!this.apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+          );
+
+          const headers = {
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
+            'CB-ACCESS-KEY': apiKey,
+          };
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
+
+          // For CB International, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
+
+          // For CB Prime, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
-          return res;
         }
         case REST_CLIENT_TYPE_ENUM.commerce: {
-          return res;
+          // https://docs.cdp.coinbase.com/commerce-onchain/docs/getting-started
+          // No auth?
+          return {
+            ...res,
+            headers: {
+              'X-CC-Api-Key': apiKey,
+            },
+          };
         }
         default: {
           console.error(
@@ -513,7 +604,7 @@ export abstract class BaseRestClient {
       };
     }
 
-    if (!this.apiKeyName || !this.apiKeySecret) {
+    if (!this.apiKey || !this.apiSecret) {
       throw new Error(MISSING_API_KEYS_ERROR);
     }
 
@@ -539,7 +630,7 @@ export abstract class BaseRestClient {
     deleteUndefinedValues(params?.query);
     deleteUndefinedValues(params?.headers);
 
-    if (isPublicApi || !this.apiKeyName || !this.apiKeySecret) {
+    if (isPublicApi || !this.apiKey || !this.apiSecret) {
       return {
         ...options,
         params: params,

@@ -32,15 +32,33 @@ const exchangeBaseURLMap = {
 } as const;
 
 export interface RestClientOptions {
-  /** Your API key name */
+  /**
+   * Your API key name.
+   *
+   * - For the Advanced Trade or App APIs, this is your API Key Name.
+   */
   apiKey?: string;
 
-  /** Your API Private Key */
+  /**
+   * Your API key secret.
+   *
+   * - For the Advanced Trade or App APIs, this is your API private key (including the -----BEGIN EC PRIVATE KEY-----\n etc).
+   */
   apiSecret?: string;
 
   /**
-   * Instead of passing the key name and private key,
-   * you can also parse the exported "cdp_api_key.json" into an object and pass it here.
+   * Your API passphrase (NOT your account password). Only used for the API groups that use an API passphrase:
+   * - Coinbase Exchange API
+   * - Coinbase International API
+   * - Coinbase Prime API
+   */
+  apiPassphrase?: string;
+
+  /**
+   * For the Advanced Trade or App APIs, instead of passing the key name and
+   * private key, you can also parse the exported "cdp_api_key.json" into an object and pass it here.
+   *
+   * It will automatically get parsed into the apiKey & apiSecret configuration parameters.
    */
   cdpApiKey?: {
     name: string;
@@ -79,6 +97,11 @@ export interface RestClientOptions {
    * Default: 1000 (defaults comes from https agent)
    */
   keepAliveMsecs?: number;
+
+  /**
+   * For JWT auth (adv trade & app API), seconds until jwt expires. Defaults to 120 seconds.
+   */
+  jwtExpiresSeconds?: number;
 
   /** Default: false. If true, we'll throw errors if any params are undefined */
   strictParamValidation?: boolean;
