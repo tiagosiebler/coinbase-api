@@ -33,10 +33,10 @@ const exchangeBaseURLMap = {
 
 export interface RestClientOptions {
   /** Your API key name */
-  apiKeyName?: string;
+  apiKey?: string;
 
   /** Your API Private Key */
-  apiPrivateKey?: string;
+  apiSecret?: string;
 
   /**
    * Instead of passing the key name and private key,

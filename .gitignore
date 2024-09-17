@@ -10,3 +10,5 @@ dist
 
 coverage
 ts-adv-trade-test-private.ts
+examples/ts-app-priv.ts
+examples/ts-commerce.ts

@@ -35,6 +35,7 @@ interface SignedRequest<T extends object | undefined = {}> {
   queryParamsWithSign: string;
   timestamp: number;
   recvWindow: number;
+  headers: object;
 }
 
 interface UnsignedRequest<T extends object | undefined = {}> {
@@ -179,8 +180,8 @@ export abstract class BaseRestClient {
       this.getClientType(),
     );
 
-    this.apiKeyName = this.options.apiKeyName;
-    this.apiKeySecret = this.options.apiPrivateKey;
+    this.apiKeyName = this.options.apiKey;
+    this.apiKeySecret = this.options.apiSecret;
 
     if (restClientOptions.cdpApiKey) {
       this.apiKeyName = restClientOptions.cdpApiKey.name;
@@ -377,6 +378,7 @@ export abstract class BaseRestClient {
       recvWindow: 0,
       serializedParams: '',
       queryParamsWithSign: '',
+      headers: {},
     };
 
     const apiKey = this.apiKeyName;
@@ -396,24 +398,65 @@ export abstract class BaseRestClient {
     if (signMethod === 'coinbase') {
       const clientType = this.getClientType();
 
-      switch (clientType) {
-        case REST_CLIENT_TYPE_ENUM.advancedTrade: {
-          const signRequestParams =
-            method === 'GET'
-              ? serializeParams(
-                  data?.query || data,
-                  strictParamValidation,
-                  encodeQueryStringValues,
-                  '?',
-                )
-              : JSON.stringify(data?.body || data) || '';
+      const signRequestParams =
+        method === 'GET'
+          ? serializeParams(
+              data?.query || data,
+              strictParamValidation,
+              encodeQueryStringValues,
+              '?',
+            )
+          : JSON.stringify(data?.body || data) || '';
 
-          res.sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
-          res.queryParamsWithSign = signRequestParams;
+      // https://docs.cdp.coinbase.com/product-apis/docs/welcome
+      switch (clientType) {
+        case REST_CLIENT_TYPE_ENUM.advancedTrade:
+        case REST_CLIENT_TYPE_ENUM.coinbaseApp: {
+          // Both adv trade & app API use the same JWT auth mechanism
+          // Advanced Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/rest-api-auth
+          // App: https://docs.cdp.coinbase.com/coinbase-app/docs/api-key-authentication
+          const sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              Authorization: `Bearer ${sign}`,
+            },
+          };
+
+          // TODO: is there demand for oauth support?
+          // Docs: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-integration
+          // See: https://github.com/tiagosiebler/coinbase-api/issues/24
+        }
+        case REST_CLIENT_TYPE_ENUM.exchange: {
+          // TODO: hmac
+          // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
+          const headers = {
+            'CB-ACCESS-KEY': apiKey,
+            'CB-ACCESS-SIGN': 'sign TODO:',
+            'CB-ACCESS-TIMESTAMP': 'TODO:',
+            'CB-ACCESS-PASSPHRASE': 'TODO:',
+          };
+
+          // TODO: is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
           return res;
         }
-        case REST_CLIENT_TYPE_ENUM.coinbaseApp: {
-          // tODO:
+        case REST_CLIENT_TYPE_ENUM.international: {
+          // TODO: hmac
+          // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
+          // TODO: is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
+          return res;
+        }
+        case REST_CLIENT_TYPE_ENUM.prime: {
+          // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
+          // TODO: is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
+          return res;
+        }
+        case REST_CLIENT_TYPE_ENUM.commerce: {
           return res;
         }
         default: {
@@ -423,6 +466,9 @@ export abstract class BaseRestClient {
               clientType,
               `Unhandled sign client type : "${clientType}"`,
             ),
+          );
+          throw new Error(
+            `Unhandled request sign for client : "${clientType}"`,
           );
         }
       }
@@ -479,7 +525,7 @@ export abstract class BaseRestClient {
     method: Method,
     endpoint: string,
     url: string,
-    params?: any,
+    params?: any | undefined,
     isPublicApi?: boolean,
   ): Promise<AxiosRequestConfig> {
     const options: AxiosRequestConfig = {
@@ -510,8 +556,11 @@ export abstract class BaseRestClient {
     );
 
     const requestHeaders = {
-      Authorization: `Bearer ${signResult.sign}`,
-      ...params.headers,
+      // request parameter headers for this request
+      ...params?.headers,
+      // auth headers for this request
+      ...signResult.headers,
+      // global headers for every request
       ...options.headers,
     };
 
