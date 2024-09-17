@@ -1,6 +1,6 @@
 import { CBInternationalClient } from '../src/index.js';
 
-const coinbaseInternational = new CBInternationalClient({});
+const coinbaseInternational = new CBInternationalClient();
 
 async function main() {
   try {
