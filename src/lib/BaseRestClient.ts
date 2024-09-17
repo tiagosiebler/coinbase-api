@@ -17,6 +17,7 @@ import {
   APIIDPrefix,
   getRestBaseUrl,
   logInvalidOrderId,
+  REST_CLIENT_TYPE_ENUM,
   RestClientOptions,
   RestClientType,
   serializeParams,
@@ -34,6 +35,7 @@ interface SignedRequest<T extends object | undefined = {}> {
   queryParamsWithSign: string;
   timestamp: number;
   recvWindow: number;
+  headers: object;
 }
 
 interface UnsignedRequest<T extends object | undefined = {}> {
@@ -44,12 +46,16 @@ interface UnsignedRequest<T extends object | undefined = {}> {
 type SignMethod = 'coinbase';
 
 /**
- * Some requests require some params to be in the query string and some in the body.
- * This type anticipates both are possible in any combination.
+ * Some requests require some params to be in the query string, some in the body, some even in the headers.
+ * This type anticipates either are possible in any combination.
  *
  * The request builder will automatically handle where parameters should go.
  */
-type ParamsInQueryAndOrBody = { query?: object; body?: object };
+type ParamsInRequest = {
+  query?: object;
+  body?: object;
+  headers?: object;
+};
 
 const ENABLE_HTTP_TRACE =
   typeof process === 'object' &&
@@ -113,8 +119,9 @@ export abstract class BaseRestClient {
   private options: RestClientOptions;
   private baseUrl: string;
   private globalRequestOptions: AxiosRequestConfig;
-  private apiKeyName: string | undefined;
-  private apiKeySecret: string | undefined;
+  private apiKey: string | undefined;
+  private apiSecret: string | undefined;
+  private apiPassphrase: string | undefined;
 
   /** Defines the client type (affecting how requests & signatures behave) */
   abstract getClientType(): RestClientType;
@@ -135,7 +142,7 @@ export abstract class BaseRestClient {
     };
 
     const VERSION = '0.1.0';
-    const USER_AGENT = `coinbase-api-node/${VERSION}`;
+    const USER_AGENT = `${APIIDPrefix}/${VERSION}`;
 
     this.globalRequestOptions = {
       /** in ms == 5 minutes by default */
@@ -174,17 +181,21 @@ export abstract class BaseRestClient {
       this.getClientType(),
     );
 
-    this.apiKeyName = this.options.apiKeyName;
-    this.apiKeySecret = this.options.apiPrivateKey;
+    this.apiKey = this.options.apiKey;
+    this.apiSecret = this.options.apiSecret;
+    this.apiPassphrase = this.options.apiPassphrase;
 
     if (restClientOptions.cdpApiKey) {
-      this.apiKeyName = restClientOptions.cdpApiKey.name;
-      this.apiKeySecret = restClientOptions.cdpApiKey.privateKey;
+      this.apiKey = restClientOptions.cdpApiKey.name;
+      this.apiSecret = restClientOptions.cdpApiKey.privateKey;
     }
 
-    // Throw if one of the 3 values is missing, but at least one of them is set
-    const credentials = [this.apiKeyName, this.apiKeySecret];
+    // Throw if one of these values is missing, and at least one of them is set
+
+    const credentials = [this.apiKey, this.apiSecret];
     if (
+      // commerce only needs keys, not key and secret
+      this.getClientType() !== REST_CLIENT_TYPE_ENUM.commerce &&
       credentials.includes(undefined) &&
       credentials.some((v) => typeof v === 'string')
     ) {
@@ -203,7 +214,7 @@ export abstract class BaseRestClient {
     return this._call('GET', endpoint, params, true);
   }
 
-  post(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  post(endpoint: string, params?: ParamsInRequest) {
     return this._call('POST', endpoint, params, true);
   }
 
@@ -211,19 +222,19 @@ export abstract class BaseRestClient {
     return this._call('GET', endpoint, params, false);
   }
 
-  postPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  postPrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('POST', endpoint, params, false);
   }
 
-  deletePrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  deletePrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('DELETE', endpoint, params, false);
   }
 
-  putPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  putPrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('PUT', endpoint, params, false);
   }
 
-  patchPrivate(endpoint: string, params?: ParamsInQueryAndOrBody) {
+  patchPrivate(endpoint: string, params?: ParamsInRequest) {
     return this._call('PATCH', endpoint, params, false);
   }
 
@@ -233,7 +244,7 @@ export abstract class BaseRestClient {
   private async _call(
     method: Method,
     endpoint: string,
-    params?: ParamsInQueryAndOrBody,
+    params?: ParamsInRequest,
     isPublicApi?: boolean,
   ): Promise<any> {
     // Sanity check to make sure it's only ever prefixed by one forward slash
@@ -354,41 +365,46 @@ export abstract class BaseRestClient {
   /**
    * @private sign request and set recv window
    */
-  private async signRequest<T extends ParamsInQueryAndOrBody | undefined = {}>(
+  private async signRequest<T extends ParamsInRequest | undefined = {}>(
     data: T,
     url: string,
-    _endpoint: string,
+    endpoint: string,
     method: Method,
     signMethod: SignMethod,
   ): Promise<SignedRequest<T>> {
-    const timestamp = this.getSignTimestampMs();
+    const timestampInMs = this.getSignTimestampMs();
 
     const res: SignedRequest<T> = {
       originalParams: {
         ...data,
       },
       sign: '',
-      timestamp,
+      timestamp: timestampInMs,
       recvWindow: 0,
       serializedParams: '',
       queryParamsWithSign: '',
+      headers: {},
     };
 
-    const apiKey = this.apiKeyName;
-    const apiSecret = this.apiKeySecret;
+    const apiKey = this.apiKey;
+    const apiSecret = this.apiSecret;
+    const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
 
-    if (!apiKey || !apiSecret) {
+    if (!apiKey) {
       return res;
     }
 
     const strictParamValidation = this.options.strictParamValidation;
     const encodeQueryStringValues = true;
 
-    const requestBodyToSign = res.originalParams?.body
-      ? JSON.stringify(res.originalParams?.body)
+    const requestBody = data?.body || data;
+    const requestBodyString = requestBody
+      ? JSON.stringify(data?.body || data)
       : '';
 
     if (signMethod === 'coinbase') {
+      const clientType = this.getClientType();
+
       const signRequestParams =
         method === 'GET'
           ? serializeParams(
@@ -397,11 +413,156 @@ export abstract class BaseRestClient {
               encodeQueryStringValues,
               '?',
             )
-          : JSON.stringify(data?.body || data) || '';
+          : requestBodyString;
 
-      res.sign = signJWT(url, method, 'ES256', apiKey, apiSecret);
-      res.queryParamsWithSign = signRequestParams;
-      return res;
+      // https://docs.cdp.coinbase.com/product-apis/docs/welcome
+      switch (clientType) {
+        case REST_CLIENT_TYPE_ENUM.advancedTrade:
+        case REST_CLIENT_TYPE_ENUM.coinbaseApp: {
+          // Both adv trade & app API use the same JWT auth mechanism
+          // Advanced Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/rest-api-auth
+          // App: https://docs.cdp.coinbase.com/coinbase-app/docs/api-key-authentication
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot prepare JWT.`);
+          }
+
+          const sign = signJWT({
+            url,
+            method,
+            algorithm: 'ES256',
+            timestampMs: timestampInMs,
+            jwtExpiresSeconds,
+            apiPubKey: apiKey,
+            apiPrivKey: apiSecret,
+          });
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              Authorization: `Bearer ${sign}`,
+            },
+          };
+
+          // TODO: is there demand for oauth support?
+          // Docs: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-integration
+          // See: https://github.com/tiagosiebler/coinbase-api/issues/24
+        }
+
+        case REST_CLIENT_TYPE_ENUM.exchange: {
+          // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
+          const timestampInSeconds = timestampInMs / 1000;
+
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!this.apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+          );
+
+          const headers = {
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
+            'CB-ACCESS-KEY': apiKey,
+          };
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
+
+          // TODO: is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
+        }
+
+        // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
+        case REST_CLIENT_TYPE_ENUM.international:
+
+        // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
+        case REST_CLIENT_TYPE_ENUM.prime: {
+          const timestampInSeconds = String(Math.floor(timestampInMs / 1000));
+
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!this.apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+          );
+
+          const headers = {
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
+            'CB-ACCESS-KEY': apiKey,
+          };
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
+
+          // For CB International, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
+
+          // For CB Prime, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
+        }
+        case REST_CLIENT_TYPE_ENUM.commerce: {
+          // https://docs.cdp.coinbase.com/commerce-onchain/docs/getting-started
+          // No auth?
+          return {
+            ...res,
+            headers: {
+              'X-CC-Api-Key': apiKey,
+            },
+          };
+        }
+        default: {
+          console.error(
+            new Date(),
+            neverGuard(
+              clientType,
+              `Unhandled sign client type : "${clientType}"`,
+            ),
+          );
+          throw new Error(
+            `Unhandled request sign for client : "${clientType}"`,
+          );
+        }
+      }
     }
 
     console.error(
@@ -443,7 +604,7 @@ export abstract class BaseRestClient {
       };
     }
 
-    if (!this.apiKeyName || !this.apiKeySecret) {
+    if (!this.apiKey || !this.apiSecret) {
       throw new Error(MISSING_API_KEYS_ERROR);
     }
 
@@ -455,7 +616,7 @@ export abstract class BaseRestClient {
     method: Method,
     endpoint: string,
     url: string,
-    params?: any,
+    params?: any | undefined,
     isPublicApi?: boolean,
   ): Promise<AxiosRequestConfig> {
     const options: AxiosRequestConfig = {
@@ -467,8 +628,9 @@ export abstract class BaseRestClient {
     deleteUndefinedValues(params);
     deleteUndefinedValues(params?.body);
     deleteUndefinedValues(params?.query);
+    deleteUndefinedValues(params?.headers);
 
-    if (isPublicApi || !this.apiKeyName || !this.apiKeySecret) {
+    if (isPublicApi || !this.apiKey || !this.apiSecret) {
       return {
         ...options,
         params: params,
@@ -484,8 +646,13 @@ export abstract class BaseRestClient {
       isPublicApi,
     );
 
-    const authHeaders = {
-      Authorization: `Bearer ${signResult.sign}`,
+    const requestHeaders = {
+      // request parameter headers for this request
+      ...params?.headers,
+      // auth headers for this request
+      ...signResult.headers,
+      // global headers for every request
+      ...options.headers,
     };
 
     const urlWithQueryParams =
@@ -494,20 +661,14 @@ export abstract class BaseRestClient {
     if (method === 'GET' || !params?.body) {
       return {
         ...options,
-        headers: {
-          ...authHeaders,
-          ...options.headers,
-        },
+        headers: requestHeaders,
         url: urlWithQueryParams,
       };
     }
 
     return {
       ...options,
-      headers: {
-        ...authHeaders,
-        ...options.headers,
-      },
+      headers: requestHeaders,
       url: params?.query ? urlWithQueryParams : options.url,
       data: signResult.originalParams.body,
     };

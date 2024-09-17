@@ -1,14 +1,24 @@
 import jwt from 'jsonwebtoken';
 import { nanoid } from 'nanoid';
 
-export function signJWT(
-  url: string,
-  method: string,
-  algorithm: 'ES256',
-  apiPubKey: string,
-  apiPrivKey: string,
-): string {
-  //
+export function signJWT(params: {
+  url: string;
+  method: string;
+  algorithm: 'ES256';
+  timestampMs: number;
+  jwtExpiresSeconds: number;
+  apiPubKey: string;
+  apiPrivKey: string;
+}): string {
+  const {
+    url,
+    method,
+    algorithm,
+    timestampMs,
+    jwtExpiresSeconds,
+    apiPrivKey,
+    apiPubKey,
+  } = params;
 
   // Remove https:// but keep the rest
   const urlWithEndpoint = url.slice(8);
@@ -16,8 +26,8 @@ export function signJWT(
 
   const payload = {
     iss: 'cdp',
-    nbf: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 120,
+    nbf: Math.floor(timestampMs / 1000),
+    exp: Math.floor(timestampMs / 1000) + jwtExpiresSeconds,
     sub: apiPubKey,
     uri,
   };

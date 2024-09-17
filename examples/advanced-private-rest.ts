@@ -3,8 +3,8 @@ import { CBAdvancedTradeClient } from '../src/index.js';
 async function main() {
   const client = new CBAdvancedTradeClient({
     // cdpApiKey: credsTradePermission,
-    apiKeyName: '',
-    apiPrivateKey: '',
+    apiKey: '',
+    apiSecret: '',
   });
 
   try {

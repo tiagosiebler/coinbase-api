@@ -57,8 +57,8 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       }
 
       this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
-        apiKeyName: this.options.apiKey,
-        apiPrivateKey: this.options.apiSecret,
+        apiKey: this.options.apiKey,
+        apiSecret: this.options.apiSecret,
       });
       return this.RESTClientCache[clientType];
     }
@@ -69,8 +69,8 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     }
 
     this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
-      apiKeyName: this.options.apiKey,
-      apiPrivateKey: this.options.apiSecret,
+      apiKey: this.options.apiKey,
+      apiSecret: this.options.apiSecret,
     });
     return this.RESTClientCache[clientType];
     throw new Error(`Unhandled WsKey: "${wsKey}"`);
