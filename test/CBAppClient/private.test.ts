@@ -1,48 +1,50 @@
-import { AdvancedTradeClient } from '../../src/index.js';
+import { CBAppClient } from '../../src/index.js';
 
-describe('REST PRIVATE', () => {
+let accId = '';
+
+describe('CBAppClient PRIVATE', () => {
   const account = {
-    key: process.env.API_KEY,
-    secret: process.env.API_SECRET,
-    passphrase: process.env.API_PASSPHRASE,
+    key: process.env.API_KEY_NAME,
+    secret: process.env.API_PRIVATE_KEY,
   };
 
-  const rest = new AdvancedTradeClient({
+  const rest = new CBAppClient({
     apiKeyName: account.key,
     apiPrivateKey: account.secret,
-    apiPassphrase: account.passphrase,
   });
 
   it('should have credentials to test with', () => {
     expect(account.key).toBeDefined();
     expect(account.secret).toBeDefined();
-    expect(account.passphrase).toBeDefined();
   });
 
   describe('public endpoints', () => {
     it('should succeed making a GET request', async () => {
-      const res = await rest.getTickers();
-      expect(res.data.ticker).toMatchObject(expect.any(Array));
+      const res = await rest.getFiatCurrencies();
+      expect(res).toMatchObject({
+        data: expect.any(Array),
+      });
     });
   });
 
   describe('private endpoints', () => {
     describe('GET requests', () => {
       test('without params', async () => {
-        const res = await rest.getBalances();
-        // console.log('res without', res);
+        const res = await rest.getAccounts();
         expect(res).toMatchObject({
-          code: '200000',
+          pagination: expect.any(Object),
           data: expect.any(Array),
         });
+        accId = res.data[0].id;
       });
 
       test('with params', async () => {
-        const res = await rest.getBalances({ currency: 'USDT' });
-        // console.log('res with', res);
+        const res = await rest.getAccount({
+          account_id: accId,
+        });
+        //console.log('res with params', res);
         expect(res).toMatchObject({
-          code: '200000',
-          data: expect.any(Array),
+          data: expect.any(Object),
         });
       });
     });
@@ -50,9 +52,12 @@ describe('REST PRIVATE', () => {
     describe('POST requests', () => {
       test('with params as request body', async () => {
         try {
-          const res = await rest.updateMarginLeverageV3({
-            leverage: '1',
-            symbol: 'BTC-USDT',
+          const res = await rest.transferMoney({
+            account_id: 'cff1d5a6-9f09-5645-8919-b998e7055170',
+            type: 'transfer',
+            to: '58542935-67b5-56e1-a3f9-42686e07fa40',
+            amount: '1',
+            currency: 'USDT',
           });
 
           console.log(`res "${expect.getState().currentTestName}"`, res);
@@ -62,10 +67,11 @@ describe('REST PRIVATE', () => {
         } catch (e: any) {
           // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
-          const responseBody = e?.body;
+          const responseBody = e?.body.errors[0];
           expect(responseBody).toMatchObject({
-            code: '400007',
-            msg: expect.stringContaining('more permission'),
+            id: 'invalid_scope',
+            message: expect.any(String),
+            url: expect.any(String),
           });
         }
       });
