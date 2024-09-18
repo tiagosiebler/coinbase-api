@@ -68,10 +68,10 @@ export class CBAppClient extends BaseRestClient {
    *
    * Get a current user's account by account ID or currency string.
    */
-  getAccount(params: { accountId: string }): Promise<{
+  getAccount(params: { account_id: string }): Promise<{
     data: CBAppAccount;
   }> {
-    return this.getPrivate(`/v2/accounts/${params.accountId}`);
+    return this.getPrivate(`/v2/accounts/${params.account_id}`);
   }
 
   /**
@@ -85,10 +85,10 @@ export class CBAppClient extends BaseRestClient {
    *
    * Creates a new address for an account. Addresses can be created for wallet account types.
    */
-  createAddress(params: { accountId: string; name?: string }): Promise<{
+  createAddress(params: { account_id: string; name?: string }): Promise<{
     data: CBAppAddress;
   }> {
-    return this.postPrivate(`/v2/accounts/${params.accountId}/addresses`, {
+    return this.postPrivate(`/v2/accounts/${params.account_id}/addresses`, {
       body: params,
     });
   }
@@ -101,14 +101,17 @@ export class CBAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of addresses.
    */
-  getAddresses(params: { accountId: string; paginationURL?: string }): Promise<{
+  getAddresses(params: {
+    account_id: string;
+    paginationURL?: string;
+  }): Promise<{
     pagination: CBAppPagination;
     data: CBAppAddress[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
     }
-    return this.getPrivate(`/v2/accounts/${params.accountId}/addresses`);
+    return this.getPrivate(`/v2/accounts/${params.account_id}/addresses`);
   }
 
   /**
@@ -119,11 +122,11 @@ export class CBAppClient extends BaseRestClient {
    *
    * !! An address can only be associated with one account. See Create Address to create new addresses.
    */
-  getAddress(params: { accountId: string; addressId: string }): Promise<{
+  getAddress(params: { account_id: string; addressId: string }): Promise<{
     data: CBAppAddress;
   }> {
     return this.getPrivate(
-      `/v2/accounts/${params.accountId}/addresses/${params.addressId}`,
+      `/v2/accounts/${params.account_id}/addresses/${params.addressId}`,
     );
   }
 
@@ -137,7 +140,7 @@ export class CBAppClient extends BaseRestClient {
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
    */
   getAddressTransactions(params: {
-    accountId: string;
+    account_id: string;
     addressId: string;
     paginationURL?: string;
   }): Promise<{
@@ -148,7 +151,7 @@ export class CBAppClient extends BaseRestClient {
       return this.getPrivate(params.paginationURL);
     }
     return this.getPrivate(
-      `/v2/accounts/${params.accountId}/addresses/${params.addressId}/transactions`,
+      `/v2/accounts/${params.account_id}/addresses/${params.addressId}/transactions`,
     );
   }
 
@@ -167,8 +170,8 @@ export class CBAppClient extends BaseRestClient {
   sendMoney(
     params: CBAppSendMoneyRequest,
   ): Promise<{ data: CBAppTransaction }> {
-    const { accountId, ...restParams } = params;
-    return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
+    const { account_id, ...restParams } = params;
+    return this.postPrivate(`/v2/accounts/${account_id}/transactions`, {
       body: restParams,
     });
   }
@@ -182,8 +185,8 @@ export class CBAppClient extends BaseRestClient {
   transferMoney(
     params: CBAppTransferMoneyRequest,
   ): Promise<{ data: CBAppTransaction }> {
-    const { accountId, ...restParams } = params;
-    return this.postPrivate(`/v2/accounts/${accountId}/transactions`, {
+    const { account_id, ...restParams } = params;
+    return this.postPrivate(`/v2/accounts/${account_id}/transactions`, {
       body: restParams,
     });
   }
@@ -197,7 +200,7 @@ export class CBAppClient extends BaseRestClient {
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of transactions.
    */
   getTransactions(params: {
-    accountId: string;
+    account_id: string;
     paginationURL?: string;
   }): Promise<{
     pagination: CBAppPagination;
@@ -206,7 +209,7 @@ export class CBAppClient extends BaseRestClient {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
     }
-    return this.getPrivate(`/v2/accounts/${params.accountId}/transactions`);
+    return this.getPrivate(`/v2/accounts/${params.account_id}/transactions`);
   }
 
   /**
@@ -215,13 +218,13 @@ export class CBAppClient extends BaseRestClient {
    * Get a single transaction for an account.
    */
   getTransaction(params: {
-    accountId: string;
+    account_id: string;
     transactionId: string;
   }): Promise<{
     data: CBAppTransaction;
   }> {
     return this.getPrivate(
-      `/v2/accounts/${params.accountId}/transactions/${params.transactionId}`,
+      `/v2/accounts/${params.account_id}/transactions/${params.transactionId}`,
     );
   }
 
@@ -239,8 +242,8 @@ export class CBAppClient extends BaseRestClient {
   depositFunds(
     params: CBAppDepositFundsRequest,
   ): Promise<{ data: CBAppDepositWithdrawal }> {
-    const { accountId, ...restParams } = params;
-    return this.postPrivate(`/v2/accounts/${accountId}/deposits`, {
+    const { account_id, ...restParams } = params;
+    return this.postPrivate(`/v2/accounts/${account_id}/deposits`, {
       body: restParams,
     });
   }
@@ -251,11 +254,11 @@ export class CBAppClient extends BaseRestClient {
    * Completes a deposit that is created in commit: false state.
    */
   commitDeposit(params: {
-    accountId: string;
-    depositId: string;
+    account_id: string;
+    deposit_id: string;
   }): Promise<{ data: CBAppDepositWithdrawal }> {
     return this.postPrivate(
-      `/v2/accounts/${params.accountId}/deposits/${params.depositId}/commit`,
+      `/v2/accounts/${params.account_id}/deposits/${params.deposit_id}/commit`,
     );
   }
 
@@ -267,14 +270,14 @@ export class CBAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of deposits.
    */
-  getDeposits(params: { accountId: string; paginationURL?: string }): Promise<{
+  getDeposits(params: { account_id: string; paginationURL?: string }): Promise<{
     pagination: CBAppPagination;
     data: CBAppDepositWithdrawal[];
   }> {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
     }
-    return this.getPrivate(`/v2/accounts/${params.accountId}/deposits`);
+    return this.getPrivate(`/v2/accounts/${params.account_id}/deposits`);
   }
 
   /**
@@ -282,11 +285,11 @@ export class CBAppClient extends BaseRestClient {
    *
    * Get one deposit by deposit Id.
    */
-  getDeposit(params: { accountId: string; depositId: string }): Promise<{
+  getDeposit(params: { account_id: string; deposit_id: string }): Promise<{
     data: CBAppDepositWithdrawal;
   }> {
     return this.getPrivate(
-      `/v2/accounts/${params.accountId}/deposits/${params.depositId}`,
+      `/v2/accounts/${params.account_id}/deposits/${params.deposit_id}`,
     );
   }
 
@@ -304,8 +307,8 @@ export class CBAppClient extends BaseRestClient {
   withdrawFunds(
     params: CBAppWithdrawFundsRequest,
   ): Promise<{ data: CBAppDepositWithdrawal }> {
-    const { accountId, ...restParams } = params;
-    return this.postPrivate(`/v2/accounts/${accountId}/withdrawals`, {
+    const { account_id, ...restParams } = params;
+    return this.postPrivate(`/v2/accounts/${account_id}/withdrawals`, {
       body: restParams,
     });
   }
@@ -316,11 +319,11 @@ export class CBAppClient extends BaseRestClient {
    * Completes a withdrawal that is created in commit: false state.
    */
   commitWithdrawal(params: {
-    accountId: string;
-    withdrawalId: string;
+    account_id: string;
+    withdrawal_id: string;
   }): Promise<{ data: CBAppDepositWithdrawal }> {
     return this.postPrivate(
-      `/v2/accounts/${params.accountId}/withdrawals/${params.withdrawalId}/commit`,
+      `/v2/accounts/${params.account_id}/withdrawals/${params.withdrawal_id}/commit`,
     );
   }
 
@@ -333,7 +336,7 @@ export class CBAppClient extends BaseRestClient {
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of withdrawals.
    */
   getWithdrawals(params: {
-    accountId: string;
+    account_id: string;
     paginationURL?: string;
   }): Promise<{
     pagination: CBAppPagination;
@@ -342,7 +345,7 @@ export class CBAppClient extends BaseRestClient {
     if (params?.paginationURL) {
       return this.getPrivate(params.paginationURL);
     }
-    return this.getPrivate(`/v2/accounts/${params.accountId}/withdrawals`);
+    return this.getPrivate(`/v2/accounts/${params.account_id}/withdrawals`);
   }
 
   /**
@@ -350,11 +353,14 @@ export class CBAppClient extends BaseRestClient {
    *
    * Get a single withdrawal.
    */
-  getWithdrawal(params: { accountId: string; withdrawalId: string }): Promise<{
+  getWithdrawal(params: {
+    account_id: string;
+    withdrawal_id: string;
+  }): Promise<{
     data: CBAppDepositWithdrawal;
   }> {
     return this.getPrivate(
-      `/v2/accounts/${params.accountId}/withdrawals/${params.withdrawalId}`,
+      `/v2/accounts/${params.account_id}/withdrawals/${params.withdrawal_id}`,
     );
   }
 
