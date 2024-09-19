@@ -351,8 +351,9 @@ export abstract class BaseRestClient {
       requestOptions: {
         ...this.options,
         // Prevent credentials from leaking into error messages
-        apiKeyName: 'omittedFromError',
-        apiPrivateKey: 'omittedFromError',
+        apiKey: 'omittedFromError',
+        apiSecret: 'omittedFromError',
+        apiPassphrase: 'omittedFromError',
         cdpApiKey: 'omittedFromError',
       },
       requestParams,
@@ -385,6 +386,7 @@ export abstract class BaseRestClient {
 
     const apiKey = this.apiKey;
     const apiSecret = this.apiSecret;
+    const apiPassphrase = this.apiPassphrase;
     const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
 
     if (!apiKey) {
@@ -448,54 +450,12 @@ export abstract class BaseRestClient {
           // See: https://github.com/tiagosiebler/coinbase-api/issues/24
         }
 
-        case REST_CLIENT_TYPE_ENUM.exchange: {
-          // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
-          const timestampInSeconds = timestampInMs / 1000;
-
-          const signInput =
-            timestampInSeconds + method + endpoint + requestBodyString;
-
-          if (!apiSecret) {
-            throw new Error(`No API secret provided, cannot sign request.`);
-          }
-
-          if (!this.apiPassphrase) {
-            throw new Error(`No API passphrase provided, cannot sign request.`);
-          }
-
-          const sign = await signMessage(
-            signInput,
-            apiSecret,
-            'base64',
-            'SHA-256',
-          );
-
-          const headers = {
-            'CB-ACCESS-SIGN': sign,
-            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
-            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
-            'CB-ACCESS-KEY': apiKey,
-          };
-
-          return {
-            ...res,
-            sign: sign,
-            queryParamsWithSign: signRequestParams,
-            headers: {
-              ...headers,
-            },
-          };
-
-          // TODO: is there demand for FIX
-          // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
-        }
+        // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
+        case REST_CLIENT_TYPE_ENUM.exchange:
 
         // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
-        case REST_CLIENT_TYPE_ENUM.international:
-
-        // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
-        case REST_CLIENT_TYPE_ENUM.prime: {
-          const timestampInSeconds = String(Math.floor(timestampInMs / 1000));
+        case REST_CLIENT_TYPE_ENUM.international: {
+          const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
           const signInput =
             timestampInSeconds + method + endpoint + requestBodyString;
@@ -504,7 +464,7 @@ export abstract class BaseRestClient {
             throw new Error(`No API secret provided, cannot sign request.`);
           }
 
-          if (!this.apiPassphrase) {
+          if (!apiPassphrase) {
             throw new Error(`No API passphrase provided, cannot sign request.`);
           }
 
@@ -513,13 +473,14 @@ export abstract class BaseRestClient {
             apiSecret,
             'base64',
             'SHA-256',
+            'base64:web',
           );
 
           const headers = {
-            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
-            'CB-ACCESS-SIGN': sign,
-            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
             'CB-ACCESS-KEY': apiKey,
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-PASSPHRASE': apiPassphrase,
           };
 
           return {
@@ -530,12 +491,55 @@ export abstract class BaseRestClient {
               ...headers,
             },
           };
+
+          // For CB Exchange, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
 
           // For CB International, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
+        }
+
+        // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
+        case REST_CLIENT_TYPE_ENUM.prime: {
+          const timestampInSeconds = Math.floor(timestampInMs / 1000); // decimal not allowed
+
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+            'base64:web',
+          );
+
+          const headers = {
+            'X-CB-ACCESS-KEY': apiKey,
+            'X-CB-ACCESS-PASSPHRASE': apiPassphrase,
+            'X-CB-ACCESS-SIGNATURE': sign,
+            'X-CB-ACCESS-TIMESTAMP': timestampInSeconds,
+          };
 
           // For CB Prime, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
         }
         case REST_CLIENT_TYPE_ENUM.commerce: {
           // https://docs.cdp.coinbase.com/commerce-onchain/docs/getting-started

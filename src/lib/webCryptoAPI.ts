@@ -10,6 +10,17 @@ function bufferToB64(buffer: ArrayBuffer): string {
   return globalThis.btoa(binary);
 }
 
+function b64StringToBuffer(input: string): ArrayBuffer {
+  const binaryString = atob(input); // Decode base64 string
+  const buffer = new Uint8Array(binaryString.length);
+
+  // Convert binary string to a Uint8Array
+  for (let i = 0; i < binaryString.length; i++) {
+    buffer[i] = binaryString.charCodeAt(i);
+  }
+  return buffer;
+}
+
 export type SignEncodeMethod = 'hex' | 'base64';
 export type SignAlgorithm = 'SHA-256' | 'SHA-512';
 
@@ -51,12 +62,33 @@ export async function signMessage(
   secret: string,
   method: SignEncodeMethod,
   algorithm: SignAlgorithm,
+  secretEncodeMethod: 'base64:web' | 'utf',
 ): Promise<string> {
   const encoder = new TextEncoder();
 
+  let encodedSecret;
+
+  switch (secretEncodeMethod) {
+    // case 'base64:node': {
+    //   encodedSecret = Buffer.from(secret, 'base64');
+    //   break;
+    // }
+    case 'base64:web': {
+      encodedSecret = b64StringToBuffer(secret);
+      break;
+    }
+    case 'utf': {
+      encodedSecret = encoder.encode(secret);
+      break;
+    }
+    default: {
+      throw new Error(`Unhandled encoding: "${secretEncodeMethod}"`);
+    }
+  }
+
   const key = await globalThis.crypto.subtle.importKey(
     'raw',
-    encoder.encode(secret),
+    encodedSecret,
     { name: 'HMAC', hash: algorithm },
     false,
     ['sign'],
