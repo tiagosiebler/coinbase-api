@@ -9,8 +9,8 @@ describe('CBAppClient PRIVATE', () => {
   };
 
   const rest = new CBAppClient({
-    apiKeyName: account.key,
-    apiPrivateKey: account.secret,
+    apiKey: account.key,
+    apiSecret: account.secret,
   });
 
   it('should have credentials to test with', () => {
