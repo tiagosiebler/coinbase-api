@@ -6,7 +6,7 @@ describe('CBExchangeClient PUBLIC', () => {
   describe('public endpoints', () => {
     it('should succeed making a GET request', async () => {
       const res = await rest.getProductBook({ product_id: 'BTC-USDT' });
-      console.log(res);
+      //console.log(res);
       expect(res).toMatchObject({
         bids: expect.any(Array),
         asks: expect.any(Array),

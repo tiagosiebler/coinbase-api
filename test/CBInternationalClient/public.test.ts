@@ -8,7 +8,7 @@ describe('CBInternationalClient PUBLIC', () => {
       const res = await rest.getHistoricalFundingRates({
         instrument: 'BTC-PERP',
       });
-      console.log(res);
+      //console.log(res);
       expect(res).toMatchObject({
         pagination: expect.any(Object),
         results: expect.any(Array),
