@@ -31,7 +31,13 @@ export class CBAppClient extends BaseRestClient {
     restClientOptions: RestClientOptions = {},
     requestOptions: AxiosRequestConfig = {},
   ) {
-    super(restClientOptions, requestOptions);
+    super(restClientOptions, {
+      ...requestOptions,
+      headers: {
+        'CB-VERSION': '2024-09-13',
+        ...requestOptions.headers,
+      },
+    });
     return this;
   }
 
