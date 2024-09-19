@@ -64,7 +64,7 @@ describe('CBInternationalClient PRIVATE', () => {
         } catch (e: any) {
           // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
-          console.log('Error, CBINTX, post req:', e);
+          //console.log('Error, CBINTX, post req:', e);
           const responseBody = e?.body;
           expect(responseBody).toMatchObject({
             title: 'Unauthorized',
