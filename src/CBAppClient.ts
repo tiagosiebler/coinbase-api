@@ -34,6 +34,8 @@ export class CBAppClient extends BaseRestClient {
     super(restClientOptions, {
       ...requestOptions,
       headers: {
+        // Some endpoints return a warning if a version header isn't included: https://docs.cdp.coinbase.com/coinbase-app/docs/versioning
+        // Currently set to a date from the changelog: https://docs.cdp.coinbase.com/coinbase-app/docs/changelog
         'CB-VERSION': '2024-09-13',
         ...requestOptions.headers,
       },

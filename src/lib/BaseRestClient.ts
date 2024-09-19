@@ -351,8 +351,9 @@ export abstract class BaseRestClient {
       requestOptions: {
         ...this.options,
         // Prevent credentials from leaking into error messages
-        apiKeyName: 'omittedFromError',
-        apiPrivateKey: 'omittedFromError',
+        apiKey: 'omittedFromError',
+        apiSecret: 'omittedFromError',
+        apiPassphrase: 'omittedFromError',
         cdpApiKey: 'omittedFromError',
       },
       requestParams,
@@ -450,7 +451,7 @@ export abstract class BaseRestClient {
 
         case REST_CLIENT_TYPE_ENUM.exchange: {
           // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
-          const timestampInSeconds = timestampInMs / 1000;
+          const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
           const signInput =
             timestampInSeconds + method + endpoint + requestBodyString;
@@ -468,13 +469,14 @@ export abstract class BaseRestClient {
             apiSecret,
             'base64',
             'SHA-256',
+            'base64:web',
           );
 
           const headers = {
+            'CB-ACCESS-KEY': apiKey,
             'CB-ACCESS-SIGN': sign,
             'CB-ACCESS-TIMESTAMP': timestampInSeconds,
             'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
-            'CB-ACCESS-KEY': apiKey,
           };
 
           return {
@@ -491,7 +493,47 @@ export abstract class BaseRestClient {
         }
 
         // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
-        case REST_CLIENT_TYPE_ENUM.international:
+        case REST_CLIENT_TYPE_ENUM.international: {
+          const timestampInSeconds = String(Math.floor(timestampInMs / 1000));
+
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!this.apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+            'base64:web',
+          );
+
+          const headers = {
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
+            'CB-ACCESS-KEY': apiKey,
+          };
+
+          // For CB International, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
+
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
+        }
 
         // Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
         case REST_CLIENT_TYPE_ENUM.prime: {
@@ -513,14 +555,22 @@ export abstract class BaseRestClient {
             apiSecret,
             'base64',
             'SHA-256',
+            'utf',
           );
 
           const headers = {
-            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
-            'CB-ACCESS-SIGN': sign,
-            'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
-            'CB-ACCESS-KEY': apiKey,
+            // 'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            // 'CB-ACCESS-SIGN': sign,
+            // 'CB-ACCESS-PASSPHRASE': this.apiPassphrase,
+            // 'CB-ACCESS-KEY': apiKey,
+            'X-CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'X-CB-ACCESS-SIGNATURE': sign,
+            'X-CB-ACCESS-PASSPHRASE': this.apiPassphrase,
+            'X-CB-ACCESS-KEY': apiKey,
           };
+
+          // For CB Prime, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
 
           return {
             ...res,
@@ -530,12 +580,6 @@ export abstract class BaseRestClient {
               ...headers,
             },
           };
-
-          // For CB International, is there demand for FIX
-          // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
-
-          // For CB Prime, is there demand for FIX
-          // Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
         }
         case REST_CLIENT_TYPE_ENUM.commerce: {
           // https://docs.cdp.coinbase.com/commerce-onchain/docs/getting-started
