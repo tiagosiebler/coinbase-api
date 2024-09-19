@@ -150,6 +150,7 @@ export abstract class BaseRestClient {
       /** inject custom rquest options based on axios specs - see axios docs for more guidance on AxiosRequestConfig: https://github.com/axios/axios#request-config */
       ...networkOptions,
       headers: {
+        ...networkOptions.headers,
         'Content-Type': 'application/json',
         locale: 'en-US',
         'User-Agent': USER_AGENT,
@@ -175,11 +176,7 @@ export abstract class BaseRestClient {
       });
     }
 
-    this.baseUrl = getRestBaseUrl(
-      false,
-      restClientOptions,
-      this.getClientType(),
-    );
+    this.baseUrl = getRestBaseUrl(restClientOptions, this.getClientType());
 
     this.apiKey = this.options.apiKey;
     this.apiSecret = this.options.apiSecret;

@@ -25,10 +25,20 @@ const exchangeBaseURLMap = {
   [REST_CLIENT_TYPE_ENUM.advancedTrade]: 'https://api.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.coinbaseApp]: 'https://api.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.exchange]: 'https://api.exchange.coinbase.com',
-  [REST_CLIENT_TYPE_ENUM.prime]: 'https://api.prime.coinbase.com', // /v1
+  [REST_CLIENT_TYPE_ENUM.prime]: 'https://api.prime.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.international]:
     'https://api.international.coinbase.com',
   [REST_CLIENT_TYPE_ENUM.commerce]: 'https://api.commerce.coinbase.com',
+} as const;
+
+const exchangeSandboxURLMap = {
+  [REST_CLIENT_TYPE_ENUM.exchange]:
+    'https://api-public.sandbox.exchange.coinbase.com',
+  [REST_CLIENT_TYPE_ENUM.international]: 'https://api-n5e1.coinbase.com',
+  [REST_CLIENT_TYPE_ENUM.advancedTrade]: 'NoSandboxAvailable',
+  [REST_CLIENT_TYPE_ENUM.coinbaseApp]: 'NoSandboxAvailable',
+  [REST_CLIENT_TYPE_ENUM.prime]: 'NoSandboxAvailable',
+  [REST_CLIENT_TYPE_ENUM.commerce]: 'NoSandboxAvailable',
 } as const;
 
 export interface RestClientOptions {
@@ -84,6 +94,18 @@ export interface RestClientOptions {
     | 'nl'
     | 'pt'
     | 'pt-br';
+
+  /**
+   * Connect to the sandbox for supported products
+   *
+   * - Coinbase Exchange: https://docs.cdp.coinbase.com/exchange/docs/sandbox
+   * - Coinbase International: https://docs.cdp.coinbase.com/intx/docs/sandbox
+   *
+   * - Coinbase App: No sandbox available.
+   * - Coinbase Advanced Trade: No sandbox available.
+   * - Coinbase Prime: No sandbox available.
+   */
+  useSandbox?: boolean;
 
   /**
    * Enable keep alive for REST API requests (via axios).
@@ -159,20 +181,19 @@ export function logInvalidOrderId(
 }
 
 export function getRestBaseUrl(
-  useTestnet: boolean,
-  restInverseOptions: RestClientOptions,
+  restClientOptions: RestClientOptions,
   restClientType: RestClientType,
 ): string {
   const exchangeBaseUrls = {
     livenet: exchangeBaseURLMap[restClientType],
-    testnet: 'https://noTestnet',
+    testnet: exchangeSandboxURLMap[restClientType],
   };
 
-  if (restInverseOptions.baseUrl) {
-    return restInverseOptions.baseUrl;
+  if (restClientOptions.baseUrl) {
+    return restClientOptions.baseUrl;
   }
 
-  if (useTestnet) {
+  if (restClientOptions.useSandbox === true) {
     return exchangeBaseUrls.testnet;
   }
 
