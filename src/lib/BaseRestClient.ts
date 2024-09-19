@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
 import https from 'https';
 import { nanoid } from 'nanoid';
@@ -397,9 +396,7 @@ export abstract class BaseRestClient {
     const encodeQueryStringValues = true;
 
     const requestBody = data?.body || data;
-    const requestBodyString = requestBody
-      ? JSON.stringify(data?.body || data)
-      : '';
+    const requestBodyString = requestBody ? JSON.stringify(requestBody) : '';
 
     if (signMethod === 'coinbase') {
       const clientType = this.getClientType();
@@ -458,7 +455,7 @@ export abstract class BaseRestClient {
           const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
           const signInput =
-            timestampInSeconds + method + endpoint + requestBodyString;
+            timestampInSeconds + method + endpoint + signRequestParams;
 
           if (!apiSecret) {
             throw new Error(`No API secret provided, cannot sign request.`);
@@ -483,6 +480,7 @@ export abstract class BaseRestClient {
             'CB-ACCESS-PASSPHRASE': apiPassphrase,
           };
 
+          // console.log('sign res: ', { signInput, ...headers });
           return {
             ...res,
             sign: sign,
@@ -656,10 +654,12 @@ export abstract class BaseRestClient {
       ...options.headers,
     };
 
-    const urlWithQueryParams =
-      options.url + '?' + signResult.queryParamsWithSign;
+    let urlWithQueryParams = options.url;
 
-    if (method === 'GET' || !params?.body) {
+    if (method === 'GET') {
+      if (signResult.queryParamsWithSign) {
+        urlWithQueryParams += signResult.queryParamsWithSign;
+      }
       return {
         ...options,
         headers: requestHeaders,

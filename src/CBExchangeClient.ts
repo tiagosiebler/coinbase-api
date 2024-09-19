@@ -423,7 +423,8 @@ export class CBExchangeClient extends BaseRestClient {
    * Get a single order by id.
    */
   getOrder(params: { order_id: string; market_type?: string }): Promise<any> {
-    return this.getPrivate(`/orders/${params.order_id}`, params);
+    const { order_id, ...otherParams } = params;
+    return this.getPrivate(`/orders/${order_id}`, otherParams);
   }
 
   /**
@@ -432,8 +433,9 @@ export class CBExchangeClient extends BaseRestClient {
    * Cancel a single open order by id.
    */
   cancelOrder(params: CancelCBExchOrderRequest): Promise<any> {
-    return this.deletePrivate(`/orders/${params.order_id}`, {
-      query: params,
+    const { order_id, ...otherParams } = params;
+    return this.deletePrivate(`/orders/${order_id}`, {
+      body: otherParams,
     });
   }
 
