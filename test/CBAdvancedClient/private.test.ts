@@ -7,8 +7,8 @@ describe('CBAdvancedTradeClient PRIVATE', () => {
   };
 
   const rest = new CBAdvancedTradeClient({
-    apiKeyName: account.key,
-    apiPrivateKey: account.secret,
+    apiKey: account.key,
+    apiSecret: account.secret,
   });
 
   it('should have credentials to test with', () => {
