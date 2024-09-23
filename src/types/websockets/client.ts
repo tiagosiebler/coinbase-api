@@ -1,16 +1,31 @@
 /** General configuration for the WebsocketClient */
 export interface WSClientConfigurableOptions {
-  /** Your API key */
+  /**
+   * Your API key name.
+   *
+   * - For the Advanced Trade or App APIs, this is your API Key Name.
+   */
   apiKey?: string;
 
-  /** Your API secret */
+  /**
+   * Your API key secret.
+   *
+   * - For the Advanced Trade or App APIs, this is your API private key (including the -----BEGIN EC PRIVATE KEY-----\n etc).
+   */
   apiSecret?: string;
 
-  /** Your API passphrase (can be anything) that you included when creating this API key */
+  /**
+   * Your API passphrase (NOT your account password). Only used for the API groups that use an API passphrase:
+   * - Coinbase Exchange API
+   * - Coinbase International API
+   * - Coinbase Prime API
+   */
   apiPassphrase?: string;
 
-  /** Define a recv window when preparing a private websocket signature. This is in milliseconds, so 5000 == 5 seconds */
-  recvWindow?: number;
+  /**
+   * For JWT auth (adv trade & app API), seconds until jwt expires. Defaults to 120 seconds.
+   */
+  jwtExpiresSeconds?: number;
 
   /** How often to check if the connection is alive */
   pingInterval?: number;
@@ -22,6 +37,18 @@ export interface WSClientConfigurableOptions {
   reconnectTimeout?: number;
 
   wsUrl?: string;
+
+  /**
+   * Connect to the sandbox for supported products
+   *
+   * - Coinbase Exchange: https://docs.cdp.coinbase.com/exchange/docs/sandbox
+   * - Coinbase International: https://docs.cdp.coinbase.com/intx/docs/sandbox
+   *
+   * - Coinbase App: No sandbox available.
+   * - Coinbase Advanced Trade: No sandbox available.
+   * - Coinbase Prime: No sandbox available.
+   */
+  useSandbox?: boolean;
 
   /**
    * Allows you to provide a custom "signMessage" function, e.g. to use node's much faster createHmac method
@@ -44,6 +71,7 @@ export interface WebsocketClientOptions extends WSClientConfigurableOptions {
   pingInterval: number;
   pongTimeout: number;
   reconnectTimeout: number;
+  useSandbox: boolean;
   recvWindow: number;
   /**
    * If true, require a "receipt" that the connection is ready for use (e.g. a specific event type)
@@ -54,4 +82,4 @@ export interface WebsocketClientOptions extends WSClientConfigurableOptions {
   reauthWSAPIOnReconnect: boolean;
 }
 
-export type WsMarket = 'advancedTrade';
+export type WsMarket = 'advancedTrade' | 'exchange' | 'international' | 'prime';
