@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { CBAdvancedTradeClient } from './CBAdvancedTradeClient.js';
 import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
+import { signWSJWT } from './lib/jwtNode.js';
 import { neverGuard } from './lib/misc-util.js';
+import { isCBWSEvent } from './lib/websocket/typeGuards.js';
 import {
   MessageEventLike,
   WS_KEY_MAP,
+  WS_URL_MAP,
   WsKey,
   WsTopicRequest,
 } from './lib/websocket/websocket-util.js';
@@ -20,22 +23,28 @@ import {
   WsAPIWsKeyTopicMap,
 } from './types/websockets/wsAPI.js';
 
-function getRandomInt(max: number) {
-  return Math.floor(Math.random() * max);
-}
-
 export const WS_LOGGER_CATEGORY = { category: 'coinbase-ws' };
 
-/** Any WS keys in this list will trigger auth on connect, if credentials are available */
+/**
+ * Any WS keys in this list will trigger automatic auth as required, if credentials are available
+ */
 const PRIVATE_WS_KEYS: WsKey[] = [
-  WS_KEY_MAP.spotPrivateV1,
-  WS_KEY_MAP.futuresPrivateV1,
+  // Account data (fills), requires auth.
+  WS_KEY_MAP.advTradeUserData,
+  // Coinbase Direct Market Data has direct access to Coinbase Exchange servers and requires auth.
+  WS_KEY_MAP.exchangeDirectMarketData,
+  // The INTX feed requires auth.
+  WS_KEY_MAP.internationalMarketData,
+  // The prime feed requires auth.
+  WS_KEY_MAP.primeMarketData,
 ];
 
-/** Any WS keys in this list will ALWAYS skip the authentication process, even if credentials are available */
+/**
+ * Any WS keys in this list will ALWAYS skip the authentication process, even if credentials are available
+ */
 export const PUBLIC_WS_KEYS: WsKey[] = [
-  WS_KEY_MAP.spotPublicV1,
-  WS_KEY_MAP.futuresPublicV1,
+  WS_KEY_MAP.advTradeMarketData,
+  WS_KEY_MAP.exchangeMarketData,
 ];
 
 /**
@@ -44,51 +53,66 @@ export const PUBLIC_WS_KEYS: WsKey[] = [
 type WsTopic = string;
 
 export class WebsocketClient extends BaseWebsocketClient<WsKey> {
-  private RESTClientCache: Record<WsMarket, CBAdvancedTradeClient | undefined> =
-    {
-      advancedTrade: undefined,
-    };
+  // private RESTClientCache: Record<WsMarket, CBAdvancedTradeClient | undefined> =
+  //   {
+  //     advancedTrade: undefined,
+  //     exchange: undefined,
+  //     international: undefined,
+  //     prime: undefined,
+  //   };
 
-  private getRESTClient(wsKey: WsKey): CBAdvancedTradeClient {
-    if (wsKey === 'spotPublicV1' || wsKey === 'spotPrivateV1') {
-      const clientType = 'advancedTrade';
-      if (this.RESTClientCache[clientType]) {
-        return this.RESTClientCache[clientType];
-      }
+  // private getRESTClient(wsKey: WsKey): undefined {
+  //   switch (wsKey) {
+  //     case WS_KEY_MAP.advTradeMarketData:
+  //     case WS_KEY_MAP.advTradeUserData:
+  //     case WS_KEY_MAP.exchangeMarketData:
+  //     case WS_KEY_MAP.exchangeDirectMarketData:
+  //     case WS_KEY_MAP.internationalMarketData:
+  //     case WS_KEY_MAP.primeMarketData: {
+  //       break;
+  //     }
+  //     default: {
+  //       throw neverGuard(wsKey, `Unhandled WsKey: "${wsKey}"`);
+  //     }
+  //   }
+  //   // if (wsKey === 'spotPublicV1' || wsKey === 'spotPrivateV1') {
+  //   //   const clientType = 'advancedTrade';
+  //   //   if (this.RESTClientCache[clientType]) {
+  //   //     return this.RESTClientCache[clientType];
+  //   //   }
 
-      this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
-        apiKey: this.options.apiKey,
-        apiSecret: this.options.apiSecret,
-      });
-      return this.RESTClientCache[clientType];
-    }
+  //   //   this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
+  //   //     apiKey: this.options.apiKey,
+  //   //     apiSecret: this.options.apiSecret,
+  //   //   });
+  //   //   return this.RESTClientCache[clientType];
+  //   // }
 
-    const clientType = 'advancedTrade';
-    if (this.RESTClientCache[clientType]) {
-      return this.RESTClientCache[clientType];
-    }
+  //   // const clientType = 'advancedTrade';
+  //   // if (this.RESTClientCache[clientType]) {
+  //   //   return this.RESTClientCache[clientType];
+  //   // }
 
-    this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
-      apiKey: this.options.apiKey,
-      apiSecret: this.options.apiSecret,
-    });
-    return this.RESTClientCache[clientType];
-    throw new Error(`Unhandled WsKey: "${wsKey}"`);
-  }
+  //   // this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
+  //   //   apiKey: this.options.apiKey,
+  //   //   apiSecret: this.options.apiSecret,
+  //   // });
+  //   // return this.RESTClientCache[clientType];
 
-  private async getWSConnectionInfo(_wsKey: WsKey): Promise<{}> {
-    throw new Error('not used');
-  }
+  //   // throw neverGuard(wsKey, `Unhandled WsKey: "${wsKey}"`);
+  // }
 
   /**
    * Request connection of all dependent (public & private) websockets, instead of waiting for automatic connection by library
    */
   public connectAll(): Promise<(WSConnectedResult | undefined)[]> {
     return Promise.all([
-      this.connect(WS_KEY_MAP.spotPublicV1),
-      this.connect(WS_KEY_MAP.spotPrivateV1),
-      this.connect(WS_KEY_MAP.futuresPublicV1),
-      this.connect(WS_KEY_MAP.futuresPrivateV1),
+      this.connect(WS_KEY_MAP.advTradeMarketData),
+      this.connect(WS_KEY_MAP.advTradeUserData),
+      this.connect(WS_KEY_MAP.exchangeMarketData),
+      this.connect(WS_KEY_MAP.exchangeDirectMarketData),
+      this.connect(WS_KEY_MAP.internationalMarketData),
+      this.connect(WS_KEY_MAP.primeMarketData),
     ]);
   }
 
@@ -193,36 +217,18 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       return this.options.wsUrl;
     }
 
-    const connectionInfo = await this.getWSConnectionInfo(wsKey);
-    this.logger.trace(`getWSConnectionInfo`, {
-      wsKey,
-      ...connectionInfo,
-    });
+    const useSandbox = this.options.useSandbox;
+    const networkKey = useSandbox ? 'testnet' : 'livenet';
 
-    return '';
+    const baseUrl = WS_URL_MAP[wsKey][networkKey];
 
-    // const server = connectionInfo.data.instanceServers[0];
-    // if (!server) {
-    //   this.logger.error(
-    //     `No servers returned by connection info response?`,
-    //     JSON.stringify(
-    //       {
-    //         wsKey,
-    //         connectionInfo,
-    //       },
-    //       null,
-    //       2,
-    //     ),
-    //   );
-    //   throw new Error(`No servers returned by connection info response?`);
-    // }
-
-    // const connectionUrl = `${server.endpoint}?token=${connectionInfo.data.token}`;
-    // return connectionUrl;
+    return baseUrl;
   }
 
   protected sendPingEvent(wsKey: WsKey) {
-    return this.tryWsSend(wsKey, `{ "id": "${Date.now()}", "type": "ping" }`);
+    const wsState = this.getWsStore().get(wsKey);
+    const ws = wsState?.ws;
+    ws?.ping();
   }
 
   protected sendPongEvent(wsKey: WsKey) {
@@ -278,73 +284,45 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     try {
       const parsed = JSON.parse(event.data);
 
-      const responseEvents = ['subscribe', 'unsubscribe', 'ack'];
-      const authenticatedEvents = ['login', 'access'];
-      const connectionReadyEvents = ['welcome'];
+      const responseEvents = ['subscriptions'];
+      // const connectionReadyEvents = [''];
 
-      const eventType = parsed.event || parsed.type;
-      if (typeof eventType === 'string') {
-        if (parsed.success === false) {
-          results.push({
-            eventType: 'exception',
-            event: parsed,
-          });
-          return results;
-        }
+      // TODO: this is the format for advanced trade WS, what about other product groups?
+      if (isCBWSEvent(parsed)) {
+        const eventType = parsed.channel;
 
-        if (connectionReadyEvents.includes(eventType)) {
+        // These are request/reply pattern events (e.g. after subscribing to topics or authenticating)
+        if (responseEvents.includes(eventType)) {
           return [
             {
-              eventType: 'connectionReady',
+              eventType: 'response',
               event: parsed,
             },
           ];
         }
 
-        // These are request/reply pattern events (e.g. after subscribing to topics or authenticating)
-        if (responseEvents.includes(eventType)) {
-          results.push({
-            eventType: 'response',
-            event: parsed,
-          });
-          return results;
+        // Generic data for a channel
+        if (typeof eventType === 'string') {
+          return [
+            {
+              eventType: 'update',
+              event: parsed,
+            },
+          ];
         }
-
-        // Request/reply pattern for authentication success
-        if (authenticatedEvents.includes(eventType)) {
-          results.push({
-            eventType: 'authenticated',
-            event: parsed,
-          });
-          return results;
-        }
-
-        if (eventType === 'message') {
-          return [{ eventType: 'update', event: parsed }];
-        }
-
-        this.logger.error(
-          `!! (${wsKey}) Unhandled string event type "${eventType}". Defaulting to "update" channel...`,
-          parsed,
-        );
-
-        results.push({
-          eventType: 'update',
-          event: parsed,
-        });
-
-        return results;
       }
 
       this.logger.error(
-        `!! (${wsKey}) Unhandled non-string event type "${eventType}". Defaulting to "update" channel...`,
-        parsed,
+        `!! (${wsKey}) Unhandled non-string event type... Defaulting to "update" channel...` +
+          JSON.stringify(parsed),
       );
 
-      results.push({
-        eventType: 'update',
-        event: parsed,
-      });
+      return [
+        {
+          eventType: 'update',
+          event: parsed,
+        },
+      ];
     } catch (e) {
       results.push({
         event: {
@@ -375,27 +353,51 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
   }
 
   protected getWsKeyForMarket(market: WsMarket, isPrivate: boolean): WsKey {
-    return isPrivate
-      ? market === 'advancedTrade'
-        ? WS_KEY_MAP.spotPrivateV1
-        : WS_KEY_MAP.futuresPrivateV1
-      : market === 'advancedTrade'
-        ? WS_KEY_MAP.spotPublicV1
-        : WS_KEY_MAP.futuresPublicV1;
-  }
-
-  protected getWsMarketForWsKey(key: WsKey): WsMarket {
-    switch (key) {
-      case 'futuresPrivateV1':
-      case 'futuresPublicV1': {
-        return 'advancedTrade';
+    switch (market) {
+      case 'advancedTrade': {
+        return isPrivate
+          ? WS_KEY_MAP.advTradeUserData
+          : WS_KEY_MAP.advTradeMarketData;
       }
-      case 'spotPrivateV1':
-      case 'spotPublicV1': {
-        return 'advancedTrade';
+      case 'exchange': {
+        return isPrivate
+          ? WS_KEY_MAP.exchangeDirectMarketData
+          : WS_KEY_MAP.exchangeMarketData;
+      }
+      case 'international': {
+        return isPrivate
+          ? WS_KEY_MAP.internationalMarketData
+          : WS_KEY_MAP.internationalMarketData;
+      }
+      case 'prime': {
+        return isPrivate
+          ? WS_KEY_MAP.primeMarketData
+          : WS_KEY_MAP.primeMarketData;
       }
       default: {
-        throw neverGuard(key, `Unhandled ws key "${key}"`);
+        throw neverGuard(market, `Unhandled "market": "${market}"`);
+      }
+    }
+  }
+
+  protected getWsMarketForWsKey(wsKey: WsKey): WsMarket {
+    switch (wsKey) {
+      case WS_KEY_MAP.advTradeMarketData:
+      case WS_KEY_MAP.advTradeUserData: {
+        return 'advancedTrade';
+      }
+      case WS_KEY_MAP.exchangeMarketData:
+      case WS_KEY_MAP.exchangeDirectMarketData: {
+        return 'exchange';
+      }
+      case WS_KEY_MAP.internationalMarketData: {
+        return 'international';
+      }
+      case WS_KEY_MAP.primeMarketData: {
+        return 'prime';
+      }
+      default: {
+        throw neverGuard(wsKey, `Unhandled WsKey: "${wsKey}"`);
       }
     }
   }
@@ -407,19 +409,12 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
   /** Force subscription requests to be sent in smaller batches, if a number is returned */
   protected getMaxTopicsPerSubscribeEvent(wsKey: WsKey): number | null {
     switch (wsKey) {
-      case 'futuresPrivateV1':
-      case 'futuresPublicV1':
-      case 'spotPrivateV1':
-      case 'spotPublicV1': {
-        // Return a number if there's a limit on the number of sub topics per rq
-        // Always 1 at a time for this exchange
-        return 1;
-      }
       default: {
-        throw neverGuard(
-          wsKey,
-          `getMaxTopicsPerSubscribeEvent(): Unhandled wsKey`,
-        );
+        return null;
+        // throw neverGuard(
+        //   wsKey,
+        //   `getMaxTopicsPerSubscribeEvent(): Unhandled wsKey`,
+        // );
       }
     }
   }
@@ -440,14 +435,42 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     const operationEvents = topicRequests.map((topicRequest) => {
       const isPrivateWsTopic = this.isPrivateTopicRequest(topicRequest, wsKey);
 
+      // Good place to build event format depending on product group, if format varies (similar to auth being different)
       const wsRequestEvent: WsRequestOperation<WsTopic> = {
-        id: getRandomInt(999999999999),
         type: operation,
-        topic: topicRequest.topic,
-        privateChannel: isPrivateWsTopic,
-        response: true,
+        channel: topicRequest.topic,
         ...topicRequest.payload,
       };
+
+      if (isPrivateWsTopic) {
+        if (wsKey === 'advTradeUserData') {
+          const apiKey = this.options.apiKey;
+          const apiSecret = this.options.apiSecret;
+          if (!apiKey || !apiSecret) {
+            throw new Error(
+              `"options.apiKey" (api key name) and/or "options.apiSecret" missing, unable to generate JWT`,
+            );
+          }
+          const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
+          const timestamp = Date.now();
+
+          const sign = signWSJWT({
+            algorithm: 'ES256',
+            timestampMs: timestamp,
+            jwtExpiresSeconds,
+            apiPubKey: apiKey,
+            apiPrivKey: apiSecret,
+          });
+
+          return {
+            ...wsRequestEvent,
+            jwt: sign,
+          };
+        }
+
+        throw new Error(`Auth not implemented yet for wsKey "${wsKey}"`);
+        // const apiPassphrase = this.options.apiPassphrase;
+      }
 
       return wsRequestEvent;
     });
