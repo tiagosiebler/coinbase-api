@@ -21,14 +21,12 @@
 Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and WebSockets:
 
 - Supports both retail and institutional REST clients and Websockets:
-
-  - [Advanced Trade](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
+  - [Coinbase Advanced Trade](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
   - [Coinbase App](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome)
   - [Coinbase Exchange](https://docs.cdp.coinbase.com/exchange/docs/welcome)
   - [Coinbase International Exchange](https://docs.cdp.coinbase.com/intx/docs/welcome)
   - [Coinbase Prime](https://docs.cdp.coinbase.com/prime/docs/welcome)
   - [Coinbase Commerce](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome)
-
 - Complete integration with all REST APIs and WebSockets.
 - TypeScript support (with type declarations for most API requests & responses)
 - Robust WebSocket integration with configurable connection heartbeats & automatic reconnect then resubscribe workflows.
@@ -87,47 +85,135 @@ This project uses typescript. Resources are stored in 2 key structures:
 
 Create API credentials
 
-- [Kucoin API Key Management](https://www.kucoin.com/account/api)
+- [Coinbase API Key Management](https://www.coinbase.com/settings/api)
 
 ### REST API
 
-To use any of Kucoin's REST APIs in JavaScript/TypeScript/Node.js, import (or require) the `SpotClient` (for spot and margin APIs) or `FuturesClient` (for futures APIs):
+To use any of Coinbase's REST APIs in JavaScript/TypeScript/Node.js, import (or require) the client you want to use. We currently support the following clients:
+
+- [CBAdvancedTradeClient](./src/CBAdvancedTradeClient.ts)
+- [CBAppClient](./src/CBAppClient.ts)
+- [CBExchangeClient](./src/CBExchangeClient.ts)
+- [CBInternationalClient](./src/CBInternationalClient.ts)
+- [CBPrimeClient](./src/CBPrimeClient.ts)
+- [CBCommerceClient](./src/CBCommerceClient.ts)
+
+#### CBAdvancedTradeClient
 
 ```javascript
-const { SpotClient, FuturesClient } = require('kucoin-api');
+import { CBAdvancedTradeClient } from 'coinbase-api';
 
-const client = new SpotClient({
-  apiKey: 'apiKeyHere',
-  apiSecret: 'apiSecretHere',
-  apiPassphrase: 'apiPassPhraseHere',
+// insert your API key details here from Coinbase API Key Management
+const advancedTradeCdpAPIKey = {
+  name: 'organizations/13232211d-d7e2-d7e2-d7e2-d7e2d7e2d7e2/apiKeys/d7e2d7e2-d7e2-d7e2-d7e2-d7e2d7e2d7e2',
+  privateKey:
+    '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
+};
+
+const client = new CBAdvancedTradeClient({
+  // Either pass the full JSON object that can be downloaded when creating your API keys
+  // cdpApiKey: advancedTradeCdpAPIKey,
+
+  // Or use the key name as "apiKey" and private key (WITH the "begin/end EC PRIVATE KEY" comment) as "apiSecret"
+  apiKey: advancedTradeCdpAPIKey.name,
+  apiSecret: advancedTradeCdpAPIKey.privateKey,
 });
 
+// Example usage of the CBAdvancedTradeClient
 try {
-  const spotBuyResult = await client.submitOrder({
-    clientOid: client.generateNewOrderID(),
-    side: 'buy',
-    type: 'market',
-    symbol: 'BTC-USDT',
-    size: '0.00001',
-  });
-  console.log('spotBuy ', JSON.stringify(spotBuyResult, null, 2));
-
-  const spotSellResult = await client.submitOrder({
-    clientOid: client.generateNewOrderID(),
-    side: 'sell',
-    type: 'market',
-    symbol: 'BTC-USDT',
-    size: '0.00001',
-  });
-  console.log('spotSellResult ', JSON.stringify(spotSellResult, null, 2));
+  const accounts = await client.getAccounts();
+  console.log('Get accounts result: ', accounts);
 } catch (e) {
-  console.error(`Req error: `, e);
+  console.error('Exception: ', JSON.stringify(e));
 }
 ```
 
-See [SpotClient](./src/SpotClient.ts) and [FuturesClient](./src/FuturesClient.ts) for further information, or the [examples](./examples/) for lots of usage examples.
+#### CBAppClient
+
+```javascript
+const { CBAppClient } = require('coinbase-api');
+
+const CBAppKeys = {
+  name: 'organizations/13232211d-d7e2-d7e2-d7e2-d7e2d7e2d7e2/apiKeys/d7e2d7e2-d7e2-d7e2-d7e2-d7e2d7e2d7e2',
+  privateKey:
+    '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
+};
+
+const client = new CBAppClient({
+  // Either pass the full JSON object that can be downloaded when creating your API keys
+  // cdpApiKey: CBAppCdpAPIKey,
+
+  // Or use the key name as "apiKey" and private key (WITH the "begin/end EC PRIVATE KEY" comment) as "apiSecret"
+  apiKey: CBAppKeys.name,
+  apiSecret: CBAppKeys.privateKey,
+});
+
+try {
+  // Transfer money between your own accounts
+  const transferMoneyResult = await client.transferMoney({
+    account_id: 'your_source_account_id',
+    type: 'transfer',
+    to: 'your_destination_account_id',
+    amount: '0.01',
+    currency: 'BTC',
+  });
+  console.log('Transfer Money Result: ', transferMoneyResult);
+} catch (e) {
+  console.error('Error: ', e);
+}
+```
+
+#### CBInternationalClient
+
+```javascript
+const { CBInternationalClient } = require('coinbase-api');
+
+// insert your API key details here from Coinbase API Key Management
+const client = new CBInternationalClient({
+  apiKey: 'insert_api_key_here',
+  apiSecret: 'insert_api_secret_here',
+  apiPassphrase: 'insert_api_passphrase_here',
+  // Set "useSandbox" to use the CoinBase International API sandbox environment
+  // useSandbox: true,
+});
+
+try {
+  // Get asset details
+  const assetDetails = await client.getAssetDetails({ asset: 'BTC' });
+  console.log('Asset Details: ', assetDetails);
+} catch (e) {
+  console.error('Exception: ', JSON.stringify(e, null, 2));
+}
+```
+
+#### CBExchangeClient
+
+```javascript
+const { CBExchangeClient } = require('coinbase-api');
+
+// insert your API key details here from Coinbase API Key Management
+const client = new CBExchangeClient({
+  apiKey: 'insert_api_key_here',
+  apiSecret: 'insert_api_secret_here',
+  apiPassphrase: 'insert_api_passphrase_here',
+  // Set "useSandbox" to use the CoinBase International API sandbox environment
+  // useSandbox: true,
+});
+
+try {
+  // Get a single currency by id
+  const currency = await client.getCurrency('BTC');
+  console.log('Currency: ', currency);
+} catch (e) {
+  console.error('Exception: ', JSON.stringify(e, null, 2));
+}
+```
+
+See all clients [here](./src/) for more information on all the functions or the [examples](./examples/) for lots of usage examples. You can also check the endpoint function list [here](./docs/endpointFunctionList.md) to find all available functions!
 
 ## WebSockets
+
+TO BE FILLED
 
 All available WebSockets can be used via a shared `WebsocketClient`. The WebSocket client will automatically open/track/manage connections as needed. Each unique connection (one per server URL) is tracked using a WsKey (each WsKey is a string - see [WS_KEY_MAP](src/lib/websocket/websocket-util.ts) for a list of supported values).
 
@@ -214,6 +300,8 @@ See [WebsocketClient](./src/WebsocketClient.ts) for further information and make
 ---
 
 ## Customise Logging
+
+TO BE FILLED
 
 Pass a custom logger which supports the log methods `trace`, `info` and `error`, or override methods from the default logger as desired.
 
