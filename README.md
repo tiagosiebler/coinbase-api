@@ -310,16 +310,15 @@ client.subscribe('heartbeats', 'advTradeMarketData');
 client.subscribe('futures_balance_summary', 'advTradeUserData');
 client.subscribe('user', 'advTradeUserData');
 
-
- /**
-  * Or send a more structured object with parameters, e.g. if parameters are required
-  */
-const tickerSubscribeRequst: WsTopicRequest = {
+/**
+ * Or send a more structured object with parameters, e.g. if parameters are required
+ */
+const tickerSubscribeRequst = {
   topic: 'ticker',
   /**
-  * Anything in the payload will be merged into the subscribe "request",
-  * allowing you to send misc parameters supported by the exchange (such as `product_ids: string[]`)
-  */
+   * Anything in the payload will be merged into the subscribe "request",
+   * allowing you to send misc parameters supported by the exchange (such as `product_ids: string[]`)
+   */
   payload: {
     product_ids: ['ETH-USD', 'BTC-USD'],
   },
