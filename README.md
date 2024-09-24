@@ -298,7 +298,7 @@ client.on('exception', (data) => {
 /**
  * Use the client subscribe(topic, market) pattern to subscribe to any websocket topic.
  *
- * You can subscribe to topics one at a time or many one one request.
+ * You can subscribe to topics one at a time or many in one request.
  *
  * Topics can be sent as simple strings, if no parameters are required:
  */
