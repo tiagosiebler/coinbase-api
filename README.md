@@ -56,6 +56,8 @@ Check out my related JavaScript/TypeScript/Node.js projects:
   - [Binance Node.js SDK](https://www.npmjs.com/package/binance)
   - [Gateio-api Node.js SDK](https://www.npmjs.com/package/gateio-api)
   - [Bitget-api Node.js SDK](https://www.npmjs.com/package/bitget-api)
+  - [Kucoin-api Node.js SDK](https://www.npmjs.com/package/kucoin-api)
+  - [Coinbase-api Node.js SDK](https://www.npmjs.com/package/coinbase-api)
   - [Bitmart-api Node.js SDK](https://www.npmjs.com/package/bitmart-api)
 - Try my misc utilities:
   - [OrderBooks Node.js](https://www.npmjs.com/package/orderbooks)

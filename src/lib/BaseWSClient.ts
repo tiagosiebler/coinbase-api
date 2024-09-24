@@ -116,15 +116,16 @@ export abstract class BaseWebsocketClient<
       pongTimeout: 1000,
       pingInterval: 10000,
       reconnectTimeout: 500,
+      useSandbox: false,
       recvWindow: 0,
       // Requires a confirmation "response" from the ws connection before assuming it is ready
-      requireConnectionReadyConfirmation: true,
+      requireConnectionReadyConfirmation: false,
       // Automatically auth after opening a connection?
       authPrivateConnectionsOnConnect: false,
       // Automatically include auth/sign with every WS request
-      authPrivateRequests: false,
+      authPrivateRequests: true,
       // Automatically re-auth WS API, if we were auth'd before and get reconnected
-      reauthWSAPIOnReconnect: true,
+      reauthWSAPIOnReconnect: false,
       ...options,
     };
   }
@@ -419,6 +420,11 @@ export abstract class BaseWebsocketClient<
       this.parseWsError('websocket error', event, wsKey);
     ws.onclose = (event: any) => this.onWsClose(event, wsKey);
 
+    if (typeof ws.on === 'function') {
+      ws.on('ping', (event) => this.onWsPing(event, wsKey, ws, 'event'));
+      ws.on('pong', (event) => this.onWsPong(event, wsKey, 'event'));
+    }
+
     return ws;
   }
 
@@ -579,11 +585,12 @@ export abstract class BaseWebsocketClient<
     );
 
     this.logger.trace(
-      `Subscribing to ${topics.length} "${wsKey}" topics in ${subscribeWsMessages.length} batches.`, // Events: "${JSON.stringify(topics)}"
+      `Subscribing to ${topics.length} "${wsKey}" topics in ${subscribeWsMessages.length} batches. Events: "${JSON.stringify(topics)}"`,
+      // `Subscribing to ${topics.length} "${wsKey}" topics in ${subscribeWsMessages.length} batches.`, // Events: "${JSON.stringify(topics)}"
     );
 
     for (const wsMessage of subscribeWsMessages) {
-      // this.logger.trace(`Sending batch via message: "${wsMessage}"`);
+      this.logger.trace(`Sending batch via message: "${wsMessage}"`);
       this.tryWsSend(wsKey, wsMessage);
     }
 
@@ -702,6 +709,24 @@ export abstract class BaseWebsocketClient<
     }
   }
 
+  private onWsPing(_event: any, wsKey: TWSKey, ws: WebSocket, source: string) {
+    this.logger.trace('Received ping, sending pong frame', {
+      ...WS_LOGGER_CATEGORY,
+      wsKey,
+      source,
+    });
+    ws.pong();
+  }
+
+  private onWsPong(_event: any, wsKey: TWSKey, source: string) {
+    this.logger.trace('Received pong, clearing pong timer', {
+      ...WS_LOGGER_CATEGORY,
+      wsKey,
+      source,
+    });
+    this.clearPongTimer(wsKey);
+  }
+
   /**
    * Called automatically once a connection is ready.
    * - Some exchanges are ready immediately after the connections open.
@@ -787,12 +812,7 @@ export abstract class BaseWebsocketClient<
       this.clearPongTimer(wsKey);
 
       if (this.isWsPong(event)) {
-        this.logger.trace('Received pong', {
-          ...WS_LOGGER_CATEGORY,
-          wsKey,
-          event: (event as any)?.data,
-        });
-        return;
+        return this.onWsPong(event, wsKey, 'onWsMessage');
       }
 
       if (this.isWsPing(event)) {
