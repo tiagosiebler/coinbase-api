@@ -1,4 +1,4 @@
-import { CBExchangeClient } from '../../src/CBExchangeClient.js';
+import { CBExchangeClient } from '../../src/index.js';
 // import { CBExchangeClient } from 'coinbase-api';
 
 // Initialize the client, you can pass in api keys here if you have them but they are not required for public endpoints

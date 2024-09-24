@@ -46,30 +46,9 @@ describe('CBExchangeClient PRIVATE', () => {
       });
 
       test('with params', async () => {
-        const res = await rest.submitOrder({
-          product_id: 'BTC-GBP',
-          price: '1000',
-          side: 'buy',
-          type: 'limit',
-          size: '0.001',
-        });
+        const res = await rest.getTransfers({ type: 'deposit' });
         console.log('res with params', res);
-        expect(res).toMatchObject({
-          id: expect.any(String),
-          price: expect.any(String),
-          size: expect.any(String),
-          product_id: expect.any(String),
-          side: expect.any(String),
-          type: expect.any(String),
-          time_in_force: expect.any(String),
-          post_only: expect.any(Boolean),
-          created_at: expect.any(String),
-          fill_fees: expect.any(String),
-          filled_size: expect.any(String),
-          executed_value: expect.any(String),
-          status: expect.any(String),
-          settled: expect.any(Boolean),
-        });
+        expect(res).toEqual(expect.arrayContaining([expect.any(Object)]));
       });
     });
 

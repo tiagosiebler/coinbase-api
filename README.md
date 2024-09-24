@@ -218,18 +218,48 @@ See all clients [here](./src/) for more information on all the functions or the 
 
 ## WebSockets
 
-TO BE FILLED
-
 All available WebSockets can be used via a shared `WebsocketClient`. The WebSocket client will automatically open/track/manage connections as needed. Each unique connection (one per server URL) is tracked using a WsKey (each WsKey is a string - see [WS_KEY_MAP](src/lib/websocket/websocket-util.ts) for a list of supported values).
 
 Any subscribe/unsubscribe events will need to include a WsKey, so the WebSocket client understands which connection the event should be routed to. See examples below or in the [examples](./examples/) folder on GitHub.
 
 Data events are emitted from the WebsocketClient via the `update` event, see example below:
 
-```javascript
-const { WebsocketClient } = require('kucoin-api');
+#### Public Websocket
 
+```javascript
+const { WebsocketClient } = require('coinbase-api');
+
+// public ws client, doesnt need any api keys to run
 const client = new WebsocketClient();
+```
+
+#### Private Websocket
+
+```javascript
+const { WebsocketClient } = require('coinbase-api');
+
+// key name & private key, as returned by coinbase when creating your API keys.
+// Note: the below example is a dummy key and won't actually work
+const advancedTradeCdpAPIKey = {
+  name: 'organizations/13232211d-d7e2-d7e2-d7e2-d7e2d7e2d7e2/apiKeys/d7e2d7e2-d7e2-d7e2-d7e2-d7e2d7e2d7e2',
+  privateKey:
+    '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
+};
+
+const client = new WebsocketClient({
+  // Either pass the full JSON object that can be downloaded when creating your API keys
+  // cdpApiKey: advancedTradeCdpAPIKey,
+
+  // Or use the key name as "apiKey" and private key (WITH the "begin/end EC PRIVATE KEY" comment) as "apiSecret"
+  apiKey: advancedTradeCdpAPIKey.name,
+  apiSecret: advancedTradeCdpAPIKey.privateKey,
+});
+```
+
+#### Listening and subscribing to Websocket events
+
+```javascript
+// add event listeners for websocket clients
 
 client.on('open', (data) => {
   console.log('open: ', data?.wsKey);
@@ -237,7 +267,7 @@ client.on('open', (data) => {
 
 // Data received
 client.on('update', (data) => {
-  console.info('data received: ', JSON.stringify(data));
+  console.info(new Date(), 'data received: ', JSON.stringify(data));
 });
 
 // Something happened, attempting to reconenct
@@ -257,56 +287,88 @@ client.on('close', (data) => {
 
 // Reply to a request, e.g. "subscribe"/"unsubscribe"/"authenticate"
 client.on('response', (data) => {
-  console.info('response: ', data);
+  console.info('response: ', JSON.stringify(data, null, 2));
   // throw new Error('res?');
 });
 
 client.on('exception', (data) => {
-  console.error('exception: ', {
-    msg: data.msg,
-    errno: data.errno,
-    code: data.code,
-    syscall: data.syscall,
-    hostname: data.hostname,
-  });
+  console.error('exception: ', data);
 });
 
-try {
-  // Optional: await a connection to be ready before subscribing (this is not necessary)
-  // await client.connect('futuresPublicV1');
+/**
+ * Use the client subscribe(topic, market) pattern to subscribe to any websocket topic.
+ *
+ * You can subscribe to topics one at a time or many in one request.
+ *
+ * Topics can be sent as simple strings, if no parameters are required:
+ */
 
+// market data
+client.subscribe('heartbeats', 'advTradeMarketData');
+
+// user data
+client.subscribe('futures_balance_summary', 'advTradeUserData');
+client.subscribe('user', 'advTradeUserData');
+
+/**
+ * Or send a more structured object with parameters, e.g. if parameters are required
+ */
+const tickerSubscribeRequst = {
+  topic: 'ticker',
   /**
-   * Examples for public futures websocket topics (that don't require authentication).
-   *
-   * These should all subscribe via the "futuresPublicV1" wsKey. For detailed usage, refer to the ws-spot-public.ts example.
+   * Anything in the payload will be merged into the subscribe "request",
+   * allowing you to send misc parameters supported by the exchange (such as `product_ids: string[]`)
    */
-  client.subscribe(
-    [
-      '/contractMarket/tickerV2:XBTUSDM',
-      '/contractMarket/ticker:XBTUSDM',
-      '/contractMarket/level2:XBTUSDM',
-      '/contractMarket/execution:XBTUSDM',
-      '/contractMarket/level2Depth5:XBTUSDM',
-      '/contractMarket/level2Depth50:XBTUSDM',
-      '/contractMarket/limitCandle:XBTUSDTM_1hour',
-      '/contract/instrument:XBTUSDM',
-      '/contract/announcement',
-      '/contractMarket/snapshot:XBTUSDM',
-    ],
-    'futuresPublicV1',
-  );
-} catch (e) {
-  console.error(`Subscribe exception: `, e);
-}
+  payload: {
+    product_ids: ['ETH-USD', 'BTC-USD'],
+  },
+};
+client.subscribe(tickerSubscribeRequst, 'advTradeMarketData');
+
+// Other adv trade public websocket topics:
+
+client.subscribe(
+  [
+    {
+      topic: 'candles',
+      payload: {
+        product_ids: ['ETH-USD'],
+      },
+    },
+    {
+      topic: 'market_trades',
+      payload: {
+        product_ids: ['ETH-USD', 'BTC-USD'],
+      },
+    },
+    {
+      topic: 'ticker',
+      payload: {
+        product_ids: ['ETH-USD', 'BTC-USD'],
+      },
+    },
+    {
+      topic: 'ticker_batch',
+      payload: {
+        product_ids: ['ETH-USD', 'BTC-USD'],
+      },
+    },
+    {
+      topic: 'level2',
+      payload: {
+        product_ids: ['ETH-USD', 'BTC-USD'],
+      },
+    },
+  ],
+  'advTradeMarketData',
+);
 ```
 
-See [WebsocketClient](./src/WebsocketClient.ts) for further information and make sure to check the [examples](./examples/) folder for much more detail, especially [ws-spot-public.ts](./examples/ws-spot-public.ts), which explains a lot of detail.
+See [WebsocketClient](./src/WebsocketClient.ts) for further information and make sure to check the [examples](./examples/) folder for much more usage examples, especially [publicWs.ts](./examples/AdvancedTrade/WebSockets/publicWs.ts) and [privateWs.ts](./examples/AdvancedTrade/WebSockets/privateWs.ts), which explains a lot of small details.
 
 ---
 
 ## Customise Logging
-
-TO BE FILLED
 
 Pass a custom logger which supports the log methods `trace`, `info` and `error`, or override methods from the default logger as desired.
 
