@@ -364,13 +364,11 @@ client.subscribe(
 );
 ```
 
-See [WebsocketClient](./src/WebsocketClient.ts) for further information and make sure to check the [examples](./examples/) folder for much more detail, especially [ws-spot-public.ts](./examples/ws-spot-public.ts), which explains a lot of detail.
+See [WebsocketClient](./src/WebsocketClient.ts) for further information and make sure to check the [examples](./examples/) folder for much more usage examples, especially [publicWs.ts](./examples/AdvancedTrade/WebSockets/publicWs.ts) and [privateWs.ts](./examples/AdvancedTrade/WebSockets/privateWs.ts), which explains a lot of small details.
 
 ---
 
 ## Customise Logging
-
-TO BE FILLED
 
 Pass a custom logger which supports the log methods `trace`, `info` and `error`, or override methods from the default logger as desired.
 
