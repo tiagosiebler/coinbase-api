@@ -74,13 +74,7 @@ async function start() {
   });
 
   client.on('exception', (data) => {
-    console.error('exception: ', {
-      msg: data.msg,
-      errno: data.errno,
-      code: data.code,
-      syscall: data.syscall,
-      hostname: data.hostname,
-    });
+    console.error('exception: ', data);
   });
 
   try {
