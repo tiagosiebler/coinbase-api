@@ -19,6 +19,9 @@ export interface WsExchangeChannelWithParams<TWSTopic extends string = string> {
   product_ids: string[];
 }
 
+/**
+ * Public subscribe/unsubscribe requests for the Coinbase Exchange product group
+ */
 export interface WsExchangeRequestOperation<TWSTopic extends string = string> {
   type: WsOperation;
   channels: (TWSTopic | WsExchangeChannelWithParams)[];
@@ -26,6 +29,7 @@ export interface WsExchangeRequestOperation<TWSTopic extends string = string> {
 }
 
 /**
+ * Private (authenticated) subscribe/unsubscribe requests for the Coinbase Exchange product group
  * https://docs.cdp.coinbase.com/exchange/docs/websocket-auth
  */
 export type WsExchangeAuthenticatedRequestOperation<
@@ -35,4 +39,28 @@ export type WsExchangeAuthenticatedRequestOperation<
   key: string;
   passphrase: string;
   timestamp: string;
+};
+
+/**
+ * Public subscribe/unsubscribe requests for the Coinbase International product group
+ */
+export interface WsInternationalRequestOperation<
+  TWSTopic extends string = string,
+> {
+  type: Uppercase<WsOperation>;
+  channels: (TWSTopic | WsExchangeChannelWithParams)[];
+  product_ids?: string[];
+}
+
+/**
+ * Private (authenticated) subscribe/unsubscribe requests for the Coinbase International product group
+ * https://docs.cdp.coinbase.com/intx/docs/websocket-auth
+ */
+export type WsInternationalAuthenticatedRequestOperation<
+  TWSTopic extends string = string,
+> = WsInternationalRequestOperation<TWSTopic> & {
+  time: string;
+  key: string;
+  passphrase: string;
+  signature: string;
 };
