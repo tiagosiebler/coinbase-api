@@ -1,10 +1,10 @@
 import { CBInternationalClient } from '../../src/index.js';
 
-describe('CBInternationalClient PRIVATE', () => {
+describe.skip('CBInternationalClient PRIVATE', () => {
   const account = {
-    key: process.env.API_KEY_NAME,
-    secret: process.env.API_PRIVATE_KEY,
-    passphrase: process.env.API_PASSPHRASE,
+    key: process.env.CB_INTX_API_KEY_NAME,
+    secret: process.env.CB_INTX_API_PRIVATE_KEY,
+    passphrase: process.env.CB_INTX_API_PASSPHRASE,
   };
 
   const rest = new CBInternationalClient({

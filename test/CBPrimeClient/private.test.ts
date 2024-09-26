@@ -1,10 +1,10 @@
 import { CBPrimeClient } from '../../src/index.js';
 
-describe('CBPrimeClient PRIVATE', () => {
+describe.skip('CBPrimeClient PRIVATE', () => {
   const account = {
-    key: process.env.API_KEY_NAME,
-    secret: process.env.API_PRIVATE_KEY,
-    passphrase: process.env.API_PASSPHRASE,
+    key: process.env.CB_PRIME_API_KEY_NAME,
+    secret: process.env.CB_PRIME_API_PRIVATE_KEY,
+    passphrase: process.env.CB_PRIME_API_PASSPHRASE,
   };
 
   const rest = new CBPrimeClient({

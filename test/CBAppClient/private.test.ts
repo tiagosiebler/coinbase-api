@@ -4,8 +4,8 @@ let accId = '';
 
 describe('CBAppClient PRIVATE', () => {
   const account = {
-    key: process.env.API_KEY_NAME,
-    secret: process.env.API_PRIVATE_KEY,
+    key: process.env.CB_APP_API_KEY_NAME,
+    secret: process.env.CB_APP_API_PRIVATE_KEY,
   };
 
   const rest = new CBAppClient({

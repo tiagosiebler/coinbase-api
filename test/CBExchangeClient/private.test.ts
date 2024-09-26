@@ -2,16 +2,17 @@ import { CBExchangeClient } from '../../src/index.js';
 
 describe('CBExchangeClient PRIVATE', () => {
   const account = {
-    key: process.env.API_KEY_NAME_EXCH,
-    secret: process.env.API_PRIVATE_KEY_EXCH,
-    passphrase: process.env.API_PASSPHRASE_EXCH,
+    key: process.env.CB_EXCHANGE_API_KEY_NAME_EXCH,
+    secret: process.env.CB_EXCHANGE_API_PRIVATE_KEY_EXCH,
+    passphrase: process.env.CB_EXCHANGE_API_PASSPHRASE_EXCH,
+    useSandbox: process.env.CB_EXCHANGE_USE_SANDBOX === 'true',
   };
 
   const rest = new CBExchangeClient({
     apiKey: account.key,
     apiSecret: account.secret,
     apiPassphrase: account.passphrase,
-    useSandbox: true,
+    useSandbox: account.useSandbox,
   });
 
   it('should have credentials to test with', () => {
