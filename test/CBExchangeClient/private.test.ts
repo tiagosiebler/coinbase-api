@@ -48,7 +48,8 @@ describe('CBExchangeClient PRIVATE', () => {
 
       test('with params', async () => {
         const res = await rest.getTransfers({ type: 'deposit' });
-        console.log('res with params', res);
+        console.log(`res "${expect.getState().currentTestName}"`, res);
+
         expect(res).toEqual(expect.arrayContaining([expect.any(Object)]));
       });
     });
@@ -67,7 +68,8 @@ describe('CBExchangeClient PRIVATE', () => {
         } catch (e: any) {
           // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
-          console.log('Error, CBExchange, post req:', e);
+          console.log(`Error, "${expect.getState().currentTestName}"`, e);
+
           const responseBody = e?.body;
           expect(responseBody).toMatchObject({
             message: 'Forbidden',
