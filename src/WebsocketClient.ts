@@ -63,55 +63,6 @@ export const PUBLIC_WS_KEYS: WsKey[] = [
 type WsTopic = string;
 
 export class WebsocketClient extends BaseWebsocketClient<WsKey> {
-  // private RESTClientCache: Record<WsMarket, CBAdvancedTradeClient | undefined> =
-  //   {
-  //     advancedTrade: undefined,
-  //     exchange: undefined,
-  //     international: undefined,
-  //     prime: undefined,
-  //   };
-
-  // private getRESTClient(wsKey: WsKey): undefined {
-  //   switch (wsKey) {
-  //     case WS_KEY_MAP.advTradeMarketData:
-  //     case WS_KEY_MAP.advTradeUserData:
-  //     case WS_KEY_MAP.exchangeMarketData:
-  //     case WS_KEY_MAP.exchangeDirectMarketData:
-  //     case WS_KEY_MAP.internationalMarketData:
-  //     case WS_KEY_MAP.primeMarketData: {
-  //       break;
-  //     }
-  //     default: {
-  //       throw neverGuard(wsKey, `Unhandled WsKey: "${wsKey}"`);
-  //     }
-  //   }
-  //   // if (wsKey === 'spotPublicV1' || wsKey === 'spotPrivateV1') {
-  //   //   const clientType = 'advancedTrade';
-  //   //   if (this.RESTClientCache[clientType]) {
-  //   //     return this.RESTClientCache[clientType];
-  //   //   }
-
-  //   //   this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
-  //   //     apiKey: this.options.apiKey,
-  //   //     apiSecret: this.options.apiSecret,
-  //   //   });
-  //   //   return this.RESTClientCache[clientType];
-  //   // }
-
-  //   // const clientType = 'advancedTrade';
-  //   // if (this.RESTClientCache[clientType]) {
-  //   //   return this.RESTClientCache[clientType];
-  //   // }
-
-  //   // this.RESTClientCache[clientType] = new CBAdvancedTradeClient({
-  //   //   apiKey: this.options.apiKey,
-  //   //   apiSecret: this.options.apiSecret,
-  //   // });
-  //   // return this.RESTClientCache[clientType];
-
-  //   // throw neverGuard(wsKey, `Unhandled WsKey: "${wsKey}"`);
-  // }
-
   /**
    * Request connection of all dependent (public & private) websockets, instead of waiting for automatic connection by library
    */
@@ -295,13 +246,13 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       const parsed = JSON.parse(event.data);
 
       const responseEvents = ['subscriptions'];
-      // const connectionReadyEvents = [''];
 
+      // E.g. {"type":"error","message":"rate limit exceeded","wsKey":"advTradeMarketData"}
       if (isCBAdvancedTradeErrorEvent(parsed)) {
         return [{ eventType: 'exception', event: parsed }];
       }
 
-      // Parse advanced trade events
+      // Parse Advanced Trade WS events (update & response)
       if (isCBAdvancedTradeWSEvent(parsed)) {
         const eventType = parsed.channel;
 
@@ -326,6 +277,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         }
       }
 
+      // Parse CB Exchange WS events
       if (isCBExchangeWSEvent(parsed, wsKey)) {
         const eventType = parsed.type;
 

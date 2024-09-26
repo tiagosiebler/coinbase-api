@@ -23,8 +23,7 @@ export function isCBAdvancedTradeWSEvent(
 }
 
 /**
- * Type guard that checks whether this event is/extends CBExchangeBaseEvent,
- * used for incoming events from ther server
+ * Type guard that checks whether this event is/extends CBExchangeBaseEvent
  */
 export function isCBExchangeWSEvent(
   event: unknown,
@@ -40,7 +39,9 @@ export function isCBExchangeWSEvent(
   );
 }
 
-// {"type":"error","message":"rate limit exceeded","wsKey":"advTradeMarketData"}
+/**
+ * Type guard for error-type response events seen for the Advnaced Trade WS channel
+ */
 export function isCBAdvancedTradeErrorEvent(
   event: unknown,
 ): event is CBAdvancedTradeErrorEvent {
