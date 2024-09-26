@@ -48,7 +48,7 @@ export interface WsInternationalRequestOperation<
   TWSTopic extends string = string,
 > {
   type: Uppercase<WsOperation>;
-  channels: (TWSTopic | WsExchangeChannelWithParams)[];
+  channels: TWSTopic[];
   product_ids?: string[];
 }
 
