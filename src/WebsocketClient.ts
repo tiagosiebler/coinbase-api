@@ -405,7 +405,14 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     switch (wsKey) {
       case WS_KEY_MAP.advTradeMarketData:
       case WS_KEY_MAP.advTradeUserData:
+      // Technically, INTX supports request batching but not with nested parameters, so we'll send one at a time
+      case WS_KEY_MAP.internationalMarketData:
         return 1;
+      // Exchange supports request batching, no known limit to max topics per request
+      case WS_KEY_MAP.exchangeDirectMarketData:
+      case WS_KEY_MAP.exchangeMarketData: {
+        return null;
+      }
       default: {
         return null;
       }
@@ -469,14 +476,10 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
           const wsRequestEvent: WsInternationalRequestOperation<WsTopic> = {
             type: operation === 'subscribe' ? 'SUBSCRIBE' : 'UNSUBSCRIBE',
-            channels: [
-              topicRequest.payload
-                ? {
-                    name: topicRequest.topic,
-                    ...topicRequest.payload,
-                  }
-                : topicRequest.topic,
-            ],
+            // As of Sep 2024, parameters (such as product_id[]) cannot be nested with the channels array
+            channels: [topicRequest.topic],
+            // This merges parametrs (such as product_id[]) into the top level request object
+            ...topicRequest.payload,
           };
 
           return wsRequestEvent;
@@ -640,59 +643,13 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
           );
         }
 
-        const mergedOperationEvents =
-          getMergedCBINTXRequestOperations(operationEvents);
-
-        // We're under the max topics per request limit.
-        // Send operation requests as one merged request
-        if (
-          !maxTopicsPerEvent ||
-          mergedOperationEvents.channels.length <= maxTopicsPerEvent
-        ) {
-          if (!isPrivateChannel) {
-            return [JSON.stringify(mergedOperationEvents)];
-          }
-
-          if (!apiKey || !apiSecret || !apiPassphrase) {
-            throw new Error(
-              `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
-            );
-          }
-
-          const { sign, timestampInSeconds } =
-            await getCBExchangeWSSign(apiSecret);
-
-          const mergedOperationEventsWithSign: WsInternationalAuthenticatedRequestOperation<WsTopic> =
-            {
-              ...mergedOperationEvents,
-              time: timestampInSeconds,
-              key: apiKey,
-              passphrase: apiPassphrase,
-              signature: sign,
-            };
-
-          throw new Error(
-            'CB INTX is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
-          );
-          return [JSON.stringify(mergedOperationEventsWithSign)];
-        }
-
         // We're over the max topics per request limit. Break into batches.
-        const signedOperations: string[] = [];
-        for (
-          let i = 0;
-          i < mergedOperationEvents.channels.length;
-          i += maxTopicsPerEvent
-        ) {
-          const batchChannels = mergedOperationEvents.channels.slice(
-            i,
-            i + maxTopicsPerEvent,
-          );
-
-          const wsRequestEvent: WsInternationalRequestOperation<WsTopic> = {
-            type: mergedOperationEvents.type,
-            channels: [...batchChannels],
-          };
+        const finalOperations: string[] = [];
+        for (const operationEvent of operationEvents) {
+          if (!isPrivateChannel) {
+            finalOperations.push(JSON.stringify(operationEvent));
+            continue;
+          }
 
           if (!apiKey || !apiSecret || !apiPassphrase) {
             throw new Error(
@@ -708,19 +665,20 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
           const wsRequestEventWithSign: WsInternationalAuthenticatedRequestOperation<WsTopic> =
             {
-              ...wsRequestEvent,
+              ...operationEvent,
               time: timestampInSeconds,
               key: apiKey,
               passphrase: apiPassphrase,
               signature: sign,
             };
 
-          signedOperations.push(JSON.stringify(wsRequestEventWithSign));
+          finalOperations.push(JSON.stringify(wsRequestEventWithSign));
         }
+
         throw new Error(
           'CB INTX is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
         );
-        return signedOperations;
+        return finalOperations;
       }
       case WS_KEY_MAP.primeMarketData: {
         throw new Error(
