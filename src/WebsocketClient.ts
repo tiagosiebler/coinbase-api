@@ -3,8 +3,16 @@ import { CBAdvancedTradeClient } from './CBAdvancedTradeClient.js';
 import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
 import { signWSJWT } from './lib/jwtNode.js';
 import { neverGuard } from './lib/misc-util.js';
-import { isCBWSEvent } from './lib/websocket/typeGuards.js';
+import { signMessage } from './lib/webCryptoAPI.js';
 import {
+  isCBAdvancedTradeErrorEvent,
+  isCBAdvancedTradeWSEvent,
+  isCBExchangeWSEvent,
+  isCBExchangeWSRequestOperation,
+} from './lib/websocket/typeGuards.js';
+import {
+  getCBExchangeWSSign,
+  getMergedCBExchangeWSRequestOperations,
   MessageEventLike,
   WS_KEY_MAP,
   WS_URL_MAP,
@@ -14,8 +22,10 @@ import {
 import { WSConnectedResult } from './lib/websocket/WsStore.types.js';
 import { WsMarket } from './types/websockets/client.js';
 import {
+  WsAdvTradeRequestOperation,
+  WsExchangeAuthenticatedRequestOperation,
+  WsExchangeRequestOperation,
   WsOperation,
-  WsRequestOperation,
 } from './types/websockets/requests.js';
 import {
   WsAPITopicRequestParamMap,
@@ -287,11 +297,38 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       const responseEvents = ['subscriptions'];
       // const connectionReadyEvents = [''];
 
-      // TODO: this is the format for advanced trade WS, what about other product groups?
-      if (isCBWSEvent(parsed)) {
+      if (isCBAdvancedTradeErrorEvent(parsed)) {
+        return [{ eventType: 'exception', event: parsed }];
+      }
+
+      // Parse advanced trade events
+      if (isCBAdvancedTradeWSEvent(parsed)) {
         const eventType = parsed.channel;
 
         // These are request/reply pattern events (e.g. after subscribing to topics or authenticating)
+        if (responseEvents.includes(eventType)) {
+          return [
+            {
+              eventType: 'response',
+              event: parsed,
+            },
+          ];
+        }
+
+        // Generic data for a channel
+        if (typeof eventType === 'string') {
+          return [
+            {
+              eventType: 'update',
+              event: parsed,
+            },
+          ];
+        }
+      }
+
+      if (isCBExchangeWSEvent(parsed, wsKey)) {
+        const eventType = parsed.type;
+
         if (responseEvents.includes(eventType)) {
           return [
             {
@@ -409,12 +446,11 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
   /** Force subscription requests to be sent in smaller batches, if a number is returned */
   protected getMaxTopicsPerSubscribeEvent(wsKey: WsKey): number | null {
     switch (wsKey) {
+      case WS_KEY_MAP.advTradeMarketData:
+      case WS_KEY_MAP.advTradeUserData:
+        return 1;
       default: {
         return null;
-        // throw neverGuard(
-        //   wsKey,
-        //   `getMaxTopicsPerSubscribeEvent(): Unhandled wsKey`,
-        // );
       }
     }
   }
@@ -431,21 +467,67 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       return [];
     }
 
-    // Operations structured in a way that this exchange understands
+    const apiKey = this.options.apiKey;
+    const apiSecret = this.options.apiSecret;
+    const apiPassphrase = this.options.apiPassphrase;
+
+    /**
+     * Operations need to be structured in a way that this exchange understands.
+     * Parse the internal format into the format expected by the exchange. One request per operation.
+     */
     const operationEvents = topicRequests.map((topicRequest) => {
-      const isPrivateWsTopic = this.isPrivateTopicRequest(topicRequest, wsKey);
+      switch (wsKey) {
+        case WS_KEY_MAP.advTradeMarketData:
+        case WS_KEY_MAP.advTradeUserData: {
+          const wsRequestEvent: WsAdvTradeRequestOperation<WsTopic> = {
+            type: operation,
+            channel: topicRequest.topic,
+            ...topicRequest.payload,
+          };
 
-      // Good place to build event format depending on product group, if format varies (similar to auth being different)
-      const wsRequestEvent: WsRequestOperation<WsTopic> = {
-        type: operation,
-        channel: topicRequest.topic,
-        ...topicRequest.payload,
-      };
+          return wsRequestEvent;
+        }
+        case WS_KEY_MAP.exchangeMarketData:
+        case WS_KEY_MAP.exchangeDirectMarketData: {
+          const wsRequestEvent: WsExchangeRequestOperation<WsTopic> = {
+            type: operation,
+            channels: [
+              topicRequest.payload
+                ? {
+                    name: topicRequest.topic,
+                    ...topicRequest.payload,
+                  }
+                : topicRequest.topic,
+            ],
+          };
 
-      if (isPrivateWsTopic) {
-        if (wsKey === 'advTradeUserData') {
-          const apiKey = this.options.apiKey;
-          const apiSecret = this.options.apiSecret;
+          return wsRequestEvent;
+        }
+        default: {
+          throw new Error(`Not implemented for "${wsKey}" yet`);
+        }
+      }
+    });
+
+    const maxTopicsPerEvent = this.getMaxTopicsPerSubscribeEvent(wsKey);
+    const isPrivateChannel = PRIVATE_WS_KEYS.includes(wsKey);
+
+    /**
+     * - Merge commands into one if the exchange supports batch requests,
+     * - Apply auth/sign, if needed,
+     * - Apply any final formatting to return a string array, ready to be sent upstream.
+     */
+    switch (wsKey) {
+      case WS_KEY_MAP.advTradeMarketData:
+      case WS_KEY_MAP.advTradeUserData: {
+        // Events that are ready to send (usually stringified JSON)
+        // ADV trade only supports sending one at a time, so we don't try to merge them
+        // These are already signed, if needed.
+        return operationEvents.map((evt) => {
+          if (!isPrivateChannel) {
+            return JSON.stringify(evt);
+          }
+
           if (!apiKey || !apiSecret) {
             throw new Error(
               `"options.apiKey" (api key name) and/or "options.apiSecret" missing, unable to generate JWT`,
@@ -454,6 +536,10 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
           const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
           const timestamp = Date.now();
 
+          /**
+           * No batching is supported for this product group, so we can already
+           * handle sign here and return it as is
+           */
           const sign = signWSJWT({
             algorithm: 'ES256',
             timestampMs: timestamp,
@@ -462,21 +548,108 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
             apiPrivKey: apiSecret,
           });
 
-          return {
-            ...wsRequestEvent,
+          const operationEventWithSign = {
+            ...evt,
             jwt: sign,
           };
+
+          return JSON.stringify(operationEventWithSign);
+        });
+      }
+      case WS_KEY_MAP.exchangeMarketData:
+      case WS_KEY_MAP.exchangeDirectMarketData: {
+        if (
+          !operationEvents.every((evt) =>
+            isCBExchangeWSRequestOperation(evt, wsKey),
+          )
+        ) {
+          // Don't expect this to ever happen, but just to please typescript...
+          throw new Error(
+            `Unexpected request schema for exchange WS request builder`,
+          );
         }
 
-        throw new Error(`Auth not implemented yet for wsKey "${wsKey}"`);
-        // const apiPassphrase = this.options.apiPassphrase;
+        const mergedOperationEvents =
+          getMergedCBExchangeWSRequestOperations(operationEvents);
+
+        // We're under the max topics per request limit.
+        // Send operation requests as one merged request
+        if (
+          !maxTopicsPerEvent ||
+          mergedOperationEvents.channels.length <= maxTopicsPerEvent
+        ) {
+          if (!isPrivateChannel) {
+            return [JSON.stringify(mergedOperationEvents)];
+          }
+
+          if (!apiKey || !apiSecret || !apiPassphrase) {
+            throw new Error(
+              `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+            );
+          }
+
+          const { sign, timestampInSeconds } =
+            await getCBExchangeWSSign(apiSecret);
+
+          const mergedOperationEventsWithSign: WsExchangeAuthenticatedRequestOperation<WsTopic> =
+            {
+              ...mergedOperationEvents,
+              signature: sign,
+              key: apiKey,
+              passphrase: apiPassphrase,
+              timestamp: timestampInSeconds,
+            };
+
+          return [JSON.stringify(mergedOperationEventsWithSign)];
+        }
+
+        // We're over the max topics per request limit. Break into batches.
+        const finalOperations: string[] = [];
+        for (
+          let i = 0;
+          i < mergedOperationEvents.channels.length;
+          i += maxTopicsPerEvent
+        ) {
+          const batchChannels = mergedOperationEvents.channels.slice(
+            i,
+            i + maxTopicsPerEvent,
+          );
+
+          const wsRequestEvent: WsExchangeRequestOperation<WsTopic> = {
+            type: mergedOperationEvents.type,
+            channels: [...batchChannels],
+          };
+
+          if (isPrivateChannel) {
+            if (!apiKey || !apiSecret || !apiPassphrase) {
+              throw new Error(
+                `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+              );
+            }
+
+            const { sign, timestampInSeconds } =
+              await getCBExchangeWSSign(apiSecret);
+
+            const wsRequestEventWithSign: WsExchangeAuthenticatedRequestOperation<WsTopic> =
+              {
+                ...wsRequestEvent,
+                signature: sign,
+                key: apiKey,
+                passphrase: apiPassphrase,
+                timestamp: timestampInSeconds,
+              };
+            finalOperations.push(JSON.stringify(wsRequestEventWithSign));
+          } else {
+            finalOperations.push(JSON.stringify(wsRequestEvent));
+          }
+        }
+
+        return finalOperations;
       }
-
-      return wsRequestEvent;
-    });
-
-    // Events that are ready to send (usually stringified JSON)
-    return operationEvents.map((event) => JSON.stringify(event));
+      default: {
+        throw new Error(`Not implemented for "${wsKey}" yet`);
+      }
+    }
   }
 
   protected async getWsAuthRequestEvent(wsKey: WsKey): Promise<object> {

@@ -7,70 +7,32 @@ export type WsOperation = 'subscribe' | 'unsubscribe';
  * Docs:
  * - Adv Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/ws-auth#subscribing
  */
-export interface WsRequestOperation<TWSTopic extends string = string> {
+export interface WsAdvTradeRequestOperation<TWSTopic extends string = string> {
   type: WsOperation;
   channel: TWSTopic;
   product_ids?: string[];
   jwt?: string;
 }
 
-const heartBeats: WsRequestOperation = {
-  type: 'subscribe',
-  channel: 'heartbeats',
-  jwt: 'XYZ',
-};
+export interface WsExchangeChannelWithParams<TWSTopic extends string = string> {
+  name: TWSTopic;
+  product_ids: string[];
+}
 
-const candles: WsRequestOperation = {
-  type: 'subscribe',
-  product_ids: ['ETH-USD'],
-  channel: 'candles',
-  jwt: 'XYZ',
-};
+export interface WsExchangeRequestOperation<TWSTopic extends string = string> {
+  type: WsOperation;
+  channels: (TWSTopic | WsExchangeChannelWithParams)[];
+  product_ids?: string[];
+}
 
-const marketTrades: WsRequestOperation = {
-  type: 'subscribe',
-  product_ids: ['ETH-USD', 'BTC-USD'],
-  channel: 'market_trades',
-  jwt: 'XYZ',
-};
-
-const status: WsRequestOperation = {
-  type: 'subscribe',
-  product_ids: ['ETH-USD', 'BTC-USD'],
-  channel: 'status',
-  jwt: 'XYZ',
-};
-
-const ticker: WsRequestOperation = {
-  type: 'subscribe',
-  product_ids: ['ETH-USD', 'BTC-USD'],
-  channel: 'ticker',
-  jwt: 'XYZ',
-};
-
-const tickerBatch: WsRequestOperation = {
-  type: 'subscribe',
-  product_ids: ['ETH-USD', 'BTC-USD'],
-  channel: 'ticker_batch',
-  jwt: 'XYZ',
-};
-
-const level2: WsRequestOperation = {
-  type: 'subscribe',
-  product_ids: ['ETH-USD', 'BTC-USD'],
-  channel: 'level2',
-  jwt: 'XYZ',
-};
-
-const user: WsRequestOperation = {
-  type: 'subscribe',
-  channel: 'user',
-  product_ids: ['BTC-USD'],
-  jwt: 'XYZ',
-};
-
-const futuresBalSummary: WsRequestOperation = {
-  type: 'subscribe',
-  channel: 'futures_balance_summary',
-  jwt: 'XYZ',
+/**
+ * https://docs.cdp.coinbase.com/exchange/docs/websocket-auth
+ */
+export type WsExchangeAuthenticatedRequestOperation<
+  TWSTopic extends string = string,
+> = WsExchangeRequestOperation<TWSTopic> & {
+  signature: string;
+  key: string;
+  passphrase: string;
+  timestamp: string;
 };
