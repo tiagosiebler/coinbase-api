@@ -733,6 +733,9 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
     }
   }
 
+  /**
+   * Events are signed per-request, so this function isn't needed for Coinbase.
+   */
   protected async getWsAuthRequestEvent(wsKey: WsKey): Promise<object> {
     return { wsKey };
   }
