@@ -1,5 +1,8 @@
 import WebSocket from 'isomorphic-ws';
 
+import { WsExchangeRequestOperation } from '../../types/websockets/requests.js';
+import { signMessage } from '../webCryptoAPI.js';
+
 /**
  * Each websocket URL (domain + endpoint) is represented as a "WS Key". Authentication is handled automatically if required.
  */
@@ -127,3 +130,56 @@ export const WS_URL_MAP: Record<WsKey, NetworkMap<'livenet' | 'testnet'>> = {
     testnet: 'NotAvailable',
   },
 } as const;
+
+export function getMergedCBExchangeWSRequestOperations<
+  TWSTopic extends string = string,
+>(operations: WsExchangeRequestOperation<TWSTopic>[]) {
+  // The CB Exchange WS supports sending multiple topics in one request.
+  // Merge all requests into one
+  const mergedOperationEvents = operations.reduce(
+    (
+      acc: WsExchangeRequestOperation<TWSTopic>,
+      evt: WsExchangeRequestOperation<TWSTopic>,
+    ) => {
+      if (!acc) {
+        const wsRequestEvent: WsExchangeRequestOperation<TWSTopic> = {
+          type: evt.type,
+          channels: [...evt.channels],
+        };
+
+        return wsRequestEvent;
+      }
+
+      const wsRequestEvent: WsExchangeRequestOperation<TWSTopic> = {
+        type: evt.type,
+        channels: [...acc.channels, ...evt.channels],
+      };
+
+      return wsRequestEvent;
+    },
+  );
+
+  return mergedOperationEvents;
+}
+
+export async function getCBExchangeWSSign(apiSecret: string): Promise<{
+  timestampInSeconds: string;
+  sign: string;
+}> {
+  const timestampInMs = Date.now();
+  const timestampInSeconds = (timestampInMs / 1000).toFixed(0);
+
+  const signPath = '/users/self/verify';
+  const signRequestMethod = 'GET';
+  const signInput = `${timestampInSeconds}${signRequestMethod}${signPath}`;
+
+  const sign = await signMessage(
+    signInput,
+    apiSecret,
+    'base64',
+    'SHA-256',
+    'base64:web',
+  );
+
+  return { sign, timestampInSeconds };
+}

@@ -454,9 +454,6 @@ export abstract class BaseRestClient {
         case REST_CLIENT_TYPE_ENUM.international: {
           const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
-          const signInput =
-            timestampInSeconds + method + endpoint + signRequestParams;
-
           if (!apiSecret) {
             throw new Error(`No API secret provided, cannot sign request.`);
           }
@@ -464,6 +461,9 @@ export abstract class BaseRestClient {
           if (!apiPassphrase) {
             throw new Error(`No API passphrase provided, cannot sign request.`);
           }
+
+          const signInput =
+            timestampInSeconds + method + endpoint + signRequestParams;
 
           const sign = await signMessage(
             signInput,
