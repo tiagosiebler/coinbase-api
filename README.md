@@ -30,7 +30,6 @@ Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and Web
 - Complete integration with all REST APIs and WebSockets.
 - TypeScript support (with type declarations for most API requests & responses)
 - Robust WebSocket integration with configurable connection heartbeats & automatic reconnect then resubscribe workflows.
-- Browser-friendly HMAC signature mechanism.
 - Automatically supports both ESM and CJS projects.
 - Proxy support via axios integration.
 - Active community support & collaboration in telegram: [Node.js Algo Traders](https://t.me/nodetraders).
@@ -231,6 +230,18 @@ const { WebsocketClient } = require('coinbase-api');
 
 // public ws client, doesnt need any api keys to run
 const client = new WebsocketClient();
+
+// The WS Key (last parameter) dictates which WS feed this request goes to (aka if auth is required).
+// As long as the WS feed doesn't require auth, you should be able to subscribe to channels without api credentials.
+client.subscribe(
+  {
+    topic: 'status',
+    payload: {
+      product_ids: ['XRP-USD'],
+    },
+  },
+  'advTradeMarketData',
+);
 ```
 
 #### Private Websocket
@@ -373,7 +384,7 @@ See [WebsocketClient](./src/WebsocketClient.ts) for further information and make
 Pass a custom logger which supports the log methods `trace`, `info` and `error`, or override methods from the default logger as desired.
 
 ```javascript
-const { WebsocketClient, DefaultLogger } = require('kucoin-api');
+const { WebsocketClient, DefaultLogger } = require('coinbase-api');
 
 // E.g. customise logging for only the trace level:
 const logger = {
@@ -384,13 +395,14 @@ const logger = {
     if (
       [
         'Sending ping',
-        // 'Sending upstream ws message: ',
-        'Received pong',
+        'Sending upstream ws message: ',
+        'Received pong, clearing pong timer',
+        'Received ping, sending pong frame',
       ].includes(params[0])
     ) {
       return;
     }
-    console.log('trace', JSON.stringify(params, null, 2));
+    console.log('trace', params);
   },
 };
 
