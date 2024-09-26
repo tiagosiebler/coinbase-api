@@ -133,7 +133,27 @@ async function start() {
             // product_ids: ['ETH-USD', 'BTC-USD'],
           },
         },
-        // TODO: @jerko add other PUBLIC channels here as example
+        // https://docs.cdp.coinbase.com/exchange/docs/websocket-channels#ticker-channel
+        {
+          topic: 'ticker',
+          payload: {
+            product_ids: ['ETH-USD', 'BTC-USD'],
+          },
+        },
+        // https://docs.cdp.coinbase.com/exchange/docs/websocket-channels#ticker-batch-channel
+        {
+          topic: 'ticker_batch',
+          payload: {
+            product_ids: ['ETH-USD', 'BTC-USD'],
+          },
+        },
+        // https://docs.cdp.coinbase.com/exchange/docs/websocket-channels#level2-batch-channel
+        {
+          topic: 'level2_batch',
+          payload: {
+            product_ids: ['ETH-USD', 'BTC-USD'],
+          },
+        },
       ],
       'exchangeMarketData',
     );
