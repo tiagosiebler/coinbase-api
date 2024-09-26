@@ -63,6 +63,9 @@ export interface WsTopicRequest<
   TWSPayload = any,
 > {
   topic: TWSTopic;
+  /**
+   * Any parameters to include with the request. These are automatically merged into the request.
+   */
   payload?: TWSPayload;
 }
 
