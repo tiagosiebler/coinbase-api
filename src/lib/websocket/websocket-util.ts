@@ -257,3 +257,41 @@ export async function getCBInternationalWSSign(
 
   return { sign, timestampInSeconds };
 }
+
+/**
+ * Return sign used to authenticate CB Prime WS requests
+ */
+export async function getCBPrimeWSSign(params: {
+  channelName: string;
+  svcAccountId: string;
+  portfolioId: string;
+  apiKey: string;
+  apiSecret: string;
+  product_ids?: string[];
+}): Promise<{
+  timestampInSeconds: string;
+  sign: string;
+}> {
+  const timestampInMs = Date.now();
+  const timestampInSeconds = (timestampInMs / 1000).toFixed(0);
+
+  // channelName + accessKey + svcAccountId + timestamp + portfolioId + products
+  const signInput = [
+    params.channelName,
+    params.apiKey,
+    params.svcAccountId,
+    timestampInSeconds,
+    params.portfolioId,
+    params.product_ids ? params.product_ids.join('') : '',
+  ].join('');
+
+  const sign = await signMessage(
+    signInput,
+    params.apiSecret,
+    'base64',
+    'SHA-256',
+    'base64:web',
+  );
+
+  return { sign, timestampInSeconds };
+}

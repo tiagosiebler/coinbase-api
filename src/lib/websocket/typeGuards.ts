@@ -7,6 +7,7 @@ import {
 import {
   WsExchangeRequestOperation,
   WsInternationalRequestOperation,
+  WsPrimeRequestOperation,
 } from '../../types/websockets/requests.js';
 import { WS_KEY_MAP, WsKey } from './websocket-util.js';
 
@@ -99,6 +100,30 @@ export function isCBINTXWSRequestOperation<TWSTopic extends string = string>(
   if (
     typeof looselyTypedEvent.type !== 'string' ||
     !Array.isArray(looselyTypedEvent.channels)
+  ) {
+    return false;
+  }
+
+  return wsKey === WS_KEY_MAP.internationalMarketData;
+}
+
+/**
+ * Silly type guard for the structure of events being sent to the server
+ * (e.g. when subscribing to a topic)
+ */
+export function isCBPrimeWSRequestOperation<TWSTopic extends string = string>(
+  evt: unknown,
+  wsKey: WsKey,
+): evt is WsPrimeRequestOperation<TWSTopic> {
+  if (!isDefinedObject(evt)) {
+    return false;
+  }
+
+  const looselyTypedEvent = evt as WsPrimeRequestOperation<TWSTopic>;
+
+  if (
+    typeof looselyTypedEvent.type !== 'string' ||
+    typeof looselyTypedEvent.channel !== 'string'
   ) {
     return false;
   }
