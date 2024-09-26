@@ -64,3 +64,31 @@ export type WsInternationalAuthenticatedRequestOperation<
   passphrase: string;
   signature: string;
 };
+
+/**
+ * Public subscribe/unsubscribe requests for the Coinbase Prime product group
+ */
+export interface WsPrimeRequestOperation<TWSTopic extends string = string> {
+  type: WsOperation;
+  channel: TWSTopic;
+  // these should be provided as a payload with the request, else auth will fail
+  svcAccountId: string;
+  portfolio_id: string;
+  product_ids: string[];
+}
+
+/**
+ * Private (authenticated) subscribe/unsubscribe requests for the Coinbase Prime product group
+ *
+ * - https://docs.cdp.coinbase.com/prime/docs/websocket-feed#signing-messages
+ * - https://docs.cdp.coinbase.com/prime/docs/websocket-channels
+ */
+export type WsPrimeAuthenticatedRequestOperation<
+  TWSTopic extends string = string,
+> = WsPrimeRequestOperation<TWSTopic> & {
+  access_key: string;
+  api_key_id: string;
+  passphrase: string;
+  signature: string;
+  timestamp: string;
+};

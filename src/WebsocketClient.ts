@@ -10,10 +10,12 @@ import {
   isCBExchangeWSEvent,
   isCBExchangeWSRequestOperation,
   isCBINTXWSRequestOperation,
+  isCBPrimeWSRequestOperation,
 } from './lib/websocket/typeGuards.js';
 import {
   getCBExchangeWSSign,
   getCBInternationalWSSign,
+  getCBPrimeWSSign,
   getMergedCBExchangeWSRequestOperations,
   getMergedCBINTXRequestOperations,
   MessageEventLike,
@@ -31,6 +33,8 @@ import {
   WsInternationalAuthenticatedRequestOperation,
   WsInternationalRequestOperation,
   WsOperation,
+  WsPrimeAuthenticatedRequestOperation,
+  WsPrimeRequestOperation,
 } from './types/websockets/requests.js';
 import {
   WsAPITopicRequestParamMap,
@@ -468,6 +472,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
           return wsRequestEvent;
         }
         case WS_KEY_MAP.internationalMarketData: {
+          // In case there's ever more operation types than "subscribe" and "unsubscribe"
           if (!['subscribe', 'unsubscribe'].includes(operation)) {
             throw new Error(
               `Unhandled request operation type for CB International WS: "${operation}"`,
@@ -484,8 +489,15 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
           return wsRequestEvent;
         }
-        // case WS_KEY_MAP.primeMarketData: {
-        // }
+        case WS_KEY_MAP.primeMarketData: {
+          const wsRequestEvent: WsPrimeRequestOperation<WsTopic> = {
+            type: operation,
+            channel: topicRequest.topic,
+            ...topicRequest.payload,
+          };
+
+          return wsRequestEvent;
+        }
         default: {
           throw new Error(
             `Not implemented for "${wsKey}" yet - if you need Prime or INTX, please get in touch.`,
@@ -646,11 +658,6 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         // We're over the max topics per request limit. Break into batches.
         const finalOperations: string[] = [];
         for (const operationEvent of operationEvents) {
-          if (!isPrivateChannel) {
-            finalOperations.push(JSON.stringify(operationEvent));
-            continue;
-          }
-
           if (!apiKey || !apiSecret || !apiPassphrase) {
             throw new Error(
               `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
@@ -681,12 +688,54 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         return finalOperations;
       }
       case WS_KEY_MAP.primeMarketData: {
+        if (
+          !operationEvents.every((evt) =>
+            isCBPrimeWSRequestOperation(evt, wsKey),
+          )
+        ) {
+          // Don't expect this to ever happen, but just to please typescript...
+          throw new Error(
+            `Unexpected request schema for exchange WS request builder`,
+          );
+        }
+        if (!apiKey || !apiSecret || !apiPassphrase) {
+          throw new Error(
+            `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+          );
+        }
+
+        const finalOperations: string[] = [];
+        for (const operationEvent of operationEvents) {
+          const { sign, timestampInSeconds } = await getCBPrimeWSSign({
+            channelName: operationEvent.channel,
+            svcAccountId: operationEvent.svcAccountId,
+            portfolioId: operationEvent.portfolio_id,
+            apiKey,
+            apiSecret,
+            product_ids: operationEvent.product_ids,
+          });
+
+          const wsRequestEventWithSign: WsPrimeAuthenticatedRequestOperation<WsTopic> =
+            {
+              ...operationEvent,
+              api_key_id: apiKey,
+              access_key: apiSecret,
+              passphrase: apiPassphrase,
+              signature: sign,
+              timestamp: timestampInSeconds,
+            };
+
+          finalOperations.push(JSON.stringify(wsRequestEventWithSign));
+        }
+
         throw new Error(
           'CB Prime is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
         );
+        return finalOperations;
       }
       default: {
-        throw new Error(`Not implemented for "${wsKey}" yet`);
+        throw neverGuard(wsKey, `Not implemented for "${wsKey}" yet`);
+        // throw new Error(`Not implemented for "${wsKey}" yet`);
       }
     }
   }
