@@ -4,7 +4,10 @@ import {
   CBAdvancedTradeEvent,
   CBExchangeBaseEvent,
 } from '../../types/websockets/events.js';
-import { WsExchangeRequestOperation } from '../../types/websockets/requests.js';
+import {
+  WsExchangeRequestOperation,
+  WsInternationalRequestOperation,
+} from '../../types/websockets/requests.js';
 import { WS_KEY_MAP, WsKey } from './websocket-util.js';
 
 function isDefinedObject(value: unknown): value is object {
@@ -64,11 +67,11 @@ export function isCBExchangeWSRequestOperation<
     return false;
   }
 
-  const looseTypedEvt = evt as WsExchangeRequestOperation<TWSTopic>;
+  const looselyTypedEvent = evt as WsExchangeRequestOperation<TWSTopic>;
 
   if (
-    typeof looseTypedEvt.type !== 'string' ||
-    !Array.isArray(looseTypedEvt.channels)
+    typeof looselyTypedEvent.type !== 'string' ||
+    !Array.isArray(looselyTypedEvent.channels)
   ) {
     return false;
   }
@@ -77,4 +80,28 @@ export function isCBExchangeWSRequestOperation<
     wsKey === WS_KEY_MAP.exchangeDirectMarketData ||
     wsKey === WS_KEY_MAP.exchangeMarketData
   );
+}
+
+/**
+ * Silly type guard for the structure of events being sent to the server
+ * (e.g. when subscribing to a topic)
+ */
+export function isCBINTXWSRequestOperation<TWSTopic extends string = string>(
+  evt: unknown,
+  wsKey: WsKey,
+): evt is WsInternationalRequestOperation<TWSTopic> {
+  if (!isDefinedObject(evt)) {
+    return false;
+  }
+
+  const looselyTypedEvent = evt as WsInternationalRequestOperation<TWSTopic>;
+
+  if (
+    typeof looselyTypedEvent.type !== 'string' ||
+    !Array.isArray(looselyTypedEvent.channels)
+  ) {
+    return false;
+  }
+
+  return wsKey === WS_KEY_MAP.internationalMarketData;
 }

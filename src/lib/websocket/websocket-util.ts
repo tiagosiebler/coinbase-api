@@ -1,6 +1,9 @@
 import WebSocket from 'isomorphic-ws';
 
-import { WsExchangeRequestOperation } from '../../types/websockets/requests.js';
+import {
+  WsExchangeRequestOperation,
+  WsInternationalRequestOperation,
+} from '../../types/websockets/requests.js';
 import { signMessage } from '../webCryptoAPI.js';
 
 /**
@@ -134,6 +137,10 @@ export const WS_URL_MAP: Record<WsKey, NetworkMap<'livenet' | 'testnet'>> = {
   },
 } as const;
 
+/**
+ * Merge one or more WS Request operations (e.g. subscribe request) for
+ * CB Exchange into one, allowing them to be sent as one request
+ */
 export function getMergedCBExchangeWSRequestOperations<
   TWSTopic extends string = string,
 >(operations: WsExchangeRequestOperation<TWSTopic>[]) {
@@ -164,7 +171,44 @@ export function getMergedCBExchangeWSRequestOperations<
 
   return mergedOperationEvents;
 }
+/**
+ * Merge one or more WS Request operations (e.g. subscribe request) for
+ * CB Exchange into one, allowing them to be sent as one request
+ */
+export function getMergedCBINTXRequestOperations<
+  TWSTopic extends string = string,
+>(operations: WsInternationalRequestOperation<TWSTopic>[]) {
+  // The CB Exchange WS supports sending multiple topics in one request.
+  // Merge all requests into one
+  const mergedOperationEvents = operations.reduce(
+    (
+      acc: WsInternationalRequestOperation<TWSTopic>,
+      evt: WsInternationalRequestOperation<TWSTopic>,
+    ) => {
+      if (!acc) {
+        const wsRequestEvent: WsInternationalRequestOperation<TWSTopic> = {
+          type: evt.type,
+          channels: [...evt.channels],
+        };
 
+        return wsRequestEvent;
+      }
+
+      const wsRequestEvent: WsInternationalRequestOperation<TWSTopic> = {
+        type: evt.type,
+        channels: [...acc.channels, ...evt.channels],
+      };
+
+      return wsRequestEvent;
+    },
+  );
+
+  return mergedOperationEvents;
+}
+
+/**
+ * Return sign used to authenticate CB Exchange WS requests
+ */
 export async function getCBExchangeWSSign(apiSecret: string): Promise<{
   timestampInSeconds: string;
   sign: string;
@@ -175,6 +219,33 @@ export async function getCBExchangeWSSign(apiSecret: string): Promise<{
   const signPath = '/users/self/verify';
   const signRequestMethod = 'GET';
   const signInput = `${timestampInSeconds}${signRequestMethod}${signPath}`;
+
+  const sign = await signMessage(
+    signInput,
+    apiSecret,
+    'base64',
+    'SHA-256',
+    'base64:web',
+  );
+
+  return { sign, timestampInSeconds };
+}
+
+/**
+ * Return sign used to authenticate CB INTX WS requests
+ */
+export async function getCBInternationalWSSign(
+  apiKey: string,
+  apiSecret: string,
+  apiPassphrase: string,
+): Promise<{
+  timestampInSeconds: string;
+  sign: string;
+}> {
+  const timestampInMs = Date.now();
+  const timestampInSeconds = (timestampInMs / 1000).toFixed(0);
+
+  const signInput = `${timestampInSeconds}, ${apiKey}, CBINTLMD, ${apiPassphrase}`;
 
   const sign = await signMessage(
     signInput,
