@@ -1,5 +1,9 @@
 import { CBAppClient } from '../../../src/index.js';
-// import { CBAppClient } from 'coinbase-api';
+
+/**
+ * import { CBAppClient } from 'coinbase-api';
+ * const { CBAppClient } = require('coinbase-api');
+ */
 
 // Initialize the client, you can pass in api keys here if you have them but they are not required for public endpoints
 const client = new CBAppClient();

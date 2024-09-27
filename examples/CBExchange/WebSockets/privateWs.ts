@@ -1,5 +1,10 @@
 import { WebsocketClient } from '../../../src/index.js';
 
+/**
+ * import { WebsocketClient } from 'coinbase-api';
+ * const { WebsocketClient } = require('coinbase-api');
+ */
+
 async function start() {
   const client = new WebsocketClient(
     {

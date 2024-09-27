@@ -103,6 +103,10 @@ To use any of Coinbase's REST APIs in JavaScript/TypeScript/Node.js, import (or 
 
 ```javascript
 import { CBAdvancedTradeClient } from 'coinbase-api';
+/**
+ * Or, with import:
+ * import { CBAdvancedTradeClient } from 'coinbase-api';
+ */
 
 // insert your API key details here from Coinbase API Key Management
 const advancedTradeCdpAPIKey = {
@@ -134,6 +138,10 @@ try {
 
 ```javascript
 const { CBAppClient } = require('coinbase-api');
+/**
+ * Or, with import:
+ * import { CBAppClient } from 'coinbase-api';
+ */
 
 // insert your API key details here from Coinbase API Key Management
 const CBAppKeys = {
@@ -171,6 +179,10 @@ try {
 
 ```javascript
 const { CBInternationalClient } = require('coinbase-api');
+/**
+ * Or, with import:
+ * import { CBInternationalClient } from 'coinbase-api';
+ */
 
 // insert your API key details here from Coinbase API Key Management
 const client = new CBInternationalClient({
@@ -194,6 +206,10 @@ try {
 
 ```javascript
 const { CBExchangeClient } = require('coinbase-api');
+/**
+ * Or, with import:
+ * import { CBExchangeClient } from 'coinbase-api';
+ */
 
 // insert your API key details here from Coinbase API Key Management
 const client = new CBExchangeClient({
@@ -217,7 +233,7 @@ See all clients [here](./src/) for more information on all the functions or the 
 
 ## WebSockets
 
-All available WebSockets can be used via a shared `WebsocketClient`. The WebSocket client will automatically open/track/manage connections as needed. Each unique connection (one per server URL) is tracked using a WsKey (each WsKey is a string - see [WS_KEY_MAP](src/lib/websocket/websocket-util.ts) for a list of supported values).
+All available WebSockets can be used via a shared `WebsocketClient`. The WebSocket client will automatically open/track/manage connections as needed. Each unique connection (one per server URL) is tracked using a WsKey (each WsKey is a string - see [WS_KEY_MAP](src/lib/websocket/websocket-util.ts) for a list of supported values - `WS_KEY_MAP` can also be used like an enum).
 
 Any subscribe/unsubscribe events will need to include a WsKey, so the WebSocket client understands which connection the event should be routed to. See examples below or in the [examples](./examples/) folder on GitHub.
 
@@ -227,6 +243,10 @@ Data events are emitted from the WebsocketClient via the `update` event, see exa
 
 ```javascript
 const { WebsocketClient } = require('coinbase-api');
+/**
+ * Or, with import:
+ * import { WebsocketClient } from 'coinbase-api';
+ */
 
 // public ws client, doesnt need any api keys to run
 const client = new WebsocketClient();
@@ -248,6 +268,10 @@ client.subscribe(
 
 ```javascript
 const { WebsocketClient } = require('coinbase-api');
+/**
+ * Or, with import:
+ * import { WebsocketClient } from 'coinbase-api';
+ */
 
 // key name & private key, as returned by coinbase when creating your API keys.
 // Note: the below example is a dummy key and won't actually work
@@ -316,6 +340,8 @@ client.on('exception', (data) => {
 
 // market data
 client.subscribe('heartbeats', 'advTradeMarketData');
+// This is the same as above, but using WS_KEY_MAP like an enum to reduce any uncertainty on what value to use:
+// client.subscribe('heartbeats', WS_KEY_MAP.advTradeMarketData);
 
 // user data
 client.subscribe('futures_balance_summary', 'advTradeUserData');
@@ -324,7 +350,7 @@ client.subscribe('user', 'advTradeUserData');
 /**
  * Or send a more structured object with parameters, e.g. if parameters are required
  */
-const tickerSubscribeRequst = {
+const tickerSubscribeRequest = {
   topic: 'ticker',
   /**
    * Anything in the payload will be merged into the subscribe "request",
@@ -334,10 +360,11 @@ const tickerSubscribeRequst = {
     product_ids: ['ETH-USD', 'BTC-USD'],
   },
 };
-client.subscribe(tickerSubscribeRequst, 'advTradeMarketData');
+client.subscribe(tickerSubscribeRequest, 'advTradeMarketData');
 
-// Other adv trade public websocket topics:
-
+/**
+ * Other adv trade public websocket topics:
+ */
 client.subscribe(
   [
     {
@@ -385,6 +412,10 @@ Pass a custom logger which supports the log methods `trace`, `info` and `error`,
 
 ```javascript
 const { WebsocketClient, DefaultLogger } = require('coinbase-api');
+/**
+ * Or, with import:
+ * import { WebsocketClient, DefaultLogger } from 'coinbase-api';
+ */
 
 // E.g. customise logging for only the trace level:
 const logger = {
@@ -428,13 +459,6 @@ Have my projects helped you? Share the love, there are many ways you can show yo
 - Or buy me all the coffee:
   - ETH(ERC20): `0xA3Bda8BecaB4DCdA539Dc16F9C54a592553Be06C` <!-- metamask -->
 
-<!---
-old ones:
-  - BTC: `1C6GWZL1XW3jrjpPTS863XtZiXL1aTK7Jk`
-  - BTC(SegWit): `bc1ql64wr9z3khp2gy7dqlmqw7cp6h0lcusz0zjtls`
-  - ETH(ERC20): `0xe0bbbc805e0e83341fadc210d6202f4022e50992`
-  - USDT(TRC20): `TA18VUywcNEM9ahh3TTWF3sFpt9rkLnnQa
--->
 <!-- template_contributions_end -->
 
 ### Contributions & Pull Requests

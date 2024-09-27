@@ -12,11 +12,11 @@ import { signMessage } from '../webCryptoAPI.js';
 export const WS_KEY_MAP = {
   /**
    * Market Data is the traditional feed that provides updates for both orders and trades.
-   * Most channels are now available without authentication. TODO: any here require auth?
+   * Most channels are now available without authentication.
    *
    * https://docs.cdp.coinbase.com/advanced-trade/docs/ws-overview
    */
-  advTradeMarketData: 'advTradeMarketData', // no auth needed for public data
+  advTradeMarketData: 'advTradeMarketData',
   /**
    * User Order Data provides updates for the orders of the user.
    *
@@ -146,7 +146,7 @@ export function getMergedCBExchangeWSRequestOperations<
 >(operations: WsExchangeRequestOperation<TWSTopic>[]) {
   // The CB Exchange WS supports sending multiple topics in one request.
   // Merge all requests into one
-  const mergedOperationEvents = operations.reduce(
+  return operations.reduce(
     (
       acc: WsExchangeRequestOperation<TWSTopic>,
       evt: WsExchangeRequestOperation<TWSTopic>,
@@ -168,8 +168,6 @@ export function getMergedCBExchangeWSRequestOperations<
       return wsRequestEvent;
     },
   );
-
-  return mergedOperationEvents;
 }
 /**
  * Merge one or more WS Request operations (e.g. subscribe request) for
@@ -180,7 +178,7 @@ export function getMergedCBINTXRequestOperations<
 >(operations: WsInternationalRequestOperation<TWSTopic>[]) {
   // The CB Exchange WS supports sending multiple topics in one request.
   // Merge all requests into one
-  const mergedOperationEvents = operations.reduce(
+  return operations.reduce(
     (
       acc: WsInternationalRequestOperation<TWSTopic>,
       evt: WsInternationalRequestOperation<TWSTopic>,
@@ -202,8 +200,6 @@ export function getMergedCBINTXRequestOperations<
       return wsRequestEvent;
     },
   );
-
-  return mergedOperationEvents;
 }
 
 /**

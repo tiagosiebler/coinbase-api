@@ -1,5 +1,9 @@
 import { CBAdvancedTradeClient } from '../../../src/index.js';
-// import { CBAdvancedTradeClient } from 'coinbase-api';
+
+/**
+ * import { CBAdvancedTradeClient } from 'coinbase-api';
+ * const { CBAdvancedTradeClient } = require('coinbase-api');
+ */
 
 // you can initialise public client without api keys as public calls do not require auth
 const client = new CBAdvancedTradeClient({});

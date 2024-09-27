@@ -4,6 +4,11 @@ import {
   WsTopicRequest,
 } from '../../../src/index.js';
 
+/**
+ * import { WebsocketClient } from 'coinbase-api';
+ * const { WebsocketClient } = require('coinbase-api');
+ */
+
 async function start() {
   // Optional: fully customise the logging experience by injecting a custom logger
   // const logger: typeof DefaultLogger = {
@@ -86,7 +91,7 @@ async function start() {
      * Or send a more structured object with parameters, e.g. if parameters are required
      */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const tickerSubscribeRequst: WsTopicRequest = {
+    const tickerSubscribeRequest: WsTopicRequest = {
       topic: 'ticker',
       /**
        * Anything in the payload will be merged into the subscribe "request",
@@ -96,7 +101,7 @@ async function start() {
         product_ids: ['ETH-USD', 'BTC-USD'],
       },
     };
-    client.subscribe(tickerSubscribeRequst, 'advTradeMarketData');
+    client.subscribe(tickerSubscribeRequest, 'advTradeMarketData');
 
     /**
      * Subscribe to the "status" topic for a few symbols

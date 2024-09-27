@@ -1,5 +1,9 @@
 import { CBAppClient } from '../../../src/index.js';
-// import { CBAppClient } from 'coinbase-api';
+
+/**
+ * import { CBAppClient } from 'coinbase-api';
+ * const { CBAppClient } = require('coinbase-api');
+ */
 
 // Initialize the client
 const client = new CBAppClient({

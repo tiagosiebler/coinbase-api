@@ -1,5 +1,9 @@
 import { CBAdvancedTradeClient } from '../../../src/index.js';
-// import { CBAdvancedTradeClient } from 'coinbase-api';
+
+/**
+ * import { CBAdvancedTradeClient } from 'coinbase-api';
+ * const { CBAdvancedTradeClient } = require('coinbase-api');
+ */
 
 // initialise the client
 const client = new CBAdvancedTradeClient({
