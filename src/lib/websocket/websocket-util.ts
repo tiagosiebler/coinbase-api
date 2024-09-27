@@ -245,7 +245,7 @@ export async function getCBInternationalWSSign(
   const timestampInMs = Date.now();
   const timestampInSeconds = (timestampInMs / 1000).toFixed(0);
 
-  const signInput = `${timestampInSeconds}, ${apiKey}, CBINTLMD, ${apiPassphrase}`;
+  const signInput = timestampInSeconds + apiKey + 'CBINTLMD' + apiPassphrase;
 
   const sign = await signMessage(
     signInput,

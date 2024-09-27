@@ -1,9 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { CBAdvancedTradeClient } from './CBAdvancedTradeClient.js';
 import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
 import { signWSJWT } from './lib/jwtNode.js';
 import { neverGuard } from './lib/misc-util.js';
-import { signMessage } from './lib/webCryptoAPI.js';
 import {
   isCBAdvancedTradeErrorEvent,
   isCBAdvancedTradeWSEvent,
@@ -17,7 +14,6 @@ import {
   getCBInternationalWSSign,
   getCBPrimeWSSign,
   getMergedCBExchangeWSRequestOperations,
-  getMergedCBINTXRequestOperations,
   MessageEventLike,
   WS_KEY_MAP,
   WS_URL_MAP,
@@ -52,9 +48,9 @@ const PRIVATE_WS_KEYS: WsKey[] = [
   WS_KEY_MAP.advTradeUserData,
   // Coinbase Direct Market Data has direct access to Coinbase Exchange servers and requires auth.
   WS_KEY_MAP.exchangeDirectMarketData,
-  // The INTX feed requires auth.
+  // The INTX feed always requires auth.
   WS_KEY_MAP.internationalMarketData,
-  // The prime feed requires auth.
+  // The Prime feed always requires auth.
   WS_KEY_MAP.primeMarketData,
 ];
 
@@ -178,8 +174,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
    */
 
   /**
-   * Whatever url this method returns, it's connected to as-is!
-   *
+   * Return a websocket URL, which is connected to as-is.
    * If a token or anything else is needed in the URL, this is a good place to add it.
    */
   protected async getWsUrl(wsKey: WsKey): Promise<string> {
@@ -682,9 +677,9 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
           finalOperations.push(JSON.stringify(wsRequestEventWithSign));
         }
 
-        throw new Error(
-          'CB INTX is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
-        );
+        // throw new Error(
+        //   'CB INTX is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
+        // );
         return finalOperations;
       }
       case WS_KEY_MAP.primeMarketData: {
@@ -728,9 +723,9 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
           finalOperations.push(JSON.stringify(wsRequestEventWithSign));
         }
 
-        throw new Error(
-          'CB Prime is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
-        );
+        // throw new Error(
+        //   'CB Prime is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
+        // );
         return finalOperations;
       }
       default: {
