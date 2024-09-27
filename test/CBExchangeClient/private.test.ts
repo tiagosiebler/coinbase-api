@@ -2,9 +2,9 @@ import { CBExchangeClient } from '../../src/index.js';
 
 describe('CBExchangeClient PRIVATE', () => {
   const account = {
-    key: process.env.CB_EXCHANGE_API_KEY_NAME_EXCH,
-    secret: process.env.CB_EXCHANGE_API_PRIVATE_KEY_EXCH,
-    passphrase: process.env.CB_EXCHANGE_API_PASSPHRASE_EXCH,
+    key: process.env.CB_EXCHANGE_API_KEY,
+    secret: process.env.CB_EXCHANGE_API_SECRET,
+    passphrase: process.env.CB_EXCHANGE_API_PASSPHRASE,
     useSandbox: process.env.CB_EXCHANGE_USE_SANDBOX === 'true',
   };
 
@@ -48,7 +48,7 @@ describe('CBExchangeClient PRIVATE', () => {
 
       test('with params', async () => {
         const res = await rest.getTransfers({ type: 'deposit' });
-        console.log(`res "${expect.getState().currentTestName}"`, res);
+        // console.log(`res "${expect.getState().currentTestName}"`, res);
 
         expect(res).toEqual(expect.arrayContaining([expect.any(Object)]));
       });
@@ -66,9 +66,9 @@ describe('CBExchangeClient PRIVATE', () => {
             whatever: true,
           });
         } catch (e: any) {
-          // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
+          // These are deliberately restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
-          console.log(`Error, "${expect.getState().currentTestName}"`, e);
+          // console.log(`Error, "${expect.getState().currentTestName}"`, e);
 
           const responseBody = e?.body;
           expect(responseBody).toMatchObject({

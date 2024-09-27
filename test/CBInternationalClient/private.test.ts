@@ -2,8 +2,8 @@ import { CBInternationalClient } from '../../src/index.js';
 
 describe.skip('CBInternationalClient PRIVATE', () => {
   const account = {
-    key: process.env.CB_INTX_API_KEY_NAME,
-    secret: process.env.CB_INTX_API_PRIVATE_KEY,
+    key: process.env.CB_INTX_API_KEY,
+    secret: process.env.CB_INTX_API_SECRET,
     passphrase: process.env.CB_INTX_API_PASSPHRASE,
   };
 
@@ -62,7 +62,7 @@ describe.skip('CBInternationalClient PRIVATE', () => {
             whatever: true,
           });
         } catch (e: any) {
-          // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
+          // These are deliberately restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
           //console.log('Error, CBINTX, post req:', e);
           const responseBody = e?.body;

@@ -2,8 +2,10 @@ import { CBAdvancedTradeClient } from '../../src/index.js';
 
 describe('CBAdvancedTradeClient PRIVATE', () => {
   const account = {
-    key: process.env.CB_ADV_API_KEY_NAME,
-    secret: process.env.CB_ADV_API_PRIVATE_KEY,
+    // The new line characters can be a bit unpredictable depending on the OS.
+    // Simplest is to ensure they're replaced into the correct format (if incorrect).
+    key: process.env.CB_ADV_API_KEY_NAME?.replace(/\\n/g, '\n'),
+    secret: process.env.CB_ADV_API_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   };
 
   const rest = new CBAdvancedTradeClient({
@@ -59,7 +61,7 @@ describe('CBAdvancedTradeClient PRIVATE', () => {
             whatever: true,
           });
         } catch (e: any) {
-          // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
+          // These are deliberately restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
           const responseBody = e?.body;
           expect(responseBody).toMatchObject({

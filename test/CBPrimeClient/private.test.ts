@@ -2,8 +2,8 @@ import { CBPrimeClient } from '../../src/index.js';
 
 describe.skip('CBPrimeClient PRIVATE', () => {
   const account = {
-    key: process.env.CB_PRIME_API_KEY_NAME,
-    secret: process.env.CB_PRIME_API_PRIVATE_KEY,
+    key: process.env.CB_PRIME_API_KEY,
+    secret: process.env.CB_PRIME_API_SECRET,
     passphrase: process.env.CB_PRIME_API_PASSPHRASE,
   };
 
@@ -54,7 +54,7 @@ describe.skip('CBPrimeClient PRIVATE', () => {
             whatever: true,
           });
         } catch (e: any) {
-          // These are deliberatly restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
+          // These are deliberately restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
           //console.log('Error, CBPrime, post req:', e);
           const responseBody = e?.body;
