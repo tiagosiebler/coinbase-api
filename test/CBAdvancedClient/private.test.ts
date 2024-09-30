@@ -1,4 +1,5 @@
 import { CBAdvancedTradeClient } from '../../src/index.js';
+import { getTestProxy } from '../proxy.util.js';
 
 describe('CBAdvancedTradeClient PRIVATE', () => {
   const account = {
@@ -8,10 +9,13 @@ describe('CBAdvancedTradeClient PRIVATE', () => {
     secret: process.env.CB_ADV_API_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   };
 
-  const rest = new CBAdvancedTradeClient({
-    apiKey: account.key,
-    apiSecret: account.secret,
-  });
+  const rest = new CBAdvancedTradeClient(
+    {
+      apiKey: account.key,
+      apiSecret: account.secret,
+    },
+    getTestProxy(),
+  );
 
   it('should have credentials to test with', () => {
     expect(account.key).toBeDefined();

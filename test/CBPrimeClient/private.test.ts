@@ -1,4 +1,5 @@
 import { CBPrimeClient } from '../../src/index.js';
+import { getTestProxy } from '../proxy.util.js';
 
 describe.skip('CBPrimeClient PRIVATE', () => {
   const account = {
@@ -7,11 +8,14 @@ describe.skip('CBPrimeClient PRIVATE', () => {
     passphrase: process.env.CB_PRIME_API_PASSPHRASE,
   };
 
-  const rest = new CBPrimeClient({
-    apiKey: account.key,
-    apiSecret: account.secret,
-    apiPassphrase: account.passphrase,
-  });
+  const rest = new CBPrimeClient(
+    {
+      apiKey: account.key,
+      apiSecret: account.secret,
+      apiPassphrase: account.passphrase,
+    },
+    getTestProxy(),
+  );
 
   let portfolioId: string;
 

@@ -1,4 +1,5 @@
 import { CBAppClient } from '../../src/index.js';
+import { getTestProxy } from '../proxy.util.js';
 
 let accId = '';
 
@@ -8,10 +9,13 @@ describe('CBAppClient PRIVATE', () => {
     secret: process.env.CB_APP_API_PRIVATE_KEY?.replace(/\\n/g, '\n'),
   };
 
-  const rest = new CBAppClient({
-    apiKey: account.key,
-    apiSecret: account.secret,
-  });
+  const rest = new CBAppClient(
+    {
+      apiKey: account.key,
+      apiSecret: account.secret,
+    },
+    getTestProxy(),
+  );
 
   it('should have credentials to test with', () => {
     expect(account.key).toBeDefined();
