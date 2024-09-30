@@ -33,6 +33,7 @@ Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and Web
 - Automatically supports both ESM and CJS projects.
 - Proxy support via axios integration.
 - Active community support & collaboration in telegram: [Node.js Algo Traders](https://t.me/nodetraders).
+- Extensive examples for interacting with the Coinbase API offering in Node.js/JavaScript/TypeScript: [/examples/](./examples).
 
 ## Installation
 
@@ -102,7 +103,7 @@ To use any of Coinbase's REST APIs in JavaScript/TypeScript/Node.js, import (or 
 #### CBAdvancedTradeClient
 
 ```javascript
-import { CBAdvancedTradeClient } from 'coinbase-api';
+const { CBAdvancedTradeClient } = require('coinbase-api');
 /**
  * Or, with import:
  * import { CBAdvancedTradeClient } from 'coinbase-api';
