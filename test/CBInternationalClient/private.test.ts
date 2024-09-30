@@ -1,4 +1,5 @@
 import { CBInternationalClient } from '../../src/index.js';
+import { getTestProxy } from '../proxy.util.js';
 
 describe.skip('CBInternationalClient PRIVATE', () => {
   const account = {
@@ -7,11 +8,14 @@ describe.skip('CBInternationalClient PRIVATE', () => {
     passphrase: process.env.CB_INTX_API_PASSPHRASE,
   };
 
-  const rest = new CBInternationalClient({
-    apiKey: account.key,
-    apiSecret: account.secret,
-    apiPassphrase: account.passphrase,
-  });
+  const rest = new CBInternationalClient(
+    {
+      apiKey: account.key,
+      apiSecret: account.secret,
+      apiPassphrase: account.passphrase,
+    },
+    getTestProxy(),
+  );
 
   it('should have credentials to test with', () => {
     expect(account.key).toBeDefined();

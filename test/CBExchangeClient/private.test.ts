@@ -1,4 +1,5 @@
 import { CBExchangeClient } from '../../src/index.js';
+import { getTestProxy } from '../proxy.util.js';
 
 describe('CBExchangeClient PRIVATE', () => {
   const account = {
@@ -8,12 +9,15 @@ describe('CBExchangeClient PRIVATE', () => {
     useSandbox: process.env.CB_EXCHANGE_USE_SANDBOX === 'true',
   };
 
-  const rest = new CBExchangeClient({
-    apiKey: account.key,
-    apiSecret: account.secret,
-    apiPassphrase: account.passphrase,
-    useSandbox: account.useSandbox,
-  });
+  const rest = new CBExchangeClient(
+    {
+      apiKey: account.key,
+      apiSecret: account.secret,
+      apiPassphrase: account.passphrase,
+      useSandbox: account.useSandbox,
+    },
+    getTestProxy(),
+  );
 
   it('should have credentials to test with', () => {
     expect(account.key).toBeDefined();

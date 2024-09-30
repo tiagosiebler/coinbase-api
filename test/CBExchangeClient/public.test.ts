@@ -1,7 +1,8 @@
 import { CBExchangeClient } from '../../src/index.js';
+import { getTestProxy } from '../proxy.util.js';
 
 describe('CBExchangeClient PUBLIC', () => {
-  const rest = new CBExchangeClient();
+  const rest = new CBExchangeClient({}, getTestProxy());
 
   describe('public endpoints', () => {
     it('should succeed making a GET request', async () => {

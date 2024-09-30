@@ -33,13 +33,30 @@ jobs:
       - name: Check Build
         run: npm run build
 
-      # - name: Test
-      #   run: npm run test
-      #   env:
-      #     API_KEY: ${{ secrets.API_KEY }}
-      #     API_SECRET: ${{ secrets.API_SECRET }}
-      #     PROXY_ENABLED: ${{ secrets.PROXY_ENABLED }}
-      #     PROXY_HOST: ${{ secrets.PROXY_HOST }}
-      #     PROXY_PASS: ${{ secrets.PROXY_PASS }}
-      #     PROXY_PORT: ${{ secrets.PROXY_PORT }}
-      #     PROXY_USER: ${{ secrets.PROXY_USER }}
+      - name: Test
+        run: npm run test
+        env:
+          CB_PRIME_API_KEY: ${{ secrets.CB_PRIME_API_KEY }}
+          CB_PRIME_API_SECRET: ${{ secrets.CB_PRIME_API_SECRET }}
+          CB_PRIME_API_PASSPHRASE: ${{ secrets.CB_PRIME_API_PASSPHRASE }}
+
+          CB_INTX_API_KEY: ${{ secrets.CB_INTX_API_KEY }}
+          CB_INTX_API_SECRET: ${{ secrets.CB_INTX_API_SECRET }}
+          CB_INTX_API_PASSPHRASE: ${{ secrets.CB_INTX_API_PASSPHRASE }}
+
+          CB_EXCHANGE_API_KEY: ${{ secrets.CB_EXCHANGE_API_KEY }}
+          CB_EXCHANGE_API_SECRET: ${{ secrets.CB_EXCHANGE_API_SECRET }}
+          CB_EXCHANGE_API_PASSPHRASE: ${{ secrets.CB_EXCHANGE_API_PASSPHRASE }}
+          CB_EXCHANGE_USE_SANDBOX: ${{ secrets.CB_EXCHANGE_USE_SANDBOX }}
+
+          CB_APP_API_KEY_NAME: ${{ secrets.CB_APP_API_KEY_NAME }}
+          CB_APP_API_PRIVATE_KEY: ${{ secrets.CB_APP_API_PRIVATE_KEY }}
+
+          CB_ADV_API_KEY_NAME: ${{ secrets.CB_ADV_API_KEY_NAME }}
+          CB_ADV_API_PRIVATE_KEY: ${{ secrets.CB_ADV_API_PRIVATE_KEY }}
+
+          PROXY_ENABLED: ${{ secrets.PROXY_ENABLED }}
+          PROXY_HOST: ${{ secrets.PROXY_HOST }}
+          PROXY_PASS: ${{ secrets.PROXY_PASS }}
+          PROXY_PORT: ${{ secrets.PROXY_PORT }}
+          PROXY_USER: ${{ secrets.PROXY_USER }}
