@@ -5,7 +5,6 @@ const { CBExchangeClient } = require('coinbase-api');
   // ENDPOINT: /withdrawals/fee-estimate
   // METHOD: GET
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBExchangeClient.ts#L340
 
 const client = new CBExchangeClient({
   apiKey: 'insert_api_key_here',

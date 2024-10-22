@@ -5,7 +5,6 @@ const { CBExchangeClient } = require('coinbase-api');
   // ENDPOINT: /payment-methods
   // METHOD: GET
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBExchangeClient.ts#L281
 
 const client = new CBExchangeClient({
   apiKey: 'insert_api_key_here',

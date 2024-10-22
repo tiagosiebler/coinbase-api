@@ -5,7 +5,6 @@ const { CBExchangeClient } = require('coinbase-api');
   // ENDPOINT: /orders/{order_id}
   // METHOD: DELETE
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBExchangeClient.ts#L435
 
 const client = new CBExchangeClient({
   apiKey: 'insert_api_key_here',

@@ -53,57 +53,56 @@ This table includes all endpoints from the official Exchange API docs and corres
 
 | Function | AUTH | HTTP Method | Endpoint |
 | -------- | :------: | :------: | -------- |
-| [getAccounts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L85) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/accounts` |
-| [getAccount()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L99) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/accounts/{account_id}` |
-| [getBestBidAsk()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L116) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/best_bid_ask` |
-| [getProductBook()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L127) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/product_book` |
-| [getProducts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L141) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products` |
-| [getProduct()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L153) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products/{product_id}` |
-| [getProductCandles()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L169) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products/{product_id}/candles` |
-| [getMarketTrades()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L184) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products/{product_id}/ticker` |
-| [submitOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L206) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders` |
-| [cancelOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L223) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/batch_cancel` |
-| [updateOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L240) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/edit` |
-| [updateOrderPreview()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L256) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/edit_preview` |
-| [getOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L276) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/orders/historical/batch` |
-| [getFills()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L291) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/orders/historical/fills` |
-| [getOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L303) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/orders/historical/{order_id}` |
-| [previewOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L321) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/preview` |
-| [closePosition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L335) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/close_position` |
-| [getPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L355) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/portfolios` |
-| [createPortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L368) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/portfolios` |
-| [movePortfolioFunds()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L381) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/portfolios/move_funds` |
-| [getPortfolioBreakdown()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L395) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/portfolios/{portfolio_uuid}` |
-| [deletePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L411) | :closed_lock_with_key:  | DELETE | `/api/v3/brokerage/portfolios/{portfolio_uuid}` |
-| [updatePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L422) | :closed_lock_with_key:  | PUT | `/api/v3/brokerage/portfolios/{portfolio_uuid}` |
-| [getFuturesBalanceSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L453) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/balance_summary` |
-| [getIntradayMarginSetting()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L464) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/intraday/margin_setting` |
-| [setIntradayMarginSetting()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L478) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/cfm/intraday/margin_setting` |
-| [getCurrentMarginWindow()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L494) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/intraday/current_margin_window` |
-| [getFuturesPositions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L511) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/positions` |
-| [getFuturesPosition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L520) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/positions/{product_id}` |
-| [scheduleFuturesSweep()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L540) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/cfm/sweeps/schedule` |
-| [getFuturesSweeps()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L558) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/sweeps` |
-| [cancelPendingFuturesSweep()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L567) | :closed_lock_with_key:  | DELETE | `/api/v3/brokerage/cfm/sweeps` |
-| [allocatePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L583) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/intx/allocate` |
-| [getPerpetualsPortfolioSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L594) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/portfolio/{portfolio_uuid}` |
-| [getPerpetualsPositions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L608) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/positions/{portfolio_uuid}` |
-| [getPerpetualsPosition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L623) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/positions/{portfolio_uuid}/{symbol}` |
-| [getPortfoliosBalances()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L638) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/balances/{portfolio_uuid}` |
-| [updateMultiAssetCollateral()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L650) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/intx/multi_asset_collateral` |
-| [getTransactionSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L670) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/transaction_summary` |
-| [submitConvertQuote()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L688) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/convert/quote` |
-| [getConvertTrade()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L699) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/convert/trade/{trade_id}` |
-| [commitConvertTrade()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L716) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/convert/trade/{trade_id}` |
-| [getServerTime()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L733) |  | GET | `/api/v3/brokerage/time` |
-| [getPublicProductBook()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L746) |  | GET | `/api/v3/brokerage/market/product_book` |
-| [getPublicProducts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L759) |  | GET | `/api/v3/brokerage/market/products` |
-| [getPublicProduct()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L771) |  | GET | `/api/v3/brokerage/market/products/{product_id}` |
-| [getPublicProductCandles()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L783) |  | GET | `/api/v3/brokerage/market/products/{product_id}/candles` |
-| [getPublicMarketTrades()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L798) |  | GET | `/api/v3/brokerage/market/products/{product_id}/ticker` |
-| [getPaymentMethods()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L819) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/payment_methods` |
-| [getPaymentMethod()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L830) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/payment_methods/{payment_method_id}` |
-| [getApiKeyPermissions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L850) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/key_permissions` |
+| [getAccounts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L148) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/accounts` |
+| [getAccount()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L162) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/accounts/{account_id}` |
+| [getBestBidAsk()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L179) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/best_bid_ask` |
+| [getProductBook()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L190) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/product_book` |
+| [getProducts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L204) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products` |
+| [getProduct()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L216) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products/{product_id}` |
+| [getProductCandles()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L232) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products/{product_id}/candles` |
+| [getMarketTrades()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L247) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/products/{product_id}/ticker` |
+| [submitOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L269) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders` |
+| [cancelOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L286) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/batch_cancel` |
+| [updateOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L303) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/edit` |
+| [updateOrderPreview()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L319) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/edit_preview` |
+| [getOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L339) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/orders/historical/batch` |
+| [getFills()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L354) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/orders/historical/fills` |
+| [getOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L366) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/orders/historical/{order_id}` |
+| [previewOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L384) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/preview` |
+| [closePosition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L398) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/orders/close_position` |
+| [getPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L418) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/portfolios` |
+| [createPortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L431) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/portfolios` |
+| [movePortfolioFunds()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L444) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/portfolios/move_funds` |
+| [getPortfolioBreakdown()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L458) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/portfolios/{portfolio_uuid}` |
+| [deletePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L474) | :closed_lock_with_key:  | DELETE | `/api/v3/brokerage/portfolios/{portfolio_uuid}` |
+| [updatePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L485) | :closed_lock_with_key:  | PUT | `/api/v3/brokerage/portfolios/{portfolio_uuid}` |
+| [getFuturesBalanceSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L516) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/balance_summary` |
+| [getIntradayMarginSetting()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L527) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/intraday/margin_setting` |
+| [setIntradayMarginSetting()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L541) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/cfm/intraday/margin_setting` |
+| [getCurrentMarginWindow()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L557) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/intraday/current_margin_window` |
+| [getFuturesPositions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L574) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/positions` |
+| [getFuturesPosition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L583) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/positions/{product_id}` |
+| [scheduleFuturesSweep()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L603) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/cfm/sweeps/schedule` |
+| [getFuturesSweeps()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L621) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/cfm/sweeps` |
+| [cancelPendingFuturesSweep()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L630) | :closed_lock_with_key:  | DELETE | `/api/v3/brokerage/cfm/sweeps` |
+| [allocatePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L646) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/intx/allocate` |
+| [getPerpetualsPortfolioSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L657) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/portfolio/{portfolio_uuid}` |
+| [getPerpetualsPositions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L671) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/positions/{portfolio_uuid}` |
+| [getPerpetualsPosition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L686) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/positions/{portfolio_uuid}/{symbol}` |
+| [getPortfoliosBalances()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L701) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/intx/balances/{portfolio_uuid}` |
+| [updateMultiAssetCollateral()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L713) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/intx/multi_asset_collateral` |
+| [getTransactionSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L733) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/transaction_summary` |
+| [submitConvertQuote()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L751) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/convert/quote` |
+| [getConvertTrade()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L762) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/convert/trade/{trade_id}` |
+| [commitConvertTrade()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L779) | :closed_lock_with_key:  | POST | `/api/v3/brokerage/convert/trade/{trade_id}` |
+| [getPublicProductBook()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L809) |  | GET | `/api/v3/brokerage/market/product_book` |
+| [getPublicProducts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L822) |  | GET | `/api/v3/brokerage/market/products` |
+| [getPublicProduct()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L834) |  | GET | `/api/v3/brokerage/market/products/{product_id}` |
+| [getPublicProductCandles()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L846) |  | GET | `/api/v3/brokerage/market/products/{product_id}/candles` |
+| [getPublicMarketTrades()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L861) |  | GET | `/api/v3/brokerage/market/products/{product_id}/ticker` |
+| [getPaymentMethods()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L882) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/payment_methods` |
+| [getPaymentMethod()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L893) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/payment_methods/{payment_method_id}` |
+| [getApiKeyPermissions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L913) | :closed_lock_with_key:  | GET | `/api/v3/brokerage/key_permissions` |
 
 # CBAppClient.ts
 

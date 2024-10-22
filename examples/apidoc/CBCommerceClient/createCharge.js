@@ -5,7 +5,6 @@ const { CBCommerceClient } = require('coinbase-api');
   // ENDPOINT: /charges
   // METHOD: POST
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBCommerceClient.ts#L38
 
 const client = new CBCommerceClient({
   apiKey: 'insert_api_key_here',
