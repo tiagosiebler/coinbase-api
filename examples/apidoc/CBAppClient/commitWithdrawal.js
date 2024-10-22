@@ -5,7 +5,6 @@ const { CBAppClient } = require('coinbase-api');
   // ENDPOINT: /v2/accounts/{account_id}/withdrawals/{withdrawal_id}/commit
   // METHOD: POST
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L329
 
 const client = new CBAppClient({
   apiKey: 'insert_api_key_here',

@@ -5,7 +5,6 @@ const { CBAdvancedTradeClient } = require('coinbase-api');
   // ENDPOINT: /api/v3/brokerage/transaction_summary
   // METHOD: GET
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAdvancedTradeClient.ts#L670
 
 const client = new CBAdvancedTradeClient({
   apiKey: 'insert_api_key_here',

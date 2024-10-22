@@ -5,7 +5,6 @@ const { CBExchangeClient } = require('coinbase-api');
   // ENDPOINT: /travel-rules
   // METHOD: GET
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBExchangeClient.ts#L783
 
 const client = new CBExchangeClient({
   apiKey: 'insert_api_key_here',

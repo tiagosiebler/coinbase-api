@@ -5,7 +5,6 @@ const { CBExchangeClient } = require('coinbase-api');
   // ENDPOINT: /wrapped-assets/stake-wrap
   // METHOD: GET
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBExchangeClient.ts#L870
 
 const client = new CBExchangeClient({
   apiKey: 'insert_api_key_here',

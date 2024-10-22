@@ -5,7 +5,6 @@ const { CBInternationalClient } = require('coinbase-api');
   // ENDPOINT: /api/v1/portfolios/fee-rates
   // METHOD: GET
   // PUBLIC: NO
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L435
 
 const client = new CBInternationalClient({
   apiKey: 'insert_api_key_here',

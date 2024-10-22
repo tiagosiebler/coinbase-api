@@ -5,7 +5,6 @@ const { CBInternationalClient } = require('coinbase-api');
   // ENDPOINT: /api/v1/instruments/{instrument}/quote
   // METHOD: GET
   // PUBLIC: YES
-  // Link to function: https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L105
 
 const client = new CBInternationalClient({
   apiKey: 'insert_api_key_here',
