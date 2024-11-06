@@ -127,13 +127,17 @@ const client = new CBAdvancedTradeClient({
   apiSecret: advancedTradeCdpAPIKey.privateKey,
 });
 
-// Example usage of the CBAdvancedTradeClient
-try {
-  const accounts = await client.getAccounts();
-  console.log('Get accounts result: ', accounts);
-} catch (e) {
-  console.error('Exception: ', JSON.stringify(e));
+async function doAPICall() {
+  // Example usage of the CBAdvancedTradeClient
+  try {
+    const accounts = await client.getAccounts();
+    console.log('Get accounts result: ', accounts);
+  } catch (e) {
+    console.error('Exception: ', JSON.stringify(e));
+  }
 }
+
+doAPICall();
 ```
 
 #### CBAppClient
@@ -162,19 +166,23 @@ const client = new CBAppClient({
   apiSecret: CBAppKeys.privateKey,
 });
 
-try {
-  // Transfer money between your own accounts
-  const transferMoneyResult = await client.transferMoney({
-    account_id: 'your_source_account_id',
-    type: 'transfer',
-    to: 'your_destination_account_id',
-    amount: '0.01',
-    currency: 'BTC',
-  });
-  console.log('Transfer Money Result: ', transferMoneyResult);
-} catch (e) {
-  console.error('Error: ', e);
+async function doAPICall() {
+  try {
+    // Transfer money between your own accounts
+    const transferMoneyResult = await client.transferMoney({
+      account_id: 'your_source_account_id',
+      type: 'transfer',
+      to: 'your_destination_account_id',
+      amount: '0.01',
+      currency: 'BTC',
+    });
+    console.log('Transfer Money Result: ', transferMoneyResult);
+  } catch (e) {
+    console.error('Error: ', e);
+  }
 }
+
+doAPICall();
 ```
 
 #### CBInternationalClient
@@ -195,13 +203,17 @@ const client = new CBInternationalClient({
   // useSandbox: true,
 });
 
-try {
-  // Get asset details
-  const assetDetails = await client.getAssetDetails({ asset: 'BTC' });
-  console.log('Asset Details: ', assetDetails);
-} catch (e) {
-  console.error('Exception: ', JSON.stringify(e, null, 2));
+async function doAPICall() {
+  try {
+    // Get asset details
+    const assetDetails = await client.getAssetDetails({ asset: 'BTC' });
+    console.log('Asset Details: ', assetDetails);
+  } catch (e) {
+    console.error('Exception: ', JSON.stringify(e, null, 2));
+  }
 }
+
+doAPICall();
 ```
 
 #### CBExchangeClient
@@ -222,13 +234,17 @@ const client = new CBExchangeClient({
   // useSandbox: true,
 });
 
-try {
-  // Get a single currency by id
-  const currency = await client.getCurrency('BTC');
-  console.log('Currency: ', currency);
-} catch (e) {
-  console.error('Exception: ', JSON.stringify(e, null, 2));
+async function doAPICall() {
+  try {
+    // Get a single currency by id
+    const currency = await client.getCurrency('BTC');
+    console.log('Currency: ', currency);
+  } catch (e) {
+    console.error('Exception: ', JSON.stringify(e, null, 2));
+  }
 }
+
+doAPICall();
 ```
 
 See all clients [here](./src/) for more information on all the functions or the [examples](./examples/) for lots of usage examples. You can also check the endpoint function list [here](./docs/endpointFunctionList.md) to find all available functions!
