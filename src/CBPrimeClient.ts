@@ -21,6 +21,7 @@ import {
   GetPrimeOrderFillsRequest,
   GetPrimeOrderPreviewRequest,
   GetPrimePortfolioAllocationsRequest,
+  GetPrimePortfolioFillsRequest,
   GetPrimePortfolioOrdersRequest,
   GetPrimePortfolioProductsRequest,
   GetPrimePortfolioTransactionsRequest,
@@ -376,6 +377,19 @@ export class CBPrimeClient extends BaseRestClient {
    * Orders Endpoints
    *
    */
+
+  /**
+   * List Portfolio Fills
+   *
+   * Retrieve fills on a given portfolio.
+   *
+   * Note: This endpoint requires a start_date and returns a payload with a default
+   * limit of 100 if not specified. The maximum allowed limit is 3000.
+   */
+  getPortfolioFills(params: GetPrimePortfolioFillsRequest): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(`/v1/portfolios/${portfolio_id}/fills`, query);
+  }
 
   /**
    * List Open Orders

@@ -158,6 +158,15 @@ export interface GetPrimeWeb3WalletBalancesRequest {
  *
  */
 
+export interface GetPrimePortfolioFillsRequest {
+  portfolio_id: string;
+  start_date: string;
+  end_date?: string;
+  limit?: number;
+  cursor?: string;
+  sort_direction?: 'DESC' | 'ASC';
+}
+
 export interface GetPrimeOpenOrdersRequest {
   portfolio_id: string;
   product_ids?: string[];

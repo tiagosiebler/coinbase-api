@@ -52,6 +52,7 @@ export interface SubmitINTXOrderRequest {
   stp_mode?: string;
   post_only?: boolean;
   close_only?: boolean;
+  algo_strategy: boolean;
 }
 
 export interface GetINTXOpenOrdersRequest {
