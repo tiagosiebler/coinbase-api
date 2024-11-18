@@ -17,7 +17,7 @@ export interface GetINTXIndexCompositionHistory {
   result_offset?: number;
 }
 
-export interface GetINTXIndexCandles {
+export interface GetINTXIndexCandlesRequest {
   index: string;
   granularity: string;
   start: string;
