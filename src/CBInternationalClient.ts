@@ -11,7 +11,7 @@ import {
   GetINTXAggregatedCandlesData,
   GetINTXDailyTradingVolumes,
   GetINTXFillsByPortfoliosRequest,
-  GetINTXIndexCandlesRequest,
+  GetINTXIndexCandles,
   GetINTXIndexCompositionHistory,
   GetINTXMatchingTransfersRequest,
   GetINTXOpenOrdersRequest,
@@ -118,7 +118,7 @@ export class CBInternationalClient extends BaseRestClient {
    * Retrieves the historical daily index prices in time descending order.
    * The daily values are represented as aggregated entries for the day in typical OHLC format.
    */
-  getIndexCandles(params: GetINTXIndexCandlesRequest): Promise<any> {
+  getIndexCandles(params: GetINTXIndexCandles): Promise<any> {
     const { index, ...query } = params;
     return this.get(`/api/v1/index/${index}/candles`, query);
   }
