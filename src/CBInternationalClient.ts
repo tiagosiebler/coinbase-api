@@ -11,6 +11,8 @@ import {
   GetINTXAggregatedCandlesData,
   GetINTXDailyTradingVolumes,
   GetINTXFillsByPortfoliosRequest,
+  GetINTXIndexCandlesRequest,
+  GetINTXIndexCompositionHistory,
   GetINTXMatchingTransfersRequest,
   GetINTXOpenOrdersRequest,
   GetINTXPortfolioFillsRequest,
@@ -71,6 +73,54 @@ export class CBInternationalClient extends BaseRestClient {
    */
   getSupportedNetworksPerAsset(params: { asset: string }): Promise<any> {
     return this.get(`/api/v1/assets/${params.asset}/networks`);
+  }
+
+  /**
+   *
+   * Index Endpoints
+   *
+   */
+
+  /**
+   * Get index composition
+   *
+   * Retrieves the latest index composition (metadata) with an ordered set of constituents.
+   */
+  getIndexComposition(params: { index: string }): Promise<any> {
+    return this.get(`/api/v1/index/${params.index}/composition`);
+  }
+
+  /**
+   * Get index composition history
+   *
+   * Retrieves a history of index composition records in a descending time order.
+   * The results are an array of index composition data recorded at different "timestamps".
+   */
+  getIndexCompositionHistory(
+    params: GetINTXIndexCompositionHistory,
+  ): Promise<any> {
+    const { index, ...query } = params;
+    return this.get(`/api/v1/index/${index}/composition-history`, query);
+  }
+
+  /**
+   * Get index price
+   *
+   * Retrieves the latest index price.
+   */
+  getIndexPrice(params: { index: string }): Promise<any> {
+    return this.get(`/api/v1/index/${params.index}/price`);
+  }
+
+  /**
+   * Get index candles
+   *
+   * Retrieves the historical daily index prices in time descending order.
+   * The daily values are represented as aggregated entries for the day in typical OHLC format.
+   */
+  getIndexCandles(params: GetINTXIndexCandlesRequest): Promise<any> {
+    const { index, ...query } = params;
+    return this.get(`/api/v1/index/${index}/candles`, query);
   }
 
   /**

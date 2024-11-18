@@ -223,50 +223,54 @@ This table includes all endpoints from the official Exchange API docs and corres
 
 | Function | AUTH | HTTP Method | Endpoint |
 | -------- | :------: | :------: | -------- |
-| [getAssets()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L54) |  | GET | `/api/v1/assets` |
-| [getAssetDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L63) |  | GET | `/api/v1/assets/{asset}` |
-| [getSupportedNetworksPerAsset()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L72) |  | GET | `/api/v1/assets/{asset}/networks` |
-| [getInstruments()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L87) |  | GET | `/api/v1/instruments` |
-| [getInstrumentDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L96) |  | GET | `/api/v1/instruments/{instrument}` |
-| [getQuotePerInstrument()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L105) |  | GET | `/api/v1/instruments/{instrument}/quote` |
-| [getDailyTradingVolumes()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L114) |  | GET | `/api/v1/instruments/volumes/daily` |
-| [getAggregatedCandlesData()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L123) |  | GET | `/api/v1/instruments/{instrument}/candles` |
-| [getHistoricalFundingRates()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L133) |  | GET | `/api/v1/instruments/{instrument}/funding` |
-| [getPositionOffsets()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L153) |  | GET | `/api/v1/position-offsets` |
-| [submitOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L168) | :closed_lock_with_key:  | POST | `/api/v1/orders` |
-| [getOpenOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L179) | :closed_lock_with_key:  | GET | `/api/v1/orders` |
-| [cancelOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L188) | :closed_lock_with_key:  | DELETE | `/api/v1/orders` |
-| [updateOpenOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L199) | :closed_lock_with_key:  | PUT | `/api/v1/orders/{id}` |
-| [getOrderDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L209) | :closed_lock_with_key:  | GET | `/api/v1/orders/{id}` |
-| [cancelOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L219) | :closed_lock_with_key:  | DELETE | `/api/v1/orders/{id}` |
-| [getUserPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L237) | :closed_lock_with_key:  | GET | `/api/v1/portfolios` |
-| [createPortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L246) | :closed_lock_with_key:  | POST | `/api/v1/portfolios` |
-| [updatePortfolioParameters()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L255) | :closed_lock_with_key:  | PATCH | `/api/v1/portfolios` |
-| [getUserPortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L266) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}` |
-| [updatePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L275) | :closed_lock_with_key:  | PUT | `/api/v1/portfolios/{portfolio}` |
-| [getPortfolioDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L285) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/detail` |
-| [getPortfolioSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L294) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/summary` |
-| [getPortfolioBalances()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L303) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/balances` |
-| [getBalanceForPortfolioAsset()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L312) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/balances/{asset}` |
-| [getPortfolioPositions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L326) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/positions` |
-| [getPositionForPortfolioInstrument()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L335) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/positions/{instrument}` |
-| [getFillsByPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L349) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/fills` |
-| [getPortfolioFills()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L358) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/fills` |
-| [setCrossCollateral()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L368) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/{portfolio}/cross-collateral-enabled` |
-| [setAutoMargin()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L385) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/{portfolio}/auto-margin-enabled` |
-| [setPortfolioMarginOverride()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L398) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/margin` |
-| [transferFundsBetweenPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L410) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/transfer` |
-| [transferPositionsBetweenPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L422) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/transfer-position` |
-| [getPortfolioFeeRates()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L435) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/fee-rates` |
-| [getRankings()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L449) | :closed_lock_with_key:  | GET | `/api/v1/rankings/statistics` |
-| [getMatchingTransfers()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L468) | :closed_lock_with_key:  | GET | `/api/v1/transfers` |
-| [getTransfer()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L477) | :closed_lock_with_key:  | GET | `/api/v1/transfers/{transfer_uuid}` |
-| [withdrawToCryptoAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L486) | :closed_lock_with_key:  | POST | `/api/v1/transfers/withdraw` |
-| [createCryptoAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L497) | :closed_lock_with_key:  | POST | `/api/v1/transfers/address` |
-| [createCounterpartyId()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L510) | :closed_lock_with_key:  | POST | `/api/v1/transfers/create-counterparty-id` |
-| [validateCounterpartyId()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L521) | :closed_lock_with_key:  | POST | `/api/v1/transfers/validate-counterparty-id` |
-| [withdrawToCounterpartyId()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L532) | :closed_lock_with_key:  | POST | `/api/v1/transfers/withdraw/counterparty` |
-| [getFeeRateTiers()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L550) | :closed_lock_with_key:  | GET | `/api/v1/fee-rate-tiers` |
+| [getAssets()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L56) |  | GET | `/api/v1/assets` |
+| [getAssetDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L65) |  | GET | `/api/v1/assets/{asset}` |
+| [getSupportedNetworksPerAsset()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L74) |  | GET | `/api/v1/assets/{asset}/networks` |
+| [getIndexComposition()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L89) |  | GET | `/api/v1/index/{index}/composition` |
+| [getIndexCompositionHistory()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L99) |  | GET | `/api/v1/index/{index}/composition-history` |
+| [getIndexPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L111) |  | GET | `/api/v1/index/{index}/price` |
+| [getIndexCandles()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L121) |  | GET | `/api/v1/index/{index}/candles` |
+| [getInstruments()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L137) |  | GET | `/api/v1/instruments` |
+| [getInstrumentDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L146) |  | GET | `/api/v1/instruments/{instrument}` |
+| [getQuotePerInstrument()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L155) |  | GET | `/api/v1/instruments/{instrument}/quote` |
+| [getDailyTradingVolumes()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L164) |  | GET | `/api/v1/instruments/volumes/daily` |
+| [getAggregatedCandlesData()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L173) |  | GET | `/api/v1/instruments/{instrument}/candles` |
+| [getHistoricalFundingRates()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L183) |  | GET | `/api/v1/instruments/{instrument}/funding` |
+| [getPositionOffsets()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L203) |  | GET | `/api/v1/position-offsets` |
+| [submitOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L218) | :closed_lock_with_key:  | POST | `/api/v1/orders` |
+| [getOpenOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L229) | :closed_lock_with_key:  | GET | `/api/v1/orders` |
+| [cancelOrders()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L238) | :closed_lock_with_key:  | DELETE | `/api/v1/orders` |
+| [updateOpenOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L249) | :closed_lock_with_key:  | PUT | `/api/v1/orders/{id}` |
+| [getOrderDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L259) | :closed_lock_with_key:  | GET | `/api/v1/orders/{id}` |
+| [cancelOrder()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L269) | :closed_lock_with_key:  | DELETE | `/api/v1/orders/{id}` |
+| [getUserPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L287) | :closed_lock_with_key:  | GET | `/api/v1/portfolios` |
+| [createPortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L296) | :closed_lock_with_key:  | POST | `/api/v1/portfolios` |
+| [updatePortfolioParameters()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L305) | :closed_lock_with_key:  | PATCH | `/api/v1/portfolios` |
+| [getUserPortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L316) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}` |
+| [updatePortfolio()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L325) | :closed_lock_with_key:  | PUT | `/api/v1/portfolios/{portfolio}` |
+| [getPortfolioDetails()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L335) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/detail` |
+| [getPortfolioSummary()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L344) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/summary` |
+| [getPortfolioBalances()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L353) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/balances` |
+| [getBalanceForPortfolioAsset()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L362) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/balances/{asset}` |
+| [getPortfolioPositions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L376) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/positions` |
+| [getPositionForPortfolioInstrument()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L385) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/positions/{instrument}` |
+| [getFillsByPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L399) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/fills` |
+| [getPortfolioFills()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L408) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/{portfolio}/fills` |
+| [setCrossCollateral()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L418) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/{portfolio}/cross-collateral-enabled` |
+| [setAutoMargin()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L435) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/{portfolio}/auto-margin-enabled` |
+| [setPortfolioMarginOverride()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L448) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/margin` |
+| [transferFundsBetweenPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L460) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/transfer` |
+| [transferPositionsBetweenPortfolios()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L472) | :closed_lock_with_key:  | POST | `/api/v1/portfolios/transfer-position` |
+| [getPortfolioFeeRates()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L485) | :closed_lock_with_key:  | GET | `/api/v1/portfolios/fee-rates` |
+| [getRankings()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L499) | :closed_lock_with_key:  | GET | `/api/v1/rankings/statistics` |
+| [getMatchingTransfers()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L518) | :closed_lock_with_key:  | GET | `/api/v1/transfers` |
+| [getTransfer()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L527) | :closed_lock_with_key:  | GET | `/api/v1/transfers/{transfer_uuid}` |
+| [withdrawToCryptoAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L536) | :closed_lock_with_key:  | POST | `/api/v1/transfers/withdraw` |
+| [createCryptoAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L547) | :closed_lock_with_key:  | POST | `/api/v1/transfers/address` |
+| [createCounterpartyId()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L560) | :closed_lock_with_key:  | POST | `/api/v1/transfers/create-counterparty-id` |
+| [validateCounterpartyId()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L571) | :closed_lock_with_key:  | POST | `/api/v1/transfers/validate-counterparty-id` |
+| [withdrawToCounterpartyId()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L582) | :closed_lock_with_key:  | POST | `/api/v1/transfers/withdraw/counterparty` |
+| [getFeeRateTiers()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBInternationalClient.ts#L600) | :closed_lock_with_key:  | GET | `/api/v1/fee-rate-tiers` |
 
 # CBPrimeClient.ts
 
