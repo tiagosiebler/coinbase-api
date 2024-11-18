@@ -6,6 +6,26 @@
 
 /**
  *
+ * Index Endpoints
+ *
+ */
+
+export interface GetINTXIndexCompositionHistory {
+  index: string;
+  time_from?: string;
+  result_limit?: number;
+  result_offset?: number;
+}
+
+export interface GetINTXIndexCandlesRequest {
+  index: string;
+  granularity: string;
+  start: string;
+  end?: string;
+}
+
+/**
+ *
  * Instruments Endpoints
  *
  */
