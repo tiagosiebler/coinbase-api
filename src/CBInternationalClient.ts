@@ -11,7 +11,7 @@ import {
   GetINTXAggregatedCandlesData,
   GetINTXDailyTradingVolumes,
   GetINTXFillsByPortfoliosRequest,
-  GetINTXIndexCandlesRequest as GetINTXIndexCandlesRequest,
+  GetINTXIndexCandlesRequest,
   GetINTXIndexCompositionHistory,
   GetINTXMatchingTransfersRequest,
   GetINTXOpenOrdersRequest,
