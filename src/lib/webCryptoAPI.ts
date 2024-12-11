@@ -10,7 +10,7 @@ function bufferToB64(buffer: ArrayBuffer): string {
   return globalThis.btoa(binary);
 }
 
-function b64StringToBuffer(input: string): ArrayBuffer {
+function b64StringToBuffer(input: string): Uint8Array {
   const binaryString = atob(input); // Decode base64 string
   const buffer = new Uint8Array(binaryString.length);
 

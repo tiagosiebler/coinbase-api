@@ -25,6 +25,7 @@ export interface AdvTradeAccount {
   ready: boolean;
   hold: Balance;
   retail_portfolio_id: string;
+  platform: string;
 }
 
 export interface AdvTradeAccountsList {

@@ -11,18 +11,21 @@ interface SORLimitIOC {
 
 interface LimitLimitGTC {
   base_size: string;
+  quote_size?: string;
   limit_price: string;
   post_only?: boolean;
 }
 
 interface LimitLimitGTD {
   base_size: string;
+  quote_size?: string;
   limit_price: string;
   end_time: string; // RFC3339 Timestamp
   post_only?: boolean;
 }
 
 interface LimitLimitFOK {
+  quote_size?: string;
   base_size: string;
   limit_price: string;
 }
