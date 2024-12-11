@@ -369,6 +369,78 @@ export class CBInternationalClient extends BaseRestClient {
   }
 
   /**
+   * List active loans for the portfolio
+   *
+   * Retrieves all loan info for a given portfolio.
+   */
+  getActiveLoansForPortfolio(params: { portfolio: string }): Promise<any> {
+    return this.getPrivate(`/api/v1/portfolios/${params.portfolio}/loans`);
+  }
+
+  /**
+   * Get loan info for portfolio/asset
+   *
+   * Retrieves the loan info for a given portfolio and asset.
+   */
+  getLoanInfoForPortfolioAsset(params: {
+    portfolio: string;
+    asset: string;
+  }): Promise<any> {
+    return this.getPrivate(
+      `/api/v1/portfolios/${params.portfolio}/loans/${params.asset}`,
+    );
+  }
+
+  /**
+   * Acquire/repay loan
+   *
+   * Acquire or repay loan for a given portfolio and asset.
+   */
+  acquireOrRepayLoan(params: {
+    portfolio: string;
+    asset: string;
+    amount: number;
+    action: 'ACQUIRE' | 'REPAY';
+  }): Promise<any> {
+    const { portfolio, asset, ...body } = params;
+    return this.postPrivate(`/api/v1/portfolios/${portfolio}/loans/${asset}`, {
+      body,
+    });
+  }
+
+  /**
+   * Preview loan update
+   *
+   * Preview acquire or repay loan for a given portfolio and asset.
+   */
+  previewLoanUpdate(params: {
+    portfolio: string;
+    asset: string;
+    action: 'ACQUIRE' | 'REPAY';
+    amount: string;
+  }): Promise<any> {
+    const { portfolio, asset, ...body } = params;
+    return this.postPrivate(
+      `/api/v1/portfolios/${portfolio}/loans/${asset}/preview`,
+      { body },
+    );
+  }
+
+  /**
+   * View max loan availability
+   *
+   * View the maximum amount of loan that could be acquired now for a given portfolio and asset.
+   */
+  getMaxLoanAvailability(params: {
+    portfolio: string;
+    asset: string;
+  }): Promise<any> {
+    return this.getPrivate(
+      `/api/v1/portfolios/${params.portfolio}/loans/${params.asset}/availability`,
+    );
+  }
+
+  /**
    * List portfolio positions
    *
    * Returns all of the positions for a given portfolio.

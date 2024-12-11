@@ -219,6 +219,20 @@ export class CBExchangeClient extends BaseRestClient {
   }
 
   /**
+   * Get all conversions
+   *
+   * Get all conversions associated with the profile tied to the API key used to make the request.
+   */
+  getAllConversions(params: {
+    profile_id: string;
+    before?: string;
+    after?: string;
+    limit?: number;
+  }): Promise<any> {
+    return this.getPrivate('/conversions', params);
+  }
+
+  /**
    *
    * Currencies Endpoints
    *
