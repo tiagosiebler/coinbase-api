@@ -203,7 +203,7 @@ export function getRestBaseUrl(
 /**
  * Extract and separate request parameters in query string from the rest of the endpoint, to prevent sign issues.
  *
- * @param url endpoint containing params in query string; "/v2/acconuts/123123213?someParam=xyz"
+ * @param url endpoint containing params in query string; "/v2/accounts/123123213?someParam=xyz"
  * @returns
  */
 export function getParamsFromURL(url: string): {
