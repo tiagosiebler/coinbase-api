@@ -2,6 +2,7 @@ import { AxiosRequestConfig } from 'axios';
 
 import { BaseRestClient } from './lib/BaseRestClient.js';
 import {
+  getParamsFromURL,
   REST_CLIENT_TYPE_ENUM,
   RestClientOptions,
   RestClientType,
@@ -36,7 +37,7 @@ export class CBAppClient extends BaseRestClient {
       headers: {
         // Some endpoints return a warning if a version header isn't included: https://docs.cdp.coinbase.com/coinbase-app/docs/versioning
         // Currently set to a date from the changelog: https://docs.cdp.coinbase.com/coinbase-app/docs/changelog
-        'CB-VERSION': '2024-09-13',
+        'CB-VERSION': '2025-FEB-3',
         ...requestOptions.headers,
       },
     });
@@ -61,14 +62,18 @@ export class CBAppClient extends BaseRestClient {
    * This endpoint is paginated. In case you are calling it first time, leave paginationURL empty.
    * If you are paginating, provide the paginationURL value from the previous response and you will receive the next page of accounts.
    */
-  getAccounts(params?: { paginationURL?: string }): Promise<{
+  getAccounts(params?: {
+    paginationURL?: string;
+    starting_after?: string;
+  }): Promise<{
     data: CBAppAccount[];
     pagination: CBAppPagination;
   }> {
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      const derivedParams = getParamsFromURL(params.paginationURL);
+      return this.getPrivate(derivedParams.endpoint, derivedParams.params);
     }
-    return this.getPrivate('/v2/accounts');
+    return this.getPrivate('/v2/accounts', params);
   }
 
   /**
@@ -116,10 +121,15 @@ export class CBAppClient extends BaseRestClient {
     pagination: CBAppPagination;
     data: CBAppAddress[];
   }> {
+    const { account_id, ...otherParams } = params;
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      const derivedParams = getParamsFromURL(params.paginationURL);
+      return this.getPrivate(derivedParams.endpoint, {
+        ...otherParams,
+        ...derivedParams.params,
+      });
     }
-    return this.getPrivate(`/v2/accounts/${params.account_id}/addresses`);
+    return this.getPrivate(`/v2/accounts/${account_id}/addresses`, otherParams);
   }
 
   /**
@@ -155,11 +165,17 @@ export class CBAppClient extends BaseRestClient {
     pagination: CBAppPagination;
     data: CBAppTransaction[];
   }> {
+    const { account_id, addressId, ...otherParams } = params;
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      const derivedParams = getParamsFromURL(params.paginationURL);
+      return this.getPrivate(derivedParams.endpoint, {
+        ...otherParams,
+        ...derivedParams.params,
+      });
     }
     return this.getPrivate(
-      `/v2/accounts/${params.account_id}/addresses/${params.addressId}/transactions`,
+      `/v2/accounts/${account_id}/addresses/${addressId}/transactions`,
+      otherParams,
     );
   }
 
@@ -214,10 +230,18 @@ export class CBAppClient extends BaseRestClient {
     pagination: CBAppPagination;
     data: CBAppTransaction[];
   }> {
+    const { account_id, ...otherParams } = params;
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      const derivedParams = getParamsFromURL(params.paginationURL);
+      return this.getPrivate(derivedParams.endpoint, {
+        ...otherParams,
+        ...derivedParams.params,
+      });
     }
-    return this.getPrivate(`/v2/accounts/${params.account_id}/transactions`);
+    return this.getPrivate(
+      `/v2/accounts/${account_id}/transactions`,
+      otherParams,
+    );
   }
 
   /**
@@ -282,10 +306,15 @@ export class CBAppClient extends BaseRestClient {
     pagination: CBAppPagination;
     data: CBAppDepositWithdrawal[];
   }> {
+    const { account_id, ...otherParams } = params;
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      const derivedParams = getParamsFromURL(params.paginationURL);
+      return this.getPrivate(derivedParams.endpoint, {
+        ...otherParams,
+        ...derivedParams.params,
+      });
     }
-    return this.getPrivate(`/v2/accounts/${params.account_id}/deposits`);
+    return this.getPrivate(`/v2/accounts/${account_id}/deposits`, otherParams);
   }
 
   /**
@@ -350,10 +379,18 @@ export class CBAppClient extends BaseRestClient {
     pagination: CBAppPagination;
     data: CBAppDepositWithdrawal[];
   }> {
+    const { account_id, ...otherParams } = params;
     if (params?.paginationURL) {
-      return this.getPrivate(params.paginationURL);
+      const derivedParams = getParamsFromURL(params.paginationURL);
+      return this.getPrivate(derivedParams.endpoint, {
+        ...otherParams,
+        ...derivedParams.params,
+      });
     }
-    return this.getPrivate(`/v2/accounts/${params.account_id}/withdrawals`);
+    return this.getPrivate(
+      `/v2/accounts/${account_id}/withdrawals`,
+      otherParams,
+    );
   }
 
   /**

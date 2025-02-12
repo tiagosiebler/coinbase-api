@@ -1,6 +1,6 @@
 {
   "name": "coinbase-api",
-  "version": "1.0.6",
+  "version": "1.0.7",
   "description": "Node.js SDK for Coinbase's REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
