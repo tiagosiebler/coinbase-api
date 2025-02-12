@@ -199,3 +199,34 @@ export function getRestBaseUrl(
 
   return exchangeBaseUrls.livenet;
 }
+
+/**
+ * Extract and separate request parameters in query string from the rest of the endpoint, to prevent sign issues.
+ *
+ * @param url endpoint containing params in query string; "/v2/acconuts/123123213?someParam=xyz"
+ * @returns
+ */
+export function getParamsFromURL(url: string): {
+  endpoint: string;
+  params: any;
+} {
+  const [endpoint, paramsStr] = url.split('?');
+  if (!paramsStr) {
+    return {
+      endpoint: url,
+      params: {},
+    };
+  }
+
+  const result = {
+    endpoint: endpoint,
+    params: {} as Record<string, string>,
+  };
+
+  (paramsStr || '').split('&').forEach((param) => {
+    const [key, value] = param.split('=');
+    result.params[key] = value;
+  });
+
+  return result;
+}
