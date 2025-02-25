@@ -341,7 +341,7 @@ export abstract class BaseWebsocketClient<
     const ws = this.getWs(wsKey);
     ws?.close();
     if (force) {
-      safeTerminateWs(ws, true);
+      safeTerminateWs(ws);
     }
   }
 
@@ -531,7 +531,7 @@ export abstract class BaseWebsocketClient<
 
       this.clearPongTimer(wsKey);
 
-      safeTerminateWs(this.getWs(wsKey));
+      safeTerminateWs(this.getWs(wsKey), true);
     }, this.options.pongTimeout);
   }
 
