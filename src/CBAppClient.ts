@@ -190,6 +190,8 @@ export class CBAppClient extends BaseRestClient {
    *
    * Send funds to a network address for any Coinbase supported asset, or email address of the recipient.
    * No transaction fees are required for off-blockchain cryptocurrency transactions.
+   *
+   * TRAVEL RULE DATA GUIDE: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-travel-rule
    */
   sendMoney(
     params: CBAppSendMoneyRequest,

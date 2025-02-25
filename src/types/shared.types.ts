@@ -58,6 +58,14 @@ interface TriggerBracketGTD {
   end_time: string; // RFC3339 Timestamp
 }
 
+interface TWAPLimitGTD {
+  quote_size: string;
+  base_size: string;
+  start_time: string; // RFC3339 Timestamp
+  end_time: string; // RFC3339 Timestamp
+  limit_price: string;
+}
+
 // Main order configuration type
 export interface OrderConfiguration {
   market_market_ioc?: MarketMarketIOC;
@@ -65,6 +73,7 @@ export interface OrderConfiguration {
   limit_limit_gtc?: LimitLimitGTC;
   limit_limit_gtd?: LimitLimitGTD;
   limit_limit_fok?: LimitLimitFOK;
+  twap_limit_gtd?: TWAPLimitGTD;
   stop_limit_stop_limit_gtc?: StopLimitStopLimitGTC;
   stop_limit_stop_limit_gtd?: StopLimitStopLimitGTD;
   trigger_bracket_gtc?: TriggerBracketGTC;
