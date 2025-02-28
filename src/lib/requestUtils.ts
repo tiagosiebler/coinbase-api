@@ -143,27 +143,57 @@ export function serializeParams<T extends Record<string, any> | undefined = {}>(
   strict_validation: boolean | undefined,
   encodeValues: boolean,
   prefixWith: string,
+  explodeArrayParameters: boolean,
 ): string {
   if (!params) {
     return '';
   }
 
-  const queryString = Object.keys(params)
-    .sort()
-    .map((key) => {
-      const value = params[key];
-      if (strict_validation === true && typeof value === 'undefined') {
-        throw new Error(
-          'Failed to sign API request due to undefined parameter',
-        );
-      }
-      const encodedValue = encodeValues ? encodeURIComponent(value) : value;
-      return `${key}=${encodedValue}`;
-    })
-    .join('&');
+  let queryParams = prefixWith || '';
 
-  // Only prefix if there's a value
-  return queryString ? prefixWith + queryString : queryString;
+  const valueKeys = Object.keys(params).sort();
+  for (const key of valueKeys) {
+    const value = params[key];
+    if (strict_validation === true && typeof value === 'undefined') {
+      throw new Error('Failed to sign API request due to undefined parameter');
+    }
+
+    /**
+     * Coinbase expected array parameters to be sent individually in GET requests, e.g:
+     * ?order_side=SELL&order_status=OPEN&product_ids=BTC-USDC&product_ids=ETH-USDC
+     *
+     * This handles that repetition instead of sending arrays as-is
+     */
+    if (explodeArrayParameters && Array.isArray(value)) {
+      for (const arrValue of value) {
+        if (queryParams && queryParams !== prefixWith) {
+          queryParams += '&';
+        }
+
+        const encodedValue = encodeValues
+          ? encodeURIComponent(`${arrValue}`)
+          : `${arrValue}`;
+
+        queryParams += `${key}=${encodedValue}`;
+      }
+
+      continue;
+    }
+
+    if (queryParams && queryParams !== prefixWith) {
+      queryParams += '&';
+    }
+
+    const encodedValue = encodeValues ? encodeURIComponent(value) : value;
+    queryParams += `${key}=${encodedValue}`;
+  }
+
+  // Only prefix if there's a value...
+  if (queryParams === prefixWith) {
+    return '';
+  }
+
+  return queryParams;
 }
 
 export const APIIDPrefix = 'cbnode';

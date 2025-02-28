@@ -177,13 +177,17 @@ export abstract class BaseRestClient {
 
     this.baseUrl = getRestBaseUrl(restClientOptions, this.getClientType());
 
+    // Newline escapes needed, if passed as env vars
     this.apiKey = this.options.apiKey;
-    this.apiSecret = this.options.apiSecret;
+    this.apiSecret = this.options.apiSecret?.replace(/\\n/g, '\n');
     this.apiPassphrase = this.options.apiPassphrase;
 
     if (restClientOptions.cdpApiKey) {
       this.apiKey = restClientOptions.cdpApiKey.name;
-      this.apiSecret = restClientOptions.cdpApiKey.privateKey;
+      this.apiSecret = restClientOptions.cdpApiKey.privateKey?.replace(
+        /\\n/g,
+        '\n',
+      );
     }
 
     // Throw if one of these values is missing, and at least one of them is set
@@ -394,6 +398,7 @@ export abstract class BaseRestClient {
 
     const strictParamValidation = this.options.strictParamValidation;
     const encodeQueryStringValues = true;
+    const explodeArrayParameters = true;
 
     const requestBody = data?.body || data;
     const requestBodyString = requestBody ? JSON.stringify(requestBody) : '';
@@ -408,8 +413,11 @@ export abstract class BaseRestClient {
               strictParamValidation,
               encodeQueryStringValues,
               '?',
+              explodeArrayParameters,
             )
           : requestBodyString;
+
+      console.log(`sign params: `, signRequestParams);
 
       // https://docs.cdp.coinbase.com/product-apis/docs/welcome
       switch (clientType) {
