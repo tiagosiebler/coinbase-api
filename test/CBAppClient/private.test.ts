@@ -71,7 +71,7 @@ describe('CBAppClient PRIVATE', () => {
         } catch (e: any) {
           // These are deliberately restricted API keys. If the response is a permission error, it confirms the sign + request was OK and permissions were denied.
           // console.log(`err "${expect.getState().currentTestName}"`, e?.body);
-          const responseBody = e?.body.errors[0];
+          const responseBody = e?.body?.errors[0];
 
           expect(responseBody).toMatchObject({
             id: expect.any(String),
