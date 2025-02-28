@@ -417,8 +417,6 @@ export abstract class BaseRestClient {
             )
           : requestBodyString;
 
-      console.log(`sign params: `, signRequestParams);
-
       // https://docs.cdp.coinbase.com/product-apis/docs/welcome
       switch (clientType) {
         case REST_CLIENT_TYPE_ENUM.advancedTrade:
