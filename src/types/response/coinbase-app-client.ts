@@ -76,21 +76,40 @@ interface TransactionNetwork {
   status: string;
   name: string;
   hash?: string;
+  transaction_fee?: TransactionAmount;
+  transaction_amount?: TransactionAmount;
+  network_name?: string;
+  status_description?: string | null;
 }
 
 interface TransactionFrom {
   id: string;
   resource: string;
+  resource_path?: string;
 }
 
 interface TransactionTo {
   resource: string;
-  address: string;
+  address?: string;
+  email?: string;
+  id?: string;
+  resource_path?: string;
 }
 
 interface TransactionDetails {
   title: string;
   subtitle: string;
+  header?: string;
+  health?: string;
+  subsidebar_label?: string | null;
+}
+
+interface AdvancedTradeFill {
+  fill_price: string;
+  product_id: string;
+  order_id: string;
+  commission: string;
+  order_side: 'BUY' | 'SELL';
 }
 
 export interface CBAppTransaction {
@@ -104,10 +123,14 @@ export interface CBAppTransaction {
   updated_at: string;
   resource: string;
   resource_path: string;
-  network: TransactionNetwork;
+  network?: TransactionNetwork;
   from?: TransactionFrom;
   to?: TransactionTo;
   details?: TransactionDetails;
+  instant_exchange?: boolean;
+  advanced_trade_fill?: AdvancedTradeFill;
+  cancelable?: boolean;
+  idem?: string;
 }
 
 /**
