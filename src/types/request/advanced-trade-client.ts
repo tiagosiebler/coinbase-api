@@ -71,6 +71,7 @@ export interface SubmitAdvTradeOrderRequest {
   product_id: string;
   side: 'BUY' | 'SELL';
   order_configuration: OrderConfiguration;
+  attached_order_configuration?: OrderConfiguration;
   leverage?: string;
   margin_type?: 'CROSS' | 'ISOLATED';
   retail_portfolio_id?: string; // deprecated

@@ -464,6 +464,45 @@ export class CBInternationalClient extends BaseRestClient {
   }
 
   /**
+   * Get total open position limit
+   *
+   * Retrieves the total open position limit across instruments for a given portfolio.
+   */
+  getTotalOpenPositionLimit(params: { portfolio: string }): Promise<any> {
+    return this.getPrivate(
+      `/api/v1/portfolios/${params.portfolio}/position-limits`,
+    );
+  }
+
+  /**
+   * List open position limits for all instruments
+   *
+   * Retrieves position limits for all positions a given portfolio currently has or has opened in the past.
+   */
+  getOpenPositionLimitsForAllInstruments(params: {
+    portfolio: string;
+  }): Promise<any> {
+    return this.getPrivate(
+      `/api/v1/portfolios/${params.portfolio}/position-limits/positions`,
+    );
+  }
+
+  /**
+   * Get open position limits for portfolio instrument
+   *
+   * Retrieves the position limits for a given portfolio and symbol.
+   */
+  getOpenPositionLimitsForInstrument(params: {
+    portfolio: string;
+    instrument: string;
+  }): Promise<any> {
+    const { portfolio, instrument } = params;
+    return this.getPrivate(
+      `/api/v1/portfolios/${portfolio}/position-limits/positions/${instrument}`,
+    );
+  }
+
+  /**
    * List fills by portfolios
    *
    * Returns fills for specified portfolios or fills for all portfolios if none are provided.
@@ -522,6 +561,22 @@ export class CBInternationalClient extends BaseRestClient {
     margin_override: string;
   }): Promise<any> {
     return this.postPrivate('/api/v1/portfolios/margin', { body: params });
+  }
+
+  /**
+   * Get fund transfer limit between portfolios
+   *
+   * Retrieves the maximum amount that can be transferred between portfolios for a specific asset.
+   * This applies to transfers between portfolios of the same beneficial owner.
+   */
+  getFundTransferLimit(params: {
+    portfolio: string;
+    asset: string;
+  }): Promise<any> {
+    const { portfolio, asset } = params;
+    return this.getPrivate(
+      `/api/v1/portfolios/transfer/${portfolio}/${asset}/transfer-limit`,
+    );
   }
 
   /**
@@ -644,6 +699,22 @@ export class CBInternationalClient extends BaseRestClient {
     return this.postPrivate('/api/v1/transfers/validate-counterparty-id', {
       body: params,
     });
+  }
+
+  /**
+   * Get counterparty withdrawal limit
+   *
+   * Retrieves the maximum amount that can be withdrawn to a counterparty within the Coinbase transfer network
+   * for a specific portfolio and asset.
+   */
+  getCounterpartyWithdrawalLimit(params: {
+    portfolio: string;
+    asset: string;
+  }): Promise<any> {
+    const { portfolio, asset } = params;
+    return this.getPrivate(
+      `/api/v1/transfers/withdraw/${portfolio}/${asset}/counterparty-withdrawal-limit`,
+    );
   }
 
   /**
