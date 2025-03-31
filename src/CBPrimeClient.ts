@@ -16,17 +16,27 @@ import {
   CreatePrimeWithdrawalRequest,
   GetPrimeActivitiesRequest,
   GetPrimeAddressBookRequest,
+  GetPrimeEntityAccrualsRequest,
+  GetPrimeEntityActivitiesRequest,
+  GetPrimeEntityLocateAvailabilitiesRequest,
+  GetPrimeEntityMarginSummariesRequest,
+  GetPrimeEntityTFTieredFeesRequest,
   GetPrimeInvoicesRequest,
   GetPrimeOpenOrdersRequest,
   GetPrimeOrderFillsRequest,
   GetPrimeOrderPreviewRequest,
+  GetPrimePortfolioAccrualsRequest,
   GetPrimePortfolioAllocationsRequest,
+  GetPrimePortfolioBuyingPowerRequest,
   GetPrimePortfolioFillsRequest,
+  GetPrimePortfolioLocatesRequest,
+  GetPrimePortfolioMarginConversionsRequest,
   GetPrimePortfolioOrdersRequest,
   GetPrimePortfolioProductsRequest,
   GetPrimePortfolioTransactionsRequest,
   GetPrimePortfolioUsersRequest,
   GetPrimePortfolioWalletsRequest,
+  GetPrimePortfolioWithdrawalPowerRequest,
   GetPrimeUsersRequest,
   GetPrimeWalletDepositInstructionsRequest,
   GetPrimeWalletTransactionsRequest,
@@ -49,6 +59,57 @@ export class CBPrimeClient extends BaseRestClient {
 
   getClientType(): RestClientType {
     return REST_CLIENT_TYPE_ENUM.prime;
+  }
+
+  /**
+   *
+   * Activities Endpoints
+   *
+   */
+
+  /**
+   * List Activities
+   *
+   * List all activities associated with a given entity.
+   */
+  getActivities(params: GetPrimeActivitiesRequest): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(`/v1/portfolios/${portfolio_id}/activities`, query);
+  }
+
+  /**
+   * Get Activity by Activity ID
+   *
+   * Retrieve an activity by its activity ID - this endpoint can retrieve both portfolio and entity activities when passed the appropriate API key.
+   */
+  getActivityById(params: { activity_id: string }): Promise<any> {
+    const { activity_id } = params;
+    return this.getPrivate(`/v1/activities/${activity_id}`);
+  }
+
+  /**
+   * List Entity Activities
+   *
+   * List all activities associated with a given entity.
+   */
+  getEntityActivities(params: GetPrimeEntityActivitiesRequest): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(`/v1/entities/${entity_id}/activities`, query);
+  }
+
+  /**
+   * Get Portfolio Activity by Activity ID
+   *
+   * Retrieve an activity by its activity ID for a specific portfolio.
+   */
+  getPortfolioActivityById(params: {
+    portfolio_id: string;
+    activity_id: string;
+  }): Promise<any> {
+    const { portfolio_id, activity_id } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/activities/${activity_id}`,
+    );
   }
 
   /**
@@ -123,6 +184,137 @@ export class CBPrimeClient extends BaseRestClient {
 
   /**
    *
+   * Financing Endpoints
+   *
+   */
+
+  /**
+   * List Interest Accruals
+   *
+   * Lists interest accruals for an entity between the specified date range given.
+   */
+  getEntityAccruals(params: GetPrimeEntityAccrualsRequest): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(`/v1/entities/${entity_id}/accruals`, query);
+  }
+
+  /**
+   * Get Entity Locate Availabilities
+   *
+   * Get currencies available to be located with their corresponding amount and rate.
+   */
+  getEntityLocateAvailabilities(
+    params: GetPrimeEntityLocateAvailabilitiesRequest,
+  ): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(
+      `/v1/entities/${entity_id}/locates_availability`,
+      query,
+    );
+  }
+
+  /**
+   * Get Margin Information
+   *
+   * Gets real-time evaluation of the margin model based on current positions and spot rates.
+   */
+  getEntityMargin(params: { entity_id: string }): Promise<any> {
+    const { entity_id } = params;
+    return this.getPrivate(`/v1/entities/${entity_id}/margin`);
+  }
+
+  /**
+   * List Margin Call Summaries
+   *
+   * Lists the margin call history for a given entity ID.
+   */
+  getEntityMarginSummaries(
+    params: GetPrimeEntityMarginSummariesRequest,
+  ): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(`/v1/entities/${entity_id}/margin_summaries`, query);
+  }
+
+  /**
+   * Get Trade Finance Tiered Pricing Fees
+   *
+   * Get trade finance tiered pricing fees for a given entity at a specific time, default to current time.
+   */
+  getEntityTFTieredFees(
+    params: GetPrimeEntityTFTieredFeesRequest,
+  ): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(`/v1/entities/${entity_id}/tf_tiered_fees`, query);
+  }
+
+  /**
+   * List Interest Accruals For Portfolio
+   *
+   * Lists interest accruals between the specified date range for a specific portfolio ID.
+   */
+  getPortfolioAccruals(params: GetPrimePortfolioAccrualsRequest): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(`/v1/portfolios/${portfolio_id}/accruals`, query);
+  }
+
+  /**
+   * Get Portfolio Buying Power
+   *
+   * Returns the size of a buy trade that can be performed based on existing holdings and available credit.
+   */
+  getPortfolioBuyingPower(
+    params: GetPrimePortfolioBuyingPowerRequest,
+  ): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/buying_power`,
+      query,
+    );
+  }
+
+  /**
+   * List Existing Locates
+   *
+   * List locates for the portfolio.
+   */
+  getPortfolioLocates(params: GetPrimePortfolioLocatesRequest): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(`/v1/portfolios/${portfolio_id}/locates`, query);
+  }
+
+  /**
+   * List Margin Conversions
+   *
+   * Lists conversions and short collateral requirement between specified date range.
+   * This endpoint is deprecated and will be removed in the future. Use /v1/entities/{entity_id}/margin_summaries instead.
+   */
+  getPortfolioMarginConversions(
+    params: GetPrimePortfolioMarginConversionsRequest,
+  ): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/margin_conversions`,
+      query,
+    );
+  }
+
+  /**
+   * Get Portfolio Withdrawal Power
+   *
+   * Returns the nominal quantity of a given asset that can be withdrawn based on holdings and current portfolio equity.
+   */
+  getPortfolioWithdrawalPower(
+    params: GetPrimePortfolioWithdrawalPowerRequest,
+  ): Promise<any> {
+    const { portfolio_id, ...query } = params;
+    return this.getPrivate(
+      `/v1/portfolios/${portfolio_id}/withdrawal_power`,
+      query,
+    );
+  }
+
+  /**
+   *
    * Invoice Endpoints
    *
    */
@@ -135,6 +327,43 @@ export class CBPrimeClient extends BaseRestClient {
   getInvoices(params: GetPrimeInvoicesRequest): Promise<any> {
     const { entity_id, ...query } = params;
     return this.getPrivate(`/v1/entities/${entity_id}/invoices`, query);
+  }
+
+  /**
+   *
+   * Position Endpoints
+   *
+   */
+
+  /**
+   * List Aggregate Entity Positions
+   *
+   * List paginated aggregate positions for a specific entity.
+   */
+  getEntityAggregatePositions(params: {
+    entity_id: string;
+    cursor?: string;
+    limit?: number;
+  }): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(
+      `/v1/entities/${entity_id}/aggregate_positions`,
+      query,
+    );
+  }
+
+  /**
+   * List Entity Positions
+   *
+   * List paginated positions for a specific entity.
+   */
+  getEntityPositions(params: {
+    entity_id: string;
+    cursor?: string;
+    limit?: number;
+  }): Promise<any> {
+    const { entity_id, ...query } = params;
+    return this.getPrivate(`/v1/entities/${entity_id}/positions`, query);
   }
 
   /**
@@ -241,37 +470,6 @@ export class CBPrimeClient extends BaseRestClient {
     portfolio_id: string;
   }): Promise<any> {
     return this.getPrivate(`/v1/portfolios/${params.portfolio_id}/credit`);
-  }
-
-  /**
-   *
-   * Activities Endpoints
-   *
-   */
-
-  /**
-   * List Activities
-   *
-   * List all activities associated with a given entity.
-   */
-  getActivities(params: GetPrimeActivitiesRequest): Promise<any> {
-    const { portfolio_id, ...query } = params;
-    return this.getPrivate(`/v1/portfolios/${portfolio_id}/activities`, query);
-  }
-
-  /**
-   * Get Activity by Activity ID
-   *
-   * Retrieve an activity by its activity ID.
-   */
-  getActivityById(params: {
-    portfolio_id: string;
-    activity_id: string;
-  }): Promise<any> {
-    const { portfolio_id, activity_id } = params;
-    return this.getPrivate(
-      `/v1/portfolios/${portfolio_id}/activities/${activity_id}`,
-    );
   }
 
   /**

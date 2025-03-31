@@ -110,6 +110,24 @@ export interface GetPrimeActivitiesRequest {
   limit?: number;
   sort_direction?: 'ASC' | 'DESC';
 }
+
+export interface GetPrimeEntityActivitiesRequest {
+  entity_id: string;
+  activity_level?: 'ACTIVITY_LEVEL_ALL';
+  symbols?: string[];
+  categories?: string[];
+  statuses?: string[];
+  start_time?: string;
+  end_time?: string;
+  cursor?: string;
+  limit?: number;
+  sort_direction?: 'ASC' | 'DESC';
+}
+
+export interface GetPrimePortfolioActivityByIdRequest {
+  portfolio_id: string;
+  activity_id: string;
+}
 /**
  *
  * Address Book Endpoints
@@ -353,4 +371,64 @@ export interface GetPrimeWalletDepositInstructionsRequest {
     | 'WIRE'
     | 'SEN'
     | 'SWIFT';
+}
+
+/**
+ *
+ * Financing Endpoints
+ *
+ */
+
+export interface GetPrimeEntityAccrualsRequest {
+  entity_id: string;
+  portfolio_id?: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface GetPrimeEntityLocateAvailabilitiesRequest {
+  entity_id: string;
+  conversion_date?: string;
+  locate_date?: string;
+}
+
+export interface GetPrimeEntityMarginSummariesRequest {
+  entity_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface GetPrimeEntityTFTieredFeesRequest {
+  entity_id: string;
+  effective_at?: string;
+}
+
+export interface GetPrimePortfolioAccrualsRequest {
+  portfolio_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface GetPrimePortfolioBuyingPowerRequest {
+  portfolio_id: string;
+  base_currency: string;
+  quote_currency: string;
+}
+
+export interface GetPrimePortfolioLocatesRequest {
+  portfolio_id: string;
+  locate_ids?: string[];
+  conversion_date?: string;
+  locate_date?: string;
+}
+
+export interface GetPrimePortfolioMarginConversionsRequest {
+  portfolio_id: string;
+  start_date?: string;
+  end_date?: string;
+}
+
+export interface GetPrimePortfolioWithdrawalPowerRequest {
+  portfolio_id: string;
+  symbol: string;
 }
