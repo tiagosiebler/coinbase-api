@@ -2,7 +2,7 @@ const { CBPrimeClient } = require('coinbase-api');
 
   // This example shows how to call this coinbase API endpoint with either node.js, javascript (js) or typescript (ts) with the npm module "coinbase-api" for coinbase exchange
   // This coinbase API SDK is available on npm via "npm install coinbase-api"
-  // ENDPOINT: /v1/activities/{activity_id}
+  // ENDPOINT: /v1/portfolios/{portfolio_id}/accruals
   // METHOD: GET
   // PUBLIC: NO
 
@@ -11,7 +11,7 @@ const client = new CBPrimeClient({
   apiSecret: 'insert_api_secret_here',
 });
 
-client.getActivityById(params)
+client.getPortfolioAccruals(params)
   .then((response) => {
     console.log(response);
   })
