@@ -215,7 +215,7 @@ interface TransferFee {
   type: string;
 }
 
-export interface CBAppTransfer {
+export interface CBAppTransferDepositWithdrawal {
   user_entered_amount: TransferAmount;
   amount: TransferAmount;
   total: TransferAmount;
@@ -243,7 +243,7 @@ export interface CBAppTransfer {
 }
 
 export interface CBAppTransfer {
-  transfer: CBAppTransfer;
+  transfer: CBAppTransferDepositWithdrawal;
 }
 /**
  *
