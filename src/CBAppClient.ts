@@ -21,6 +21,7 @@ import {
   CBAppFiatCurrency,
   CBAppPagination,
   CBAppTransaction,
+  CBAppTransfer,
 } from './types/response/coinbase-app-client.js';
 
 /**
@@ -273,9 +274,7 @@ export class CBAppClient extends BaseRestClient {
    *
    * Deposits user-defined amount of funds to a fiat account.
    */
-  depositFunds(
-    params: CBAppDepositFundsRequest,
-  ): Promise<{ data: CBAppDepositWithdrawal }> {
+  depositFunds(params: CBAppDepositFundsRequest): Promise<CBAppTransfer> {
     const { account_id, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${account_id}/deposits`, {
       body: restParams,
@@ -290,7 +289,7 @@ export class CBAppClient extends BaseRestClient {
   commitDeposit(params: {
     account_id: string;
     deposit_id: string;
-  }): Promise<{ data: CBAppDepositWithdrawal }> {
+  }): Promise<CBAppTransfer> {
     return this.postPrivate(
       `/v2/accounts/${params.account_id}/deposits/${params.deposit_id}/commit`,
     );
@@ -343,9 +342,7 @@ export class CBAppClient extends BaseRestClient {
    *
    * Withdraws a user-defined amount of funds from a fiat account.
    */
-  withdrawFunds(
-    params: CBAppWithdrawFundsRequest,
-  ): Promise<{ data: CBAppDepositWithdrawal }> {
+  withdrawFunds(params: CBAppWithdrawFundsRequest): Promise<CBAppTransfer> {
     const { account_id, ...restParams } = params;
     return this.postPrivate(`/v2/accounts/${account_id}/withdrawals`, {
       body: restParams,
@@ -360,7 +357,7 @@ export class CBAppClient extends BaseRestClient {
   commitWithdrawal(params: {
     account_id: string;
     withdrawal_id: string;
-  }): Promise<{ data: CBAppDepositWithdrawal }> {
+  }): Promise<CBAppTransfer> {
     return this.postPrivate(
       `/v2/accounts/${params.account_id}/withdrawals/${params.withdrawal_id}/commit`,
     );

@@ -115,7 +115,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
       `,
     );
 
-    if (timeDifference > 500) {
+    if (Math.abs(timeDifference) > 500) {
       console.warn(
         `WARNING! Time difference between server and client clock is greater than 500ms. It is currently ${timeDifference}ms.
         Consider adjusting your system clock to avoid unwanted clock sync errors!

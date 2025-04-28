@@ -172,6 +172,79 @@ export interface CBAppDepositWithdrawal {
   payout_at: string;
 }
 
+interface TransferAmount {
+  value: string;
+  currency: string;
+}
+
+interface TransferOwner {
+  id: string;
+  uuid: string;
+  user_uuid: string;
+  type: string;
+}
+
+interface TransferLedgerAccount {
+  account_id: string;
+  currency: string;
+  owner: TransferOwner;
+}
+
+interface TransferExternalPaymentMethod {
+  payment_method_id: string;
+}
+
+interface TransferSource {
+  type: string;
+  network: string;
+  payment_method_id: string;
+  external_payment_method: TransferExternalPaymentMethod;
+}
+
+interface TransferTarget {
+  type: string;
+  network: string;
+  payment_method_id: string;
+  ledger_account: TransferLedgerAccount;
+}
+
+interface TransferFee {
+  title: string;
+  description: string;
+  amount: TransferAmount;
+  type: string;
+}
+
+export interface CBAppTransferDepositWithdrawal {
+  user_entered_amount: TransferAmount;
+  amount: TransferAmount;
+  total: TransferAmount;
+  subtotal: TransferAmount;
+  idem: string;
+  committed: boolean;
+  id: string;
+  instant: boolean;
+  source: TransferSource;
+  target: TransferTarget;
+  payout_at: string;
+  status: string;
+  user_reference: string;
+  type: string;
+  created_at: string | null;
+  updated_at: string | null;
+  user_warnings: any[];
+  fees: any[];
+  total_fee: TransferFee;
+  cancellation_reason: string | null;
+  hold_days: number;
+  nextStep: any | null;
+  checkout_url: string;
+  requires_completion_step: boolean;
+}
+
+export interface CBAppTransfer {
+  transfer: CBAppTransferDepositWithdrawal;
+}
 /**
  *
  * DATA - Currencies Endpoints

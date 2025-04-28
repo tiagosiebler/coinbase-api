@@ -110,31 +110,31 @@ This table includes all endpoints from the official Exchange API docs and corres
 
 | Function | AUTH | HTTP Method | Endpoint |
 | -------- | :------: | :------: | -------- |
-| [getAccounts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L65) | :closed_lock_with_key:  | GET | `/v2/accounts` |
-| [getAccount()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L84) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}` |
-| [createAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L101) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/addresses` |
-| [getAddresses()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L117) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/addresses` |
-| [getAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L143) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/addresses/{addressId}` |
-| [getAddressTransactions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L160) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/addresses/{addressId}/transactions` |
-| [sendMoney()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L196) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/transactions` |
-| [transferMoney()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L211) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/transactions` |
-| [getTransactions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L228) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/transactions` |
-| [getTransaction()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L254) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/transactions/{transactionId}` |
-| [depositFunds()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L276) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/deposits` |
-| [commitDeposit()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L290) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/deposits/{deposit_id}/commit` |
-| [getDeposits()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L307) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/deposits` |
-| [getDeposit()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L327) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/deposits/{deposit_id}` |
-| [withdrawFunds()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L346) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/withdrawals` |
-| [commitWithdrawal()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L360) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/withdrawals/{withdrawal_id}/commit` |
-| [getWithdrawals()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L377) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/withdrawals` |
-| [getWithdrawal()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L403) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/withdrawals/{withdrawal_id}` |
-| [getFiatCurrencies()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L426) |  | GET | `/v2/currencies` |
-| [getCryptocurrencies()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L437) |  | GET | `/v2/currencies/crypto` |
-| [getExchangeRates()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L453) |  | GET | `/v2/exchange-rates` |
-| [getBuyPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L474) |  | GET | `/v2/prices/{currencyPair}/buy` |
-| [getSellPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L489) |  | GET | `/v2/prices/{currencyPair}/sell` |
-| [getSpotPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L504) |  | GET | `/v2/prices/{currencyPair}/spot` |
-| [getCurrentTime()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L526) |  | GET | `/v2/time` |
+| [getAccounts()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L66) | :closed_lock_with_key:  | GET | `/v2/accounts` |
+| [getAccount()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L85) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}` |
+| [createAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L102) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/addresses` |
+| [getAddresses()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L118) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/addresses` |
+| [getAddress()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L144) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/addresses/{addressId}` |
+| [getAddressTransactions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L161) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/addresses/{addressId}/transactions` |
+| [sendMoney()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L197) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/transactions` |
+| [transferMoney()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L212) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/transactions` |
+| [getTransactions()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L229) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/transactions` |
+| [getTransaction()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L255) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/transactions/{transactionId}` |
+| [depositFunds()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L277) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/deposits` |
+| [commitDeposit()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L289) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/deposits/{deposit_id}/commit` |
+| [getDeposits()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L306) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/deposits` |
+| [getDeposit()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L326) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/deposits/{deposit_id}` |
+| [withdrawFunds()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L345) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/withdrawals` |
+| [commitWithdrawal()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L357) | :closed_lock_with_key:  | POST | `/v2/accounts/{account_id}/withdrawals/{withdrawal_id}/commit` |
+| [getWithdrawals()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L374) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/withdrawals` |
+| [getWithdrawal()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L400) | :closed_lock_with_key:  | GET | `/v2/accounts/{account_id}/withdrawals/{withdrawal_id}` |
+| [getFiatCurrencies()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L423) |  | GET | `/v2/currencies` |
+| [getCryptocurrencies()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L434) |  | GET | `/v2/currencies/crypto` |
+| [getExchangeRates()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L450) |  | GET | `/v2/exchange-rates` |
+| [getBuyPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L471) |  | GET | `/v2/prices/{currencyPair}/buy` |
+| [getSellPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L486) |  | GET | `/v2/prices/{currencyPair}/sell` |
+| [getSpotPrice()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L501) |  | GET | `/v2/prices/{currencyPair}/spot` |
+| [getCurrentTime()](https://github.com/tiagosiebler/coinbase-api/blob/master/src/CBAppClient.ts#L523) |  | GET | `/v2/time` |
 
 # CBExchangeClient.ts
 
