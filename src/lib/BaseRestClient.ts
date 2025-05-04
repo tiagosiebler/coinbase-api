@@ -400,7 +400,8 @@ export abstract class BaseRestClient {
     const encodeQueryStringValues = true;
     const explodeArrayParameters = true;
 
-    const requestBody = data?.body || data;
+    // if there is body, use body - otherwise empty string
+    const requestBody = data?.body;
     const requestBodyString = requestBody ? JSON.stringify(requestBody) : '';
 
     if (signMethod === 'coinbase') {
@@ -468,8 +469,9 @@ export abstract class BaseRestClient {
             throw new Error(`No API passphrase provided, cannot sign request.`);
           }
 
+          // For CB International, no query params are used in the signature
           const signInput =
-            timestampInSeconds + method + endpoint + signRequestParams;
+            timestampInSeconds + method + endpoint + requestBodyString;
 
           const sign = await signMessage(
             signInput,
