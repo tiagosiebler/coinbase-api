@@ -400,14 +400,15 @@ export abstract class BaseRestClient {
     const encodeQueryStringValues = true;
     const explodeArrayParameters = true;
 
-    const requestBody = data?.body || data;
+    // if there is body, use body - otherwise empty string
+    const requestBody = data?.body;
     const requestBodyString = requestBody ? JSON.stringify(requestBody) : '';
 
     if (signMethod === 'coinbase') {
       const clientType = this.getClientType();
 
       const signRequestParams =
-        method === 'GET'
+        method === 'GET' || method === 'DELETE'
           ? serializeParams(
               data?.query || data,
               strictParamValidation,
@@ -454,10 +455,7 @@ export abstract class BaseRestClient {
         }
 
         // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
-        case REST_CLIENT_TYPE_ENUM.exchange:
-
-        // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
-        case REST_CLIENT_TYPE_ENUM.international: {
+        case REST_CLIENT_TYPE_ENUM.exchange: {
           const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
           if (!apiSecret) {
@@ -498,6 +496,48 @@ export abstract class BaseRestClient {
 
           // For CB Exchange, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
+        }
+
+        // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
+        case REST_CLIENT_TYPE_ENUM.international: {
+          const timestampInSeconds = timestampInMs / 1000; // decimals are OK
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          // For CB International, no query params are used in the signature
+          const signInput =
+            timestampInSeconds + method + endpoint + requestBodyString;
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+            'base64:web',
+          );
+
+          const headers = {
+            'CB-ACCESS-KEY': apiKey,
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-PASSPHRASE': apiPassphrase,
+          };
+
+          // console.log('sign res: ', { signInput, ...headers });
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
 
           // For CB International, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
@@ -662,7 +702,7 @@ export abstract class BaseRestClient {
 
     let urlWithQueryParams = options.url;
 
-    if (method === 'GET') {
+    if (method === 'GET' || method === 'DELETE') {
       if (signResult.queryParamsWithSign) {
         urlWithQueryParams += signResult.queryParamsWithSign;
       }
