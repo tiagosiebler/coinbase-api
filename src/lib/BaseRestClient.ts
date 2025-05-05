@@ -455,7 +455,49 @@ export abstract class BaseRestClient {
         }
 
         // Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
-        case REST_CLIENT_TYPE_ENUM.exchange:
+        case REST_CLIENT_TYPE_ENUM.exchange: {
+          const timestampInSeconds = timestampInMs / 1000; // decimals are OK
+
+          if (!apiSecret) {
+            throw new Error(`No API secret provided, cannot sign request.`);
+          }
+
+          if (!apiPassphrase) {
+            throw new Error(`No API passphrase provided, cannot sign request.`);
+          }
+
+          const signInput =
+            timestampInSeconds + method + endpoint + signRequestParams;
+
+          const sign = await signMessage(
+            signInput,
+            apiSecret,
+            'base64',
+            'SHA-256',
+            'base64:web',
+          );
+
+          const headers = {
+            'CB-ACCESS-KEY': apiKey,
+            'CB-ACCESS-SIGN': sign,
+            'CB-ACCESS-TIMESTAMP': timestampInSeconds,
+            'CB-ACCESS-PASSPHRASE': apiPassphrase,
+          };
+
+          // console.log('sign res: ', { signInput, ...headers });
+          return {
+            ...res,
+            sign: sign,
+            queryParamsWithSign: signRequestParams,
+            headers: {
+              ...headers,
+            },
+          };
+
+          // For CB Exchange, is there demand for FIX
+          // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
+
+        }
 
         // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
         case REST_CLIENT_TYPE_ENUM.international: {
@@ -497,9 +539,6 @@ export abstract class BaseRestClient {
               ...headers,
             },
           };
-
-          // For CB Exchange, is there demand for FIX
-          // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
 
           // For CB International, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
