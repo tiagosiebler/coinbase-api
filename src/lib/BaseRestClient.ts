@@ -496,7 +496,6 @@ export abstract class BaseRestClient {
 
           // For CB Exchange, is there demand for FIX
           // Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
-
         }
 
         // Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
