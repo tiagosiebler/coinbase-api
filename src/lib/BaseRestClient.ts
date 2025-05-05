@@ -469,7 +469,6 @@ export abstract class BaseRestClient {
             throw new Error(`No API passphrase provided, cannot sign request.`);
           }
 
-          console.log('Sign request params: ', signRequestParams);
           // For CB International, no query params are used in the signature
           const signInput =
             timestampInSeconds + method + endpoint + requestBodyString;
