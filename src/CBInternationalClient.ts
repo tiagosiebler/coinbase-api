@@ -236,9 +236,7 @@ export class CBInternationalClient extends BaseRestClient {
    * Cancels all orders matching the requested criteria.
    */
   cancelOrders(params: CancelINTXOrdersRequest): Promise<any> {
-    return this.deletePrivate('/api/v1/orders', {
-      query: params,
-    });
+    return this.deletePrivate('/api/v1/orders', { query: params });
   }
 
   /**

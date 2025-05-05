@@ -408,7 +408,7 @@ export abstract class BaseRestClient {
       const clientType = this.getClientType();
 
       const signRequestParams =
-        method === 'GET'
+        method === 'GET' || method === 'DELETE'
           ? serializeParams(
               data?.query || data,
               strictParamValidation,
@@ -469,6 +469,7 @@ export abstract class BaseRestClient {
             throw new Error(`No API passphrase provided, cannot sign request.`);
           }
 
+          console.log('Sign request params: ', signRequestParams);
           // For CB International, no query params are used in the signature
           const signInput =
             timestampInSeconds + method + endpoint + requestBodyString;
@@ -664,7 +665,7 @@ export abstract class BaseRestClient {
 
     let urlWithQueryParams = options.url;
 
-    if (method === 'GET') {
+    if (method === 'GET' || method === 'DELETE') {
       if (signResult.queryParamsWithSign) {
         urlWithQueryParams += signResult.queryParamsWithSign;
       }
