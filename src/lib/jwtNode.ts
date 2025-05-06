@@ -1,4 +1,6 @@
-import jwt from 'jsonwebtoken';
+import crypto from 'node:crypto';
+
+import * as jose from 'jose';
 import { nanoid } from 'nanoid';
 
 interface JWTSignParams {
@@ -9,12 +11,12 @@ interface JWTSignParams {
   apiPrivKey: string;
 }
 
-export function signJWT(
+export async function signJWT(
   params: {
     url: string;
     method: string;
   } & JWTSignParams,
-): string {
+): Promise<string> {
   const {
     url,
     method,
@@ -24,7 +26,6 @@ export function signJWT(
     apiPrivKey,
     apiPubKey,
   } = params;
-
   // Remove https:// but keep the rest
   const urlWithEndpoint = url.slice(8);
   const uri = `${method} ${urlWithEndpoint}`;
@@ -37,23 +38,29 @@ export function signJWT(
     uri,
   };
 
-  const header = {
+  const jwt = new jose.SignJWT(payload).setProtectedHeader({
     alg: algorithm,
     kid: apiPubKey,
     nonce: nanoid(16),
-  };
+  });
 
-  const options: jwt.SignOptions = {
-    algorithm: algorithm as jwt.Algorithm,
-    header: header,
-  };
+  const pkcs8Key = crypto
+    .createPrivateKey({
+      key: apiPrivKey,
+      format: 'pem',
+    })
+    .export({
+      type: 'pkcs8',
+      format: 'pem',
+    });
 
-  return jwt.sign(payload, apiPrivKey, options);
+  return jwt.sign(await jose.importPKCS8(pkcs8Key as string, algorithm));
 }
 
-export function signWSJWT(params: JWTSignParams): string {
+export async function signWSJWT(params: JWTSignParams): Promise<string> {
   const { algorithm, timestampMs, jwtExpiresSeconds, apiPrivKey, apiPubKey } =
     params;
+
   const payload = {
     iss: 'cdp',
     nbf: Math.floor(timestampMs / 1000),
@@ -61,16 +68,21 @@ export function signWSJWT(params: JWTSignParams): string {
     sub: apiPubKey,
   };
 
-  const header = {
+  const jwt = new jose.SignJWT(payload).setProtectedHeader({
     alg: algorithm,
     kid: apiPubKey,
     nonce: nanoid(16),
-  };
+  });
 
-  const options: jwt.SignOptions = {
-    algorithm: algorithm as jwt.Algorithm,
-    header: header,
-  };
+  const pkcs8Key = crypto
+    .createPrivateKey({
+      key: apiPrivKey,
+      format: 'pem',
+    })
+    .export({
+      type: 'pkcs8',
+      format: 'pem',
+    });
 
-  return jwt.sign(payload, apiPrivKey, options);
+  return jwt.sign(await jose.importPKCS8(pkcs8Key as string, algorithm));
 }

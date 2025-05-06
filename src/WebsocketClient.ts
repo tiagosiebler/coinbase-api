@@ -515,7 +515,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         // Events that are ready to send (usually stringified JSON)
         // ADV trade only supports sending one at a time, so we don't try to merge them
         // These are already signed, if needed.
-        return operationEvents.map((evt) => {
+        const signedEvents = operationEvents.map(async (evt) => {
           if (!isPrivateChannel) {
             return JSON.stringify(evt);
           }
@@ -532,7 +532,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
            * No batching is supported for this product group, so we can already
            * handle sign here and return it as is
            */
-          const sign = signWSJWT({
+          const sign = await signWSJWT({
             algorithm: 'ES256',
             timestampMs: timestamp,
             jwtExpiresSeconds,
@@ -547,6 +547,8 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
           return JSON.stringify(operationEventWithSign);
         });
+
+        return Promise.all(signedEvents);
       }
       case WS_KEY_MAP.exchangeMarketData:
       case WS_KEY_MAP.exchangeDirectMarketData: {

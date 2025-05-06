@@ -157,7 +157,7 @@ const config: Config = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  // testEnvironment: "jest-environment-node",
+  // testEnvironment: 'jest-environment-node',
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -191,7 +191,7 @@ const config: Config = {
   // transform: undefined,
 
   transform: {
-    '^.+\\.m?[tj]sx?$': [
+    '^.+\\.m?[t]sx?$': [
       'ts-jest',
       {
         tsconfig: 'test/tsconfig.test.json',
