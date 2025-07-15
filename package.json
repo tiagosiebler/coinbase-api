@@ -1,12 +1,13 @@
 {
   "name": "coinbase-api",
-  "version": "1.0.14",
+  "version": "1.0.15",
   "description": "Node.js SDK for Coinbase's REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && bash ./postBuild.sh",
     "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests"
+    "test:watch": "jest --watch --passWithNoTests",
+    "lint": "eslint src"
   },
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",
