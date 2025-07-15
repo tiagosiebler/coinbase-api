@@ -150,7 +150,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     cursor?: string;
     retail_portfolio_id?: string; // deprecated
   }): Promise<AdvTradeAccountsList> {
-    return this.getPrivate(`/api/v3/brokerage/accounts`, params);
+    return this.getPrivate('/api/v3/brokerage/accounts', params);
   }
 
   /**
@@ -179,7 +179,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   getBestBidAsk(params?: { product_ids?: string[] }): Promise<{
     pricebooks: AdvTradePricebook[];
   }> {
-    return this.getPrivate(`/api/v3/brokerage/best_bid_ask`, params);
+    return this.getPrivate('/api/v3/brokerage/best_bid_ask', params);
   }
 
   /**
@@ -192,7 +192,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     limit?: number;
     aggregation_price_increment?: string;
   }): Promise<{ pricebook: AdvTradePricebook }> {
-    return this.getPrivate(`/api/v3/brokerage/product_book`, params);
+    return this.getPrivate('/api/v3/brokerage/product_book', params);
   }
 
   /**
@@ -205,7 +205,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     products: AdvTradeProduct[];
     num_products: number;
   }> {
-    return this.getPrivate(`/api/v3/brokerage/products`, params);
+    return this.getPrivate('/api/v3/brokerage/products', params);
   }
 
   /**
@@ -270,7 +270,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     params: SubmitAdvTradeOrderRequest,
   ): Promise<AdvTradeSubmitOrderResponse> {
     this.validateOrderId(params, 'client_order_id');
-    return this.postPrivate(`/api/v3/brokerage/orders`, {
+    return this.postPrivate('/api/v3/brokerage/orders', {
       body: params,
     });
   }
@@ -286,7 +286,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   cancelOrders(params: {
     order_ids: string[];
   }): Promise<AdvTradeCancelOrdersResponse> {
-    return this.postPrivate(`/api/v3/brokerage/orders/batch_cancel`, {
+    return this.postPrivate('/api/v3/brokerage/orders/batch_cancel', {
       body: params,
     });
   }
@@ -305,7 +305,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     price?: string;
     size?: string;
   }): Promise<AdvTradeEditOrderResponse> {
-    return this.postPrivate(`/api/v3/brokerage/orders/edit`, {
+    return this.postPrivate('/api/v3/brokerage/orders/edit', {
       body: params,
     });
   }
@@ -321,7 +321,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     price?: string;
     size?: string;
   }): Promise<AdvTradeEditOrderPreviewResponse> {
-    return this.postPrivate(`/api/v3/brokerage/orders/edit_preview`, {
+    return this.postPrivate('/api/v3/brokerage/orders/edit_preview', {
       body: params,
     });
   }
@@ -342,7 +342,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     has_next: boolean;
     cursor?: string;
   }> {
-    return this.getPrivate(`/api/v3/brokerage/orders/historical/batch`, params);
+    return this.getPrivate('/api/v3/brokerage/orders/historical/batch', params);
   }
 
   /**
@@ -355,7 +355,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     fills: AdvTradeFill[];
     cursor?: string;
   }> {
-    return this.getPrivate(`/api/v3/brokerage/orders/historical/fills`, params);
+    return this.getPrivate('/api/v3/brokerage/orders/historical/fills', params);
   }
 
   /**
@@ -384,7 +384,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   previewOrder(
     params: PreviewAdvTradeOrderRequest,
   ): Promise<AdvTradeOrderPreview> {
-    return this.postPrivate(`/api/v3/brokerage/orders/preview`, {
+    return this.postPrivate('/api/v3/brokerage/orders/preview', {
       body: params,
     });
   }
@@ -399,7 +399,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     params: CloseAdvTradePositionRequest,
   ): Promise<AdvTradeClosePositionResponse> {
     this.validateOrderId(params, 'client_order_id');
-    return this.postPrivate(`/api/v3/brokerage/orders/close_position`, {
+    return this.postPrivate('/api/v3/brokerage/orders/close_position', {
       body: params,
     });
   }
@@ -420,7 +420,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   }): Promise<{
     portfolios: AdvTradePortfolio[];
   }> {
-    return this.getPrivate(`/api/v3/brokerage/portfolios`, params);
+    return this.getPrivate('/api/v3/brokerage/portfolios', params);
   }
 
   /**
@@ -431,7 +431,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   createPortfolio(params: { name: string }): Promise<{
     portfolio: AdvTradePortfolio;
   }> {
-    return this.postPrivate(`/api/v3/brokerage/portfolios`, {
+    return this.postPrivate('/api/v3/brokerage/portfolios', {
       body: params,
     });
   }
@@ -445,7 +445,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     source_portfolio_uuid: string;
     target_portfolio_uuid: string;
   }> {
-    return this.postPrivate(`/api/v3/brokerage/portfolios/move_funds`, {
+    return this.postPrivate('/api/v3/brokerage/portfolios/move_funds', {
       body: params,
     });
   }
@@ -516,7 +516,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   getFuturesBalanceSummary(): Promise<{
     balance_summary: AdvTradeFuturesBalance;
   }> {
-    return this.getPrivate(`/api/v3/brokerage/cfm/balance_summary`);
+    return this.getPrivate('/api/v3/brokerage/cfm/balance_summary');
   }
 
   /**
@@ -530,7 +530,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
       | 'INTRADAY_MARGIN_SETTING_STANDARD'
       | 'INTRADAY_MARGIN_SETTING_INTRADAY';
   }> {
-    return this.getPrivate(`/api/v3/brokerage/cfm/intraday/margin_setting`);
+    return this.getPrivate('/api/v3/brokerage/cfm/intraday/margin_setting');
   }
 
   /**
@@ -544,7 +544,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
       | 'INTRADAY_MARGIN_SETTING_STANDARD'
       | 'INTRADAY_MARGIN_SETTING_INTRADAY';
   }): Promise<any> {
-    return this.postPrivate(`/api/v3/brokerage/cfm/intraday/margin_setting`, {
+    return this.postPrivate('/api/v3/brokerage/cfm/intraday/margin_setting', {
       body: params,
     });
   }
@@ -561,7 +561,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
       | 'MARGIN_PROFILE_TYPE_RETAIL_INTRADAY_MARGIN_1';
   }): Promise<AdvTradeCurrentMarginWindow> {
     return this.getPrivate(
-      `/api/v3/brokerage/cfm/intraday/current_margin_window`,
+      '/api/v3/brokerage/cfm/intraday/current_margin_window',
       params,
     );
   }
@@ -572,7 +572,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * Get a list of positions in CFM products.
    */
   getFuturesPositions(): Promise<{ positions: AdvTradeFuturesPosition[] }> {
-    return this.getPrivate(`/api/v3/brokerage/cfm/positions`);
+    return this.getPrivate('/api/v3/brokerage/cfm/positions');
   }
 
   /**
@@ -603,7 +603,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   scheduleFuturesSweep(params?: {
     usd_amount?: string;
   }): Promise<{ success: boolean }> {
-    return this.postPrivate(`/api/v3/brokerage/cfm/sweeps/schedule`, {
+    return this.postPrivate('/api/v3/brokerage/cfm/sweeps/schedule', {
       body: params,
     });
   }
@@ -619,7 +619,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * - Once a sweep is complete, it no longer appears in the list of sweeps.
    */
   getFuturesSweeps(): Promise<{ sweeps: AdvTradeFuturesSweep[] }> {
-    return this.getPrivate(`/api/v3/brokerage/cfm/sweeps`);
+    return this.getPrivate('/api/v3/brokerage/cfm/sweeps');
   }
 
   /**
@@ -628,7 +628,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * Cancel the pending sweep of funds from FCM wallet to USD Spot wallet.
    */
   cancelPendingFuturesSweep(): Promise<{ success: boolean }> {
-    return this.deletePrivate(`/api/v3/brokerage/cfm/sweeps`);
+    return this.deletePrivate('/api/v3/brokerage/cfm/sweeps');
   }
 
   /**
@@ -644,7 +644,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    *
    */
   allocatePortfolio(params: AllocateAdvTradePortfolioRequest): Promise<any> {
-    return this.postPrivate(`/api/v3/brokerage/intx/allocate`, {
+    return this.postPrivate('/api/v3/brokerage/intx/allocate', {
       body: params,
     });
   }
@@ -714,7 +714,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     portfolio_uuid?: string;
     multi_asset_collateral_enabled?: boolean;
   }): Promise<{ multi_asset_collateral_enabled: boolean }> {
-    return this.postPrivate(`/api/v3/brokerage/intx/multi_asset_collateral`, {
+    return this.postPrivate('/api/v3/brokerage/intx/multi_asset_collateral', {
       body: params,
     });
   }
@@ -733,7 +733,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   getTransactionSummary(
     params?: GetAdvTradeTransactionSummaryRequest,
   ): Promise<AdvTradeTransactionSummary> {
-    return this.getPrivate(`/api/v3/brokerage/transaction_summary`, params);
+    return this.getPrivate('/api/v3/brokerage/transaction_summary', params);
   }
 
   /**
@@ -749,7 +749,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * Convert is applicable for USDC-USD and EURC-EUR conversion.
    */
   submitConvertQuote(params: SubmitAdvTradeConvertQuoteRequest): Promise<any> {
-    return this.postPrivate(`/api/v3/brokerage/convert/quote`, {
+    return this.postPrivate('/api/v3/brokerage/convert/quote', {
       body: params,
     });
   }
@@ -798,7 +798,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     epochSeconds: string;
     epochMillis: string;
   }> {
-    return this.get(`/api/v3/brokerage/time`);
+    return this.get('/api/v3/brokerage/time');
   }
 
   /**
@@ -811,7 +811,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     limit?: number;
     aggregation_price_increment?: string;
   }): Promise<{ pricebook: AdvTradePricebook }> {
-    return this.get(`/api/v3/brokerage/market/product_book`, params);
+    return this.get('/api/v3/brokerage/market/product_book', params);
   }
 
   /**
@@ -823,7 +823,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
     products: AdvTradePublicProduct[];
     num_products: number;
   }> {
-    return this.get(`/api/v3/brokerage/market/products`, params);
+    return this.get('/api/v3/brokerage/market/products', params);
   }
 
   /**
@@ -882,7 +882,7 @@ export class CBAdvancedTradeClient extends BaseRestClient {
   getPaymentMethods(): Promise<{
     payment_methods: AdvTradePaymentMethod[];
   }> {
-    return this.getPrivate(`/api/v3/brokerage/payment_methods`);
+    return this.getPrivate('/api/v3/brokerage/payment_methods');
   }
 
   /**
@@ -911,6 +911,6 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * Get information about your CDP API key permissions.
    */
   getApiKeyPermissions(): Promise<AdvTradeApiKeyPermissions> {
-    return this.getPrivate(`/api/v3/brokerage/key_permissions`);
+    return this.getPrivate('/api/v3/brokerage/key_permissions');
   }
 }

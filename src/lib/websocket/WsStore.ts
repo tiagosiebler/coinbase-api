@@ -44,6 +44,7 @@ export class WsStore<
 > {
   private wsState: Record<string, WsStoredState<TWSTopicSubscribeEventArgs>> =
     {};
+
   private logger: typeof DefaultLogger;
 
   constructor(logger: typeof DefaultLogger) {
@@ -55,10 +56,12 @@ export class WsStore<
     key: WsKey,
     createIfMissing?: true,
   ): WsStoredState<TWSTopicSubscribeEventArgs>;
+
   get(
     key: WsKey,
     createIfMissing?: false,
   ): WsStoredState<TWSTopicSubscribeEventArgs> | undefined;
+
   get(
     key: WsKey,
     createIfMissing?: boolean,
@@ -245,7 +248,7 @@ export class WsStore<
         this.rejectDeferredPromise(wsKey, promiseRef, reason, true);
       } catch (e) {
         this.logger.error(
-          `rejectAllDeferredPromises(): Exception rejecting deferred promise`,
+          'rejectAllDeferredPromises(): Exception rejecting deferred promise',
           { wsKey: wsKey, reason, promiseRef, exception: e },
         );
       }
