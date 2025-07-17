@@ -116,10 +116,15 @@ function deleteUndefinedValues(params?: any): void {
 
 export abstract class BaseRestClient {
   private options: RestClientOptions;
+
   private baseUrl: string;
+
   private globalRequestOptions: AxiosRequestConfig;
+
   private apiKey: string | undefined;
+
   private apiSecret: string | undefined;
+
   private apiPassphrase: string | undefined;
 
   /** Defines the client type (affecting how requests & signatures behave) */
@@ -167,9 +172,16 @@ export abstract class BaseRestClient {
 
     // If enabled, configure a https agent with keepAlive enabled
     if (this.options.keepAlive) {
+      // Extract existing https agent parameters, if provided, to prevent the keepAlive flag from overwriting an existing https agent completely
+      const existingHttpsAgent = this.globalRequestOptions.httpsAgent as
+        | https.Agent
+        | undefined;
+      const existingAgentOptions = existingHttpsAgent?.options || {};
+
       // For more advanced configuration, raise an issue on GitHub or use the "networkOptions"
       // parameter to define a custom httpsAgent with the desired properties
       this.globalRequestOptions.httpsAgent = new https.Agent({
+        ...existingAgentOptions,
         keepAlive: true,
         keepAliveMsecs: this.options.keepAliveMsecs,
       });
@@ -427,7 +439,7 @@ export abstract class BaseRestClient {
           // App: https://docs.cdp.coinbase.com/coinbase-app/docs/api-key-authentication
 
           if (!apiSecret) {
-            throw new Error(`No API secret provided, cannot prepare JWT.`);
+            throw new Error('No API secret provided, cannot prepare JWT.');
           }
 
           const sign = await signJWT({
@@ -459,11 +471,11 @@ export abstract class BaseRestClient {
           const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
           if (!apiSecret) {
-            throw new Error(`No API secret provided, cannot sign request.`);
+            throw new Error('No API secret provided, cannot sign request.');
           }
 
           if (!apiPassphrase) {
-            throw new Error(`No API passphrase provided, cannot sign request.`);
+            throw new Error('No API passphrase provided, cannot sign request.');
           }
 
           const signInput =
@@ -503,11 +515,11 @@ export abstract class BaseRestClient {
           const timestampInSeconds = timestampInMs / 1000; // decimals are OK
 
           if (!apiSecret) {
-            throw new Error(`No API secret provided, cannot sign request.`);
+            throw new Error('No API secret provided, cannot sign request.');
           }
 
           if (!apiPassphrase) {
-            throw new Error(`No API passphrase provided, cannot sign request.`);
+            throw new Error('No API passphrase provided, cannot sign request.');
           }
 
           // For CB International, no query params are used in the signature
@@ -551,11 +563,11 @@ export abstract class BaseRestClient {
             timestampInSeconds + method + endpoint + requestBodyString;
 
           if (!apiSecret) {
-            throw new Error(`No API secret provided, cannot sign request.`);
+            throw new Error('No API secret provided, cannot sign request.');
           }
 
           if (!apiPassphrase) {
-            throw new Error(`No API passphrase provided, cannot sign request.`);
+            throw new Error('No API passphrase provided, cannot sign request.');
           }
 
           const sign = await signMessage(
@@ -626,6 +638,7 @@ export abstract class BaseRestClient {
     params?: TParams,
     isPublicApi?: true,
   ): Promise<UnsignedRequest<TParams>>;
+
   private async prepareSignParams<TParams extends object | undefined>(
     method: Method,
     url: string,
@@ -634,6 +647,7 @@ export abstract class BaseRestClient {
     params?: TParams,
     isPublicApi?: false | undefined,
   ): Promise<SignedRequest<TParams>>;
+
   private async prepareSignParams<TParams extends object | undefined>(
     method: Method,
     url: string,

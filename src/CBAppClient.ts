@@ -453,7 +453,7 @@ export class CBAppClient extends BaseRestClient {
       rates: { [key: string]: string };
     };
   }> {
-    return this.get(`/v2/exchange-rates`, params);
+    return this.get('/v2/exchange-rates', params);
   }
 
   /**
