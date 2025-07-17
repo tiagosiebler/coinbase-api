@@ -442,7 +442,7 @@ export abstract class BaseRestClient {
             throw new Error('No API secret provided, cannot prepare JWT.');
           }
 
-          const sign = signJWT({
+          const sign = await signJWT({
             url,
             method,
             algorithm: 'ES256',
