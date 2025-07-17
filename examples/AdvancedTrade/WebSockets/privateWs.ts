@@ -14,9 +14,8 @@ async function start() {
   // key name & private key, as returned by coinbase when creating your API keys.
   // Note: the below example is a dummy key and won't actually work
   const advancedTradeCdpAPIKey = {
-    name: 'organizations/13232211d-d7e2-d7e2-d7e2-d7e2d7e2d7e2/apiKeys/d7e2d7e2-d7e2-d7e2-d7e2-d7e2d7e2d7e2',
-    privateKey:
-      '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
+    name: process.env.API_KEY_NAME || 'insert_api_key_here',
+    privateKey: process.env.API_PRIVATE_KEY || 'insert_api_secret_here',
   };
 
   // Optional: fully customise the logging experience by injecting a custom logger
@@ -129,7 +128,7 @@ async function start() {
     };
     client.subscribe(tickerSubscribeRequest, 'advTradeUserData');
   } catch (e) {
-    console.error(`Subscribe exception: `, e);
+    console.error('Subscribe exception: ', e);
   }
 }
 

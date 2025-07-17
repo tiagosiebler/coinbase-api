@@ -445,7 +445,6 @@ export abstract class BaseRestClient {
           const sign = await signJWT({
             url,
             method,
-            algorithm: 'ES256',
             timestampMs: timestampInMs,
             jwtExpiresSeconds,
             apiPubKey: apiKey,
