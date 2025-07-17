@@ -198,7 +198,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
   protected sendPongEvent(wsKey: WsKey) {
     try {
-      this.logger.trace(`Sending upstream ws PONG: `, {
+      this.logger.trace('Sending upstream ws PONG: ', {
         ...WS_LOGGER_CATEGORY,
         wsMessage: 'PONG',
         wsKey,
@@ -215,7 +215,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
       // Send a protocol layer pong
       wsState.ws.pong();
     } catch (e) {
-      this.logger.error(`Failed to send WS PONG`, {
+      this.logger.error('Failed to send WS PONG', {
         ...WS_LOGGER_CATEGORY,
         wsMessage: 'PONG',
         wsKey,
@@ -326,7 +326,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         eventType: 'exception',
       });
 
-      this.logger.error(`Failed to parse event data due to exception: `, {
+      this.logger.error('Failed to parse event data due to exception: ', {
         exception: e,
         eventData: event.data,
       });
@@ -522,7 +522,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
           if (!apiKey || !apiSecret) {
             throw new Error(
-              `"options.apiKey" (api key name) and/or "options.apiSecret" missing, unable to generate JWT`,
+              '"options.apiKey" (api key name) and/or "options.apiSecret" missing, unable to generate JWT',
             );
           }
           const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
@@ -557,7 +557,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         ) {
           // Don't expect this to ever happen, but just to please typescript...
           throw new Error(
-            `Unexpected request schema for exchange WS request builder`,
+            'Unexpected request schema for exchange WS request builder',
           );
         }
 
@@ -576,7 +576,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
 
           if (!apiKey || !apiSecret || !apiPassphrase) {
             throw new Error(
-              `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+              'One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.',
             );
           }
 
@@ -615,7 +615,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
           if (isPrivateChannel) {
             if (!apiKey || !apiSecret || !apiPassphrase) {
               throw new Error(
-                `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+                'One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.',
               );
             }
 
@@ -646,7 +646,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         ) {
           // Don't expect this to ever happen, but just to please typescript...
           throw new Error(
-            `Unexpected request schema for exchange WS request builder`,
+            'Unexpected request schema for exchange WS request builder',
           );
         }
 
@@ -655,7 +655,7 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         for (const operationEvent of operationEvents) {
           if (!apiKey || !apiSecret || !apiPassphrase) {
             throw new Error(
-              `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+              'One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.',
             );
           }
 
@@ -690,12 +690,12 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         ) {
           // Don't expect this to ever happen, but just to please typescript...
           throw new Error(
-            `Unexpected request schema for exchange WS request builder`,
+            'Unexpected request schema for exchange WS request builder',
           );
         }
         if (!apiKey || !apiSecret || !apiPassphrase) {
           throw new Error(
-            `One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.`,
+            'One or more of apiKey, apiSecret and/or apiPassphrase are missing. These must be provided to use private channels.',
           );
         }
 

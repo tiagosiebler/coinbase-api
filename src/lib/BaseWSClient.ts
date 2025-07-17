@@ -100,6 +100,7 @@ export abstract class BaseWebsocketClient<
   private wsStore: WsStore<TWSKey, WsTopicRequest<WSTopic>>;
 
   protected logger: typeof DefaultLogger;
+
   protected options: WebsocketClientOptions;
 
   private wsApiRequestId: number = 0;
@@ -132,9 +133,11 @@ export abstract class BaseWebsocketClient<
   }
 
   protected abstract sendPingEvent(wsKey: TWSKey, ws: WebSocket): void;
+
   protected abstract sendPongEvent(wsKey: TWSKey, ws: WebSocket): void;
 
   protected abstract isWsPong(data: any): boolean;
+
   protected abstract isWsPing(data: any): boolean;
 
   protected abstract getWsAuthRequestEvent(wsKey: TWSKey): Promise<object>;
@@ -154,6 +157,7 @@ export abstract class BaseWebsocketClient<
   ): Promise<string[]>;
 
   protected abstract getPrivateWSKeys(): TWSKey[];
+
   protected abstract getWsUrl(wsKey: TWSKey): Promise<string>;
 
   protected abstract getMaxTopicsPerSubscribeEvent(
@@ -235,7 +239,7 @@ export abstract class BaseWebsocketClient<
        * Are we in the process of connection? Nothing to send yet.
        */
       this.logger.trace(
-        `WS not connected - requests queued for retry once connected.`,
+        'WS not connected - requests queued for retry once connected.',
         {
           ...WS_LOGGER_CATEGORY,
           wsKey,
@@ -255,7 +259,7 @@ export abstract class BaseWebsocketClient<
        * Auth should already automatically be in progress, so no action needed from here. Topics will automatically subscribe post-auth success.
        */
       this.logger.trace(
-        `WS connected but not authenticated yet - awaiting auth before subscribing`,
+        'WS connected but not authenticated yet - awaiting auth before subscribing',
       );
       return false;
     }
@@ -396,7 +400,7 @@ export abstract class BaseWebsocketClient<
 
         this.wsStore.setWs(wsKey, ws);
       } catch (e) {
-        this.logger.error(`Exception fetching WS URL`, e);
+        this.logger.error('Exception fetching WS URL', e);
         throw e;
       }
 
@@ -480,7 +484,7 @@ export abstract class BaseWebsocketClient<
   /** Get a signature, build the auth request and send it */
   private async sendAuthRequest(wsKey: TWSKey): Promise<void> {
     try {
-      this.logger.info(`Sending auth request...`, {
+      this.logger.info('Sending auth request...', {
         ...WS_LOGGER_CATEGORY,
         wsKey,
       });
@@ -638,7 +642,7 @@ export abstract class BaseWebsocketClient<
    */
   public tryWsSend(wsKey: TWSKey, wsMessage: string) {
     try {
-      this.logger.trace(`Sending upstream ws message: `, {
+      this.logger.trace('Sending upstream ws message: ', {
         ...WS_LOGGER_CATEGORY,
         wsMessage,
         wsKey,
@@ -656,7 +660,7 @@ export abstract class BaseWebsocketClient<
       }
       ws.send(wsMessage);
     } catch (e) {
-      this.logger.error(`Failed to send WS message`, {
+      this.logger.error('Failed to send WS message', {
         ...WS_LOGGER_CATEGORY,
         wsMessage,
         wsKey,
@@ -699,7 +703,7 @@ export abstract class BaseWebsocketClient<
 
     this.setWsState(wsKey, WsConnectionStateEnum.CONNECTED);
 
-    this.logger.trace(`Enabled ping timer`, { ...WS_LOGGER_CATEGORY, wsKey });
+    this.logger.trace('Enabled ping timer', { ...WS_LOGGER_CATEGORY, wsKey });
     this.wsStore.get(wsKey, true)!.activePingTimer = setInterval(
       () => this.ping(wsKey),
       this.options.pingInterval,
@@ -748,7 +752,8 @@ export abstract class BaseWebsocketClient<
       }
     } catch (e) {
       this.logger.error(
-        `Exception trying to resolve "connectionInProgress" promise`,
+        'Exception trying to resolve "connectionInProgress" promise',
+        { error: e },
       );
     }
 
@@ -860,7 +865,7 @@ export abstract class BaseWebsocketClient<
 
           if (emittable.eventType === 'connectionReady') {
             this.logger.trace(
-              `Successfully connected - connection ready for events`,
+              'Successfully connected - connection ready for events',
               {
                 ...WS_LOGGER_CATEGORY,
                 wsKey,
@@ -882,7 +887,7 @@ export abstract class BaseWebsocketClient<
           }
 
           if (emittable.eventType === 'authenticated') {
-            this.logger.trace(`Successfully authenticated`, {
+            this.logger.trace('Successfully authenticated', {
               ...WS_LOGGER_CATEGORY,
               wsKey,
             });
@@ -967,24 +972,24 @@ export abstract class BaseWebsocketClient<
       // Already in progress? Await shared promise and retry
       if (inProgressPromise) {
         this.logger.trace(
-          `sendWSAPIRequest(): Awaiting EXISTING connection promise...`,
+          'sendWSAPIRequest(): Awaiting EXISTING connection promise...',
         );
         await inProgressPromise.promise;
         this.logger.trace(
-          `sendWSAPIRequest(): EXISTING connection promise resolved!`,
+          'sendWSAPIRequest(): EXISTING connection promise resolved!',
         );
         return;
       }
 
       // Start connection, it should automatically store/return a promise.
       this.logger.trace(
-        `sendWSAPIRequest(): Not connected yet...queue await connection...`,
+        'sendWSAPIRequest(): Not connected yet...queue await connection...',
       );
 
       await this.connect(wsKey);
 
       this.logger.trace(
-        `sendWSAPIRequest(): New connection promise resolved! `,
+        'sendWSAPIRequest(): New connection promise resolved! ',
       );
     }
   }
