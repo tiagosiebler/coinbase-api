@@ -750,10 +750,10 @@ export abstract class BaseWebsocketClient<
           wsKey,
         });
       }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       this.logger.error(
         'Exception trying to resolve "connectionInProgress" promise',
+        { error: e },
       );
     }
 
