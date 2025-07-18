@@ -13,10 +13,6 @@ import {
 async function start() {
   // key name & private key, as returned by coinbase when creating your API keys.
   // Note: the below example is a dummy key and won't actually work
-  const advancedTradeCdpAPIKey = {
-    name: process.env.API_KEY_NAME || 'insert_api_key_here',
-    privateKey: process.env.API_PRIVATE_KEY || 'insert_api_secret_here',
-  };
 
   // Optional: fully customise the logging experience by injecting a custom logger
   // const logger: typeof DefaultLogger = {
@@ -41,9 +37,29 @@ async function start() {
       // Either pass the full JSON object that can be downloaded when creating your API keys
       // cdpApiKey: advancedTradeCdpAPIKey,
 
-      // Or use the key name as "apiKey" and private key (WITH the "begin/end EC PRIVATE KEY" comment) as "apiSecret"
-      apiKey: advancedTradeCdpAPIKey.name,
-      apiSecret: advancedTradeCdpAPIKey.privateKey,
+      // initialise the client
+      /**
+       *
+       * You can add both ED25519 and ECDSA keys, client will recognize both types of keys
+       *
+       * ECDSA:
+       *
+       * {
+       *   apiKey: 'organizations/your_org_id/apiKeys/your_api_key_id',
+       *   apiSecret:
+       *     '-----BEGIN EC PRIVATE KEY-----\nMHcCAQEEIPT/TTZPxw0kDGvpuCENJp9A4/2INAt9/QKKfyidTWM8oAoGCCqGSM49\nAwEHoUQDQgAEd+cnxrKl536ly5eYBi+8dvXt1MJXYRo+/v38h9HrFKVGBRndU9DY\npV357xIfqeJEzb/MBuk3EW8cG9RTrYBwjg==\n-----END EC PRIVATE KEY-----\n',
+       * }
+       *
+       * ED25519:
+       * {
+       *   apiKey: 'your-api-key-id',
+       *   apiSecret: 'yourExampleApiSecretEd25519Version==',
+       * }
+       *
+       *
+       */
+      apiKey: process.env.API_KEY_NAME || 'insert_api_key_here',
+      apiSecret: process.env.API_PRIVATE_KEY || 'insert_api_secret_here',
     },
     // logger,
   );
