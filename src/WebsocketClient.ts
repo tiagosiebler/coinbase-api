@@ -515,39 +515,42 @@ export class WebsocketClient extends BaseWebsocketClient<WsKey> {
         // Events that are ready to send (usually stringified JSON)
         // ADV trade only supports sending one at a time, so we don't try to merge them
         // These are already signed, if needed.
-        return Promise.all(
-          operationEvents.map(async (evt) => {
-            if (!isPrivateChannel) {
-              return JSON.stringify(evt);
-            }
+        const signedEvents: string[] = [];
 
-            if (!apiKey || !apiSecret) {
-              throw new Error(
-                '"options.apiKey" (api key name) and/or "options.apiSecret" missing, unable to generate JWT',
-              );
-            }
-            const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
-            const timestamp = Date.now();
+        for (const evt of operationEvents) {
+          if (!isPrivateChannel) {
+            signedEvents.push(JSON.stringify(evt));
+            continue;
+          }
 
-            /**
-             * No batching is supported for this product group, so we can already
-             * handle sign here and return it as is
-             */
-            const sign = await signWSJWT({
-              timestampMs: timestamp,
-              jwtExpiresSeconds,
-              apiPubKey: apiKey,
-              apiPrivKey: apiSecret,
-            });
+          if (!apiKey || !apiSecret) {
+            throw new Error(
+              '"options.apiKey" (api key name) and/or "options.apiSecret" missing, unable to generate JWT',
+            );
+          }
+          const jwtExpiresSeconds = this.options.jwtExpiresSeconds || 120;
+          const timestamp = Date.now();
 
-            const operationEventWithSign = {
-              ...evt,
-              jwt: sign,
-            };
+          /**
+           * No batching is supported for this product group, so we can already
+           * handle sign here and return it as is
+           */
+          const sign = await signWSJWT({
+            timestampMs: timestamp,
+            jwtExpiresSeconds,
+            apiPubKey: apiKey,
+            apiPrivKey: apiSecret,
+          });
 
-            return JSON.stringify(operationEventWithSign);
-          }),
-        );
+          const operationEventWithSign = {
+            ...evt,
+            jwt: sign,
+          };
+
+          signedEvents.push(JSON.stringify(operationEventWithSign));
+        }
+
+        return signedEvents;
       }
       case WS_KEY_MAP.exchangeMarketData:
       case WS_KEY_MAP.exchangeDirectMarketData: {
