@@ -191,7 +191,7 @@ const config: Config = {
   // transform: undefined,
 
   transform: {
-    '^.+\\.m?[tj]sx?$': [
+    '^.+\\.m?[t]sx?$': [
       'ts-jest',
       {
         tsconfig: 'test/tsconfig.test.json',

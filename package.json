@@ -5,8 +5,11 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && bash ./postBuild.sh",
-    "test": "jest --passWithNoTests",
-    "test:watch": "jest --watch --passWithNoTests",
+    "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --passWithNoTests --config=jest.config.ts",
+    "test:watch:raw": "jest --watch --passWithNoTests",
+    "test:watch": "npm run test -- --watch",
+    "test:watch:v": "node --no-warnings --experimental-vm-modules $( [ -f ./node_modules/.bin/jest ] && echo ./node_modules/.bin/jest || which jest ) --watch --passWithNoTests",
+    "betapublish": "npm publish --tag beta",
     "lint": "eslint src"
   },
   "main": "dist/cjs/index.js",
@@ -30,7 +33,7 @@
   "dependencies": {
     "axios": "^1.7.4",
     "isomorphic-ws": "^4.0.1",
-    "jose": "^5.10.0",
+    "jose": "^6.0.11",
     "nanoid": "^3.3.7",
     "ws": "^7.4.0"
   },
