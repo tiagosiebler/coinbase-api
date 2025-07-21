@@ -28,6 +28,7 @@ Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and Web
   - [Coinbase Prime](https://docs.cdp.coinbase.com/prime/docs/welcome)
   - [Coinbase Commerce](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome)
 - Complete integration with all REST APIs and WebSockets.
+- Supports both ECDSA and ED25519 API keys with automatic key type detection.
 - TypeScript support (with type declarations for most API requests & responses)
 - Robust WebSocket integration with configurable connection heartbeats & automatic reconnect then resubscribe workflows.
 - Automatically supports both ESM and CJS projects.
@@ -118,6 +119,16 @@ const advancedTradeCdpAPIKey = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
+/* 
+ * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
+ * Client will recognize both types of keys automatically.
+ * ED25519:
+ * {
+ *   name: 'your-api-key-id',
+ *   privateKey: 'yourExampleApiSecretEd25519Version==',
+ * }
+*/
+
 const client = new CBAdvancedTradeClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
   // cdpApiKey: advancedTradeCdpAPIKey,
@@ -156,6 +167,16 @@ const CBAppKeys = {
   privateKey:
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
+
+/* 
+ * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
+ * Client will recognize both types of keys automatically.
+ * ED25519:
+ * {
+ *   name: 'your-api-key-id',
+ *   privateKey: 'yourExampleApiSecretEd25519Version==',
+ * }
+*/
 
 const client = new CBAppClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -298,6 +319,16 @@ const advancedTradeCdpAPIKey = {
   privateKey:
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
+
+/* 
+ * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
+ * Client will recognize both types of keys automatically.
+ * ED25519:
+ * {
+ *   name: 'your-api-key-id',
+ *   privateKey: 'yourExampleApiSecretEd25519Version==',
+ * }
+*/
 
 const client = new WebsocketClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
