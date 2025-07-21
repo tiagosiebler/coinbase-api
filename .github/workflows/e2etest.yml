@@ -55,6 +55,12 @@ jobs:
           CB_ADV_API_KEY_NAME: ${{ secrets.CB_ADV_API_KEY_NAME }}
           CB_ADV_API_PRIVATE_KEY: ${{ secrets.CB_ADV_API_PRIVATE_KEY }}
 
+          CB_ADV_ED25519_API_KEY_NAME: ${{ secrets.CB_ADV_ED25519_API_KEY_NAME }}
+          CB_ADV_ED25519_API_PRIVATE_KEY: ${{ secrets.CB_ADV_ED25519_API_PRIVATE_KEY }}
+
+          CB_APP_ED25519_API_KEY_NAME: ${{ secrets.CB_APP_ED25519_API_KEY_NAME }}
+          CB_APP_ED25519_API_PRIVATE_KEY: ${{ secrets.CB_APP_ED25519_API_PRIVATE_KEY }}
+
           PROXY_ENABLED: ${{ secrets.PROXY_ENABLED }}
           PROXY_HOST: ${{ secrets.PROXY_HOST }}
           PROXY_PASS: ${{ secrets.PROXY_PASS }}
