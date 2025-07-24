@@ -1,6 +1,6 @@
 {
   "name": "coinbase-api",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Node.js SDK for Coinbase's REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
@@ -24,7 +24,8 @@
   },
   "type": "module",
   "files": [
-    "dist/*"
+    "dist/*",
+    "llms.txt"
   ],
   "author": "Tiago Siebler (https://github.com/tiagosiebler)",
   "contributors": [
