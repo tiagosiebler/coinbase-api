@@ -20,25 +20,61 @@
 
 Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and WebSockets:
 
-- Supports both retail and institutional REST clients and Websockets:
-  - [Coinbase Advanced Trade](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
-  - [Coinbase App](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome)
-  - [Coinbase Exchange](https://docs.cdp.coinbase.com/exchange/docs/welcome)
-  - [Coinbase International Exchange](https://docs.cdp.coinbase.com/intx/docs/welcome)
-  - [Coinbase Prime](https://docs.cdp.coinbase.com/prime/docs/welcome)
-  - [Coinbase Commerce](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome)
-- Complete integration with all REST APIs and WebSockets.
+- Professional, robust & performant Coinbase SDK with extensive production use in live trading environments.
+- Complete integration with all Coinbase APIs - supports both retail and institutional REST clients and WebSockets:
+  - [Coinbase Advanced Trade](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome) - Modern trading platform
+  - [Coinbase App](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome) - Consumer mobile/web application
+  - [Coinbase Exchange](https://docs.cdp.coinbase.com/exchange/docs/welcome) - Professional trading platform
+  - [Coinbase International Exchange](https://docs.cdp.coinbase.com/intx/docs/welcome) - International institutional trading
+  - [Coinbase Prime](https://docs.cdp.coinbase.com/prime/docs/welcome) - Institutional custody and trading
+  - [Coinbase Commerce](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome) - Payments and commerce solutions
+- Complete TypeScript support (with type declarations for most API requests & responses).
+  - Strongly typed requests and responses.
+  - Automated end-to-end tests ensuring reliability.
+- Actively maintained with a modern, promise-driven interface.
 - Supports both ECDSA and ED25519 API keys with automatic key type detection.
-- TypeScript support (with type declarations for most API requests & responses)
 - Robust WebSocket integration with configurable connection heartbeats & automatic reconnect then resubscribe workflows.
+  - Event driven messaging.
+  - Smart WebSocket persistence with automatic reconnection handling.
+  - Emit `reconnected` event when dropped connection is restored.
+  - Support for both public and private WebSocket streams across all platforms.
 - Automatically supports both ESM and CJS projects.
 - Proxy support via axios integration.
+- Heavy automated end-to-end testing with real API calls.
 - Active community support & collaboration in telegram: [Node.js Algo Traders](https://t.me/nodetraders).
 - Extensive examples for interacting with the Coinbase API offering in Node.js/JavaScript/TypeScript: [/examples/](./examples).
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Examples](#examples)
+- [Issues & Discussion](#issues--discussion)
+- [Related Projects](#related-projects)
+- [Documentation](#documentation)
+- [Structure](#structure)
+- [Usage](#usage)
+  - [REST API Clients](#rest-api)
+    - [CBAdvancedTradeClient](#cbadvancedtradeclient)
+    - [CBAppClient](#cbappclient)
+    - [CBExchangeClient](#cbexchangeclient)
+    - [CBInternationalClient](#cbinternationalclient)
+    - [CBPrimeClient](#cbprimeclient)
+    - [CBCommerceClient](#cbcommerceclient)
+  - [WebSocket Client](#websockets)
+    - [Public WebSocket Streams](#public-websocket)
+    - [Private WebSocket Streams](#private-websocket)
+    - [WebSocket Event Handling](#listening-and-subscribing-to-websocket-events)
+- [Customise Logging](#customise-logging)
+- [LLMs & AI](#use-with-llms--ai)
+- [Contributions & Thanks](#contributions--thanks)
 
 ## Installation
 
 `npm install --save coinbase-api`
+
+## Examples
+
+Refer to the [examples](./examples) folder for implementation examples. 
 
 ## Issues & Discussion
 
@@ -70,11 +106,18 @@ Check out my related JavaScript/TypeScript/Node.js projects:
 
 ## Documentation
 
-Most methods accept JS objects. These can be populated using parameters specified by Coinbase's API documentation.
+Most methods accept JS objects. These can be populated using parameters specified by Coinbase's API documentation, or check the type definition in each class within this repository.
 
-- [Coinbase API Documentation](https://docs.cdp.coinbase.com/product-apis/docs/welcome)
+### API Documentation Links
+
+- [Coinbase Developer Platform - Product APIs](https://docs.cdp.coinbase.com/product-apis/docs/welcome)
+  - [Advanced Trade API](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
+  - [Coinbase App API](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome)
+  - [Exchange API](https://docs.cdp.coinbase.com/exchange/docs/welcome)
+  - [International Exchange API](https://docs.cdp.coinbase.com/intx/docs/welcome)
+  - [Prime API](https://docs.cdp.coinbase.com/prime/docs/welcome)
+  - [Commerce API](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome)
 - [REST Endpoint Function List](./docs/endpointFunctionList.md)
-<!-- - [TSDoc Documentation (autogenerated using typedoc)](https://tsdocs.dev/docs/coinbase-api) -->
 
 ## Structure
 
@@ -87,11 +130,13 @@ This project uses typescript. Resources are stored in 2 key structures:
 
 # Usage
 
-Create API credentials
+Create API credentials on Coinbase's website:
 
 - [Coinbase API Key Management](https://www.coinbase.com/settings/api)
 
-### REST API
+## REST API
+
+The SDK provides dedicated REST clients for each of Coinbase's API groups. Each client is designed for specific use cases and user types:
 
 To use any of Coinbase's REST APIs in JavaScript/TypeScript/Node.js, import (or require) the client you want to use. We currently support the following clients:
 

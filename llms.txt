@@ -1287,42 +1287,6 @@ File: tsconfig.esm.json
 }
 
 ================
-File: tsconfig.json
-================
-{
-  "compilerOptions": {
-    "allowSyntheticDefaultImports": true,
-    "baseUrl": "src",
-    "noEmitOnError": true,
-    "declaration": true,
-    "esModuleInterop": true,
-    "forceConsistentCasingInFileNames": false,
-    "inlineSourceMap": false,
-    "lib": ["esnext"],
-    "listEmittedFiles": false,
-    "listFiles": false,
-    "moduleResolution": "node",
-    "noFallthroughCasesInSwitch": true,
-    "noImplicitAny": true,
-    "noUnusedParameters": true,
-    "pretty": true,
-    "removeComments": false,
-    "resolveJsonModule": true,
-    "skipLibCheck": false,
-    "sourceMap": true,
-    "strict": true,
-    "strictNullChecks": true,
-    "types": ["node", "jest"],
-    "module": "commonjs",
-    "outDir": "dist/cjs",
-    "target": "esnext"
-  },
-  "compileOnSave": true,
-  "exclude": ["node_modules", "dist"],
-  "include": ["src/**/*.*", "test/**/*.*", ".eslintrc.cjs"]
-}
-
-================
 File: tsconfig.linting.json
 ================
 {
@@ -3151,6 +3115,106 @@ export interface AdvTradeApiKeyPermissions {
 }
 
 ================
+File: src/types/websockets/requests.ts
+================
+/* eslint-disable @typescript-eslint/no-unused-vars */
+export type WsOperation = 'subscribe' | 'unsubscribe';
+⋮----
+/**
+ * This is the format used for commands sent upstream for this websocket connection.
+ *
+ * Docs:
+ * - Adv Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/ws-auth#subscribing
+ */
+export interface WsAdvTradeRequestOperation<TWSTopic extends string = string> {
+  type: WsOperation;
+  channel: TWSTopic;
+  product_ids?: string[];
+  jwt?: string;
+}
+⋮----
+export interface WsExchangeChannelWithParams<TWSTopic extends string = string> {
+  name: TWSTopic;
+  product_ids: string[];
+}
+⋮----
+/**
+ * Public subscribe/unsubscribe requests for the Coinbase Exchange product group
+ */
+export interface WsExchangeRequestOperation<TWSTopic extends string = string> {
+  type: WsOperation;
+  channels: (TWSTopic | WsExchangeChannelWithParams)[];
+  product_ids?: string[];
+}
+⋮----
+/**
+ * Private (authenticated) subscribe/unsubscribe requests for the Coinbase Exchange product group
+ * https://docs.cdp.coinbase.com/exchange/docs/websocket-auth
+ */
+export type WsExchangeAuthenticatedRequestOperation<
+  TWSTopic extends string = string,
+> = WsExchangeRequestOperation<TWSTopic> & {
+  signature: string;
+  key: string;
+  passphrase: string;
+  timestamp: string;
+};
+⋮----
+/**
+ * Public subscribe/unsubscribe requests for the Coinbase International product group
+ */
+export interface WsInternationalRequestOperation<
+  TWSTopic extends string = string,
+> {
+  type: Uppercase<WsOperation>;
+  channels: TWSTopic[];
+  product_ids?: string[];
+}
+⋮----
+/**
+ * Private (authenticated) subscribe/unsubscribe requests for the Coinbase International product group
+ * https://docs.cdp.coinbase.com/intx/docs/websocket-auth
+ */
+export type WsInternationalAuthenticatedRequestOperation<
+  TWSTopic extends string = string,
+> = WsInternationalRequestOperation<TWSTopic> & {
+  time: string;
+  key: string;
+  passphrase: string;
+  signature: string;
+};
+⋮----
+/**
+ * Public subscribe/unsubscribe requests for the Coinbase Prime product group
+ */
+export interface WsPrimeRequestOperation<TWSTopic extends string = string> {
+  type: WsOperation;
+  channel: TWSTopic;
+  // these should be provided as a payload with the request, else auth will fail
+  svcAccountId: string;
+  portfolio_id: string;
+  product_ids: string[];
+}
+⋮----
+// these should be provided as a payload with the request, else auth will fail
+⋮----
+/**
+ * Private (authenticated) subscribe/unsubscribe requests for the Coinbase Prime product group
+ *
+ * - https://docs.cdp.coinbase.com/prime/docs/websocket-feed#signing-messages
+ * - https://docs.cdp.coinbase.com/prime/docs/websocket-channels
+ */
+export type WsPrimeAuthenticatedRequestOperation<
+  TWSTopic extends string = string,
+> = WsPrimeRequestOperation<TWSTopic> & {
+  access_key: string;
+  api_key_id: string;
+  passphrase: string;
+  signature: string;
+  timestamp: string;
+};
+
+================
 File: src/CBExchangeClient.ts
 ================
 import { AxiosRequestConfig } from 'axios';
@@ -4092,6 +4156,42 @@ verbose: true, // report individual test
 ⋮----
 // Whether to use watchman for file crawling
 // watchman: true,
+
+================
+File: tsconfig.json
+================
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "noEmitOnError": true,
+    "declaration": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": false,
+    "inlineSourceMap": false,
+    "lib": ["esnext"],
+    "listEmittedFiles": false,
+    "listFiles": false,
+    "moduleResolution": "node",
+    "noFallthroughCasesInSwitch": true,
+    "noImplicitAny": true,
+    "noUnusedParameters": true,
+    "pretty": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": false,
+    "sourceMap": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "types": ["node", "jest"],
+    "module": "commonjs",
+    "outDir": "dist/cjs",
+    "target": "esnext"
+  },
+  "compileOnSave": true,
+  "exclude": ["node_modules", "dist"],
+  "include": ["src/**/*.*", "test/**/*.*", ".eslintrc.cjs"]
+}
 
 ================
 File: examples/AdvancedTrade/Private/closePosition.ts
@@ -5149,106 +5249,6 @@ export interface GetPrimePortfolioWithdrawalPowerRequest {
   portfolio_id: string;
   symbol: string;
 }
-
-================
-File: src/types/websockets/requests.ts
-================
-/* eslint-disable @typescript-eslint/no-unused-vars */
-export type WsOperation = 'subscribe' | 'unsubscribe';
-⋮----
-/**
- * This is the format used for commands sent upstream for this websocket connection.
- *
- * Docs:
- * - Adv Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/ws-auth#subscribing
- */
-export interface WsAdvTradeRequestOperation<TWSTopic extends string = string> {
-  type: WsOperation;
-  channel: TWSTopic;
-  product_ids?: string[];
-  jwt?: string;
-}
-⋮----
-export interface WsExchangeChannelWithParams<TWSTopic extends string = string> {
-  name: TWSTopic;
-  product_ids: string[];
-}
-⋮----
-/**
- * Public subscribe/unsubscribe requests for the Coinbase Exchange product group
- */
-export interface WsExchangeRequestOperation<TWSTopic extends string = string> {
-  type: WsOperation;
-  channels: (TWSTopic | WsExchangeChannelWithParams)[];
-  product_ids?: string[];
-}
-⋮----
-/**
- * Private (authenticated) subscribe/unsubscribe requests for the Coinbase Exchange product group
- * https://docs.cdp.coinbase.com/exchange/docs/websocket-auth
- */
-export type WsExchangeAuthenticatedRequestOperation<
-  TWSTopic extends string = string,
-> = WsExchangeRequestOperation<TWSTopic> & {
-  signature: string;
-  key: string;
-  passphrase: string;
-  timestamp: string;
-};
-⋮----
-/**
- * Public subscribe/unsubscribe requests for the Coinbase International product group
- */
-export interface WsInternationalRequestOperation<
-  TWSTopic extends string = string,
-> {
-  type: Uppercase<WsOperation>;
-  channels: TWSTopic[];
-  product_ids?: string[];
-}
-⋮----
-/**
- * Private (authenticated) subscribe/unsubscribe requests for the Coinbase International product group
- * https://docs.cdp.coinbase.com/intx/docs/websocket-auth
- */
-export type WsInternationalAuthenticatedRequestOperation<
-  TWSTopic extends string = string,
-> = WsInternationalRequestOperation<TWSTopic> & {
-  time: string;
-  key: string;
-  passphrase: string;
-  signature: string;
-};
-⋮----
-/**
- * Public subscribe/unsubscribe requests for the Coinbase Prime product group
- */
-export interface WsPrimeRequestOperation<TWSTopic extends string = string> {
-  type: WsOperation;
-  channel: TWSTopic;
-  // these should be provided as a payload with the request, else auth will fail
-  svcAccountId: string;
-  portfolio_id: string;
-  product_ids: string[];
-}
-⋮----
-// these should be provided as a payload with the request, else auth will fail
-⋮----
-/**
- * Private (authenticated) subscribe/unsubscribe requests for the Coinbase Prime product group
- *
- * - https://docs.cdp.coinbase.com/prime/docs/websocket-feed#signing-messages
- * - https://docs.cdp.coinbase.com/prime/docs/websocket-channels
- */
-export type WsPrimeAuthenticatedRequestOperation<
-  TWSTopic extends string = string,
-> = WsPrimeRequestOperation<TWSTopic> & {
-  access_key: string;
-  api_key_id: string;
-  passphrase: string;
-  signature: string;
-  timestamp: string;
-};
 
 ================
 File: src/types/shared.types.ts
@@ -8139,33 +8139,6 @@ getSpotPrice(params:
 getCurrentTime(): Promise<
 
 ================
-File: .gitignore
-================
-examples/futures-private-test.ts
-examples/spot-private-test.ts
-node_modules
-
-rest-spot-private-ts-test.ts
-
-localtest.sh
-testfile.ts
-dist
-cbtests.sh
-
-coverage
-ts-adv-trade-test-private.ts
-examples/ts-app-priv.ts
-examples/ts-commerce.ts
-ts-exchange-priv.ts
-testfile-cbexch.ts
-restClientRegex.ts
-privaterepotracker.txt
-examples/_TiagoTests
-testfile.ts
-cbapidocs.txt
-repomix.sh
-
-================
 File: src/types/request/coinbase-international.ts
 ================
 /**
@@ -8368,6 +8341,289 @@ export interface INTXWithdrawToCounterpartyIdRequest {
  * Fee Rates Endpoints
  *
  */
+
+================
+File: .gitignore
+================
+examples/futures-private-test.ts
+examples/spot-private-test.ts
+node_modules
+
+rest-spot-private-ts-test.ts
+
+localtest.sh
+testfile.ts
+dist
+cbtests.sh
+
+coverage
+ts-adv-trade-test-private.ts
+examples/ts-app-priv.ts
+examples/ts-commerce.ts
+ts-exchange-priv.ts
+testfile-cbexch.ts
+restClientRegex.ts
+privaterepotracker.txt
+examples/_TiagoTests
+testfile.ts
+cbapidocs.txt
+repomix.sh
+
+================
+File: src/WebsocketClient.ts
+================
+import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
+import { signWSJWT } from './lib/jwtNode.js';
+import { neverGuard } from './lib/misc-util.js';
+import {
+  isCBAdvancedTradeErrorEvent,
+  isCBAdvancedTradeWSEvent,
+  isCBExchangeWSEvent,
+  isCBExchangeWSRequestOperation,
+  isCBINTXWSRequestOperation,
+  isCBPrimeWSRequestOperation,
+} from './lib/websocket/typeGuards.js';
+import {
+  getCBExchangeWSSign,
+  getCBInternationalWSSign,
+  getCBPrimeWSSign,
+  getMergedCBExchangeWSRequestOperations,
+  MessageEventLike,
+  WS_KEY_MAP,
+  WS_URL_MAP,
+  WsKey,
+  WsTopicRequest,
+} from './lib/websocket/websocket-util.js';
+import { WSConnectedResult } from './lib/websocket/WsStore.types.js';
+import { WsMarket } from './types/websockets/client.js';
+import {
+  WsAdvTradeRequestOperation,
+  WsExchangeAuthenticatedRequestOperation,
+  WsExchangeRequestOperation,
+  WsInternationalAuthenticatedRequestOperation,
+  WsInternationalRequestOperation,
+  WsOperation,
+  WsPrimeAuthenticatedRequestOperation,
+  WsPrimeRequestOperation,
+} from './types/websockets/requests.js';
+import {
+  WsAPITopicRequestParamMap,
+  WsAPITopicResponseMap,
+  WsAPIWsKeyTopicMap,
+} from './types/websockets/wsAPI.js';
+⋮----
+/**
+ * Any WS keys in this list will trigger automatic auth as required, if credentials are available
+ */
+⋮----
+// Account data (fills), requires auth.
+⋮----
+// Coinbase Direct Market Data has direct access to Coinbase Exchange servers and requires auth.
+⋮----
+// The INTX feed always requires auth.
+⋮----
+// The Prime feed always requires auth.
+⋮----
+/**
+ * Any WS keys in this list will ALWAYS skip the authentication process, even if credentials are available
+ */
+⋮----
+/**
+ * WS topics are always a string for this exchange. Some exchanges use complex objects.
+ */
+type WsTopic = string;
+⋮----
+export class WebsocketClient extends BaseWebsocketClient<WsKey>
+⋮----
+/**
+   * Request connection of all dependent (public & private) websockets, instead of waiting for automatic connection by library
+   */
+public connectAll(): Promise<(WSConnectedResult | undefined)[]>
+⋮----
+/**
+   * Request subscription to one or more topics. Pass topics as either an array of strings, or array of objects (if the topic has parameters).
+   * Objects should be formatted as {topic: string, params: object}.
+   *
+   * - Subscriptions are automatically routed to the correct websocket connection.
+   * - Authentication/connection is automatic.
+   * - Resubscribe after network issues is automatic.
+   *
+   * Call `unsubscribe(topics)` to remove topics
+   */
+public subscribe(
+    requests:
+      | (WsTopicRequest<WsTopic> | WsTopic)
+      | (WsTopicRequest<WsTopic> | WsTopic)[],
+    wsKey: WsKey,
+)
+⋮----
+/**
+   * Unsubscribe from one or more topics. Similar to subscribe() but in reverse.
+   *
+   * - Requests are automatically routed to the correct websocket connection.
+   * - These topics will be removed from the topic cache, so they won't be subscribed to again.
+   */
+public unsubscribe(
+    requests:
+      | (WsTopicRequest<WsTopic> | WsTopic)
+      | (WsTopicRequest<WsTopic> | WsTopic)[],
+    wsKey: WsKey,
+)
+⋮----
+/**
+   * Not supported by this exchange, do not use
+   */
+⋮----
+// This overload allows the caller to omit the 3rd param, if it isn't required (e.g. for the login call)
+async sendWSAPIRequest<
+    TWSKey extends keyof WsAPIWsKeyTopicMap,
+    TWSChannel extends WsAPIWsKeyTopicMap[TWSKey] = WsAPIWsKeyTopicMap[TWSKey],
+    TWSParams extends
+      WsAPITopicRequestParamMap[TWSChannel] = WsAPITopicRequestParamMap[TWSChannel],
+    TWSAPIResponse extends
+      | WsAPITopicResponseMap[TWSChannel]
+      | object = WsAPITopicResponseMap[TWSChannel],
+  >(
+    wsKey: TWSKey,
+    channel: TWSChannel,
+    ...params: TWSParams extends undefined ? [] : [TWSParams]
+  ): Promise<TWSAPIResponse>;
+⋮----
+async sendWSAPIRequest<
+    TWSKey extends keyof WsAPIWsKeyTopicMap = keyof WsAPIWsKeyTopicMap,
+    TWSChannel extends WsAPIWsKeyTopicMap[TWSKey] = WsAPIWsKeyTopicMap[TWSKey],
+    TWSParams extends
+      WsAPITopicRequestParamMap[TWSChannel] = WsAPITopicRequestParamMap[TWSChannel],
+  >(
+    wsKey: TWSKey,
+    channel: TWSChannel,
+    params?: TWSParams,
+): Promise<undefined>
+⋮----
+/**
+   *
+   * Internal methods
+   *
+   */
+⋮----
+/**
+   * Return a websocket URL, which is connected to as-is.
+   * If a token or anything else is needed in the URL, this is a good place to add it.
+   */
+protected async getWsUrl(wsKey: WsKey): Promise<string>
+⋮----
+protected sendPingEvent(wsKey: WsKey)
+⋮----
+protected sendPongEvent(wsKey: WsKey)
+⋮----
+// Send a protocol layer pong
+⋮----
+protected isWsPing(msg: any): boolean
+⋮----
+protected isWsPong(msg: any): boolean
+⋮----
+// this.logger.info(`Not a pong: `, msg);
+⋮----
+protected resolveEmittableEvents(
+    wsKey: WsKey,
+    event: MessageEventLike,
+): EmittableEvent[]
+⋮----
+// E.g. {"type":"error","message":"rate limit exceeded","wsKey":"advTradeMarketData"}
+⋮----
+// Parse Advanced Trade WS events (update & response)
+⋮----
+// These are request/reply pattern events (e.g. after subscribing to topics or authenticating)
+⋮----
+// Generic data for a channel
+⋮----
+// Parse CB Exchange WS events
+⋮----
+// Generic data for a channel
+⋮----
+/**
+   * Determines if a topic is for a private channel, using a hardcoded list of strings
+   */
+protected isPrivateTopicRequest(
+    request: WsTopicRequest<string>,
+    wsKey: WsKey,
+): boolean
+⋮----
+protected getWsKeyForMarket(market: WsMarket, isPrivate: boolean): WsKey
+⋮----
+protected getWsMarketForWsKey(wsKey: WsKey): WsMarket
+⋮----
+protected getPrivateWSKeys(): WsKey[]
+⋮----
+/** Force subscription requests to be sent in smaller batches, if a number is returned */
+protected getMaxTopicsPerSubscribeEvent(wsKey: WsKey): number | null
+⋮----
+// Technically, INTX supports request batching but not with nested parameters, so we'll send one at a time
+⋮----
+// Exchange supports request batching, no known limit to max topics per request
+⋮----
+/**
+   * Map one or more topics into fully prepared "subscribe request" events (already stringified and ready to send)
+   */
+protected async getWsOperationEventsForTopics(
+    topicRequests: WsTopicRequest<string>[],
+    wsKey: WsKey,
+    operation: WsOperation,
+): Promise<string[]>
+⋮----
+/**
+     * Operations need to be structured in a way that this exchange understands.
+     * Parse the internal format into the format expected by the exchange. One request per operation.
+     */
+⋮----
+// In case there's ever more operation types than "subscribe" and "unsubscribe"
+⋮----
+// As of Sep 2024, parameters (such as product_id[]) cannot be nested with the channels array
+⋮----
+// This merges parametrs (such as product_id[]) into the top level request object
+⋮----
+/**
+     * - Merge commands into one if the exchange supports batch requests,
+     * - Apply auth/sign, if needed,
+     * - Apply any final formatting to return a string array, ready to be sent upstream.
+     */
+⋮----
+// Events that are ready to send (usually stringified JSON)
+// ADV trade only supports sending one at a time, so we don't try to merge them
+// These are already signed, if needed.
+⋮----
+/**
+           * No batching is supported for this product group, so we can already
+           * handle sign here and return it as is
+           */
+⋮----
+// Don't expect this to ever happen, but just to please typescript...
+⋮----
+// We're under the max topics per request limit.
+// Send operation requests as one merged request
+⋮----
+// We're over the max topics per request limit. Break into batches.
+⋮----
+// Don't expect this to ever happen, but just to please typescript...
+⋮----
+// We're over the max topics per request limit. Break into batches.
+⋮----
+// throw new Error(
+//   'CB INTX is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
+// );
+⋮----
+// Don't expect this to ever happen, but just to please typescript...
+⋮----
+// throw new Error(
+//   'CB Prime is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
+// );
+⋮----
+// throw new Error(`Not implemented for "${wsKey}" yet`);
+⋮----
+/**
+   * Events are signed per-request, so this function isn't needed for Coinbase.
+   */
+protected async getWsAuthRequestEvent(wsKey: WsKey): Promise<object>
 
 ================
 File: src/CBInternationalClient.ts
@@ -8941,262 +9197,6 @@ withdrawToCounterpartyId(
 getFeeRateTiers(): Promise<any>
 
 ================
-File: src/WebsocketClient.ts
-================
-import { BaseWebsocketClient, EmittableEvent } from './lib/BaseWSClient.js';
-import { signWSJWT } from './lib/jwtNode.js';
-import { neverGuard } from './lib/misc-util.js';
-import {
-  isCBAdvancedTradeErrorEvent,
-  isCBAdvancedTradeWSEvent,
-  isCBExchangeWSEvent,
-  isCBExchangeWSRequestOperation,
-  isCBINTXWSRequestOperation,
-  isCBPrimeWSRequestOperation,
-} from './lib/websocket/typeGuards.js';
-import {
-  getCBExchangeWSSign,
-  getCBInternationalWSSign,
-  getCBPrimeWSSign,
-  getMergedCBExchangeWSRequestOperations,
-  MessageEventLike,
-  WS_KEY_MAP,
-  WS_URL_MAP,
-  WsKey,
-  WsTopicRequest,
-} from './lib/websocket/websocket-util.js';
-import { WSConnectedResult } from './lib/websocket/WsStore.types.js';
-import { WsMarket } from './types/websockets/client.js';
-import {
-  WsAdvTradeRequestOperation,
-  WsExchangeAuthenticatedRequestOperation,
-  WsExchangeRequestOperation,
-  WsInternationalAuthenticatedRequestOperation,
-  WsInternationalRequestOperation,
-  WsOperation,
-  WsPrimeAuthenticatedRequestOperation,
-  WsPrimeRequestOperation,
-} from './types/websockets/requests.js';
-import {
-  WsAPITopicRequestParamMap,
-  WsAPITopicResponseMap,
-  WsAPIWsKeyTopicMap,
-} from './types/websockets/wsAPI.js';
-⋮----
-/**
- * Any WS keys in this list will trigger automatic auth as required, if credentials are available
- */
-⋮----
-// Account data (fills), requires auth.
-⋮----
-// Coinbase Direct Market Data has direct access to Coinbase Exchange servers and requires auth.
-⋮----
-// The INTX feed always requires auth.
-⋮----
-// The Prime feed always requires auth.
-⋮----
-/**
- * Any WS keys in this list will ALWAYS skip the authentication process, even if credentials are available
- */
-⋮----
-/**
- * WS topics are always a string for this exchange. Some exchanges use complex objects.
- */
-type WsTopic = string;
-⋮----
-export class WebsocketClient extends BaseWebsocketClient<WsKey>
-⋮----
-/**
-   * Request connection of all dependent (public & private) websockets, instead of waiting for automatic connection by library
-   */
-public connectAll(): Promise<(WSConnectedResult | undefined)[]>
-⋮----
-/**
-   * Request subscription to one or more topics. Pass topics as either an array of strings, or array of objects (if the topic has parameters).
-   * Objects should be formatted as {topic: string, params: object}.
-   *
-   * - Subscriptions are automatically routed to the correct websocket connection.
-   * - Authentication/connection is automatic.
-   * - Resubscribe after network issues is automatic.
-   *
-   * Call `unsubscribe(topics)` to remove topics
-   */
-public subscribe(
-    requests:
-      | (WsTopicRequest<WsTopic> | WsTopic)
-      | (WsTopicRequest<WsTopic> | WsTopic)[],
-    wsKey: WsKey,
-)
-⋮----
-/**
-   * Unsubscribe from one or more topics. Similar to subscribe() but in reverse.
-   *
-   * - Requests are automatically routed to the correct websocket connection.
-   * - These topics will be removed from the topic cache, so they won't be subscribed to again.
-   */
-public unsubscribe(
-    requests:
-      | (WsTopicRequest<WsTopic> | WsTopic)
-      | (WsTopicRequest<WsTopic> | WsTopic)[],
-    wsKey: WsKey,
-)
-⋮----
-/**
-   * Not supported by this exchange, do not use
-   */
-⋮----
-// This overload allows the caller to omit the 3rd param, if it isn't required (e.g. for the login call)
-async sendWSAPIRequest<
-    TWSKey extends keyof WsAPIWsKeyTopicMap,
-    TWSChannel extends WsAPIWsKeyTopicMap[TWSKey] = WsAPIWsKeyTopicMap[TWSKey],
-    TWSParams extends
-      WsAPITopicRequestParamMap[TWSChannel] = WsAPITopicRequestParamMap[TWSChannel],
-    TWSAPIResponse extends
-      | WsAPITopicResponseMap[TWSChannel]
-      | object = WsAPITopicResponseMap[TWSChannel],
-  >(
-    wsKey: TWSKey,
-    channel: TWSChannel,
-    ...params: TWSParams extends undefined ? [] : [TWSParams]
-  ): Promise<TWSAPIResponse>;
-⋮----
-async sendWSAPIRequest<
-    TWSKey extends keyof WsAPIWsKeyTopicMap = keyof WsAPIWsKeyTopicMap,
-    TWSChannel extends WsAPIWsKeyTopicMap[TWSKey] = WsAPIWsKeyTopicMap[TWSKey],
-    TWSParams extends
-      WsAPITopicRequestParamMap[TWSChannel] = WsAPITopicRequestParamMap[TWSChannel],
-  >(
-    wsKey: TWSKey,
-    channel: TWSChannel,
-    params?: TWSParams,
-): Promise<undefined>
-⋮----
-/**
-   *
-   * Internal methods
-   *
-   */
-⋮----
-/**
-   * Return a websocket URL, which is connected to as-is.
-   * If a token or anything else is needed in the URL, this is a good place to add it.
-   */
-protected async getWsUrl(wsKey: WsKey): Promise<string>
-⋮----
-protected sendPingEvent(wsKey: WsKey)
-⋮----
-protected sendPongEvent(wsKey: WsKey)
-⋮----
-// Send a protocol layer pong
-⋮----
-protected isWsPing(msg: any): boolean
-⋮----
-protected isWsPong(msg: any): boolean
-⋮----
-// this.logger.info(`Not a pong: `, msg);
-⋮----
-protected resolveEmittableEvents(
-    wsKey: WsKey,
-    event: MessageEventLike,
-): EmittableEvent[]
-⋮----
-// E.g. {"type":"error","message":"rate limit exceeded","wsKey":"advTradeMarketData"}
-⋮----
-// Parse Advanced Trade WS events (update & response)
-⋮----
-// These are request/reply pattern events (e.g. after subscribing to topics or authenticating)
-⋮----
-// Generic data for a channel
-⋮----
-// Parse CB Exchange WS events
-⋮----
-// Generic data for a channel
-⋮----
-/**
-   * Determines if a topic is for a private channel, using a hardcoded list of strings
-   */
-protected isPrivateTopicRequest(
-    request: WsTopicRequest<string>,
-    wsKey: WsKey,
-): boolean
-⋮----
-protected getWsKeyForMarket(market: WsMarket, isPrivate: boolean): WsKey
-⋮----
-protected getWsMarketForWsKey(wsKey: WsKey): WsMarket
-⋮----
-protected getPrivateWSKeys(): WsKey[]
-⋮----
-/** Force subscription requests to be sent in smaller batches, if a number is returned */
-protected getMaxTopicsPerSubscribeEvent(wsKey: WsKey): number | null
-⋮----
-// Technically, INTX supports request batching but not with nested parameters, so we'll send one at a time
-⋮----
-// Exchange supports request batching, no known limit to max topics per request
-⋮----
-/**
-   * Map one or more topics into fully prepared "subscribe request" events (already stringified and ready to send)
-   */
-protected async getWsOperationEventsForTopics(
-    topicRequests: WsTopicRequest<string>[],
-    wsKey: WsKey,
-    operation: WsOperation,
-): Promise<string[]>
-⋮----
-/**
-     * Operations need to be structured in a way that this exchange understands.
-     * Parse the internal format into the format expected by the exchange. One request per operation.
-     */
-⋮----
-// In case there's ever more operation types than "subscribe" and "unsubscribe"
-⋮----
-// As of Sep 2024, parameters (such as product_id[]) cannot be nested with the channels array
-⋮----
-// This merges parametrs (such as product_id[]) into the top level request object
-⋮----
-/**
-     * - Merge commands into one if the exchange supports batch requests,
-     * - Apply auth/sign, if needed,
-     * - Apply any final formatting to return a string array, ready to be sent upstream.
-     */
-⋮----
-// Events that are ready to send (usually stringified JSON)
-// ADV trade only supports sending one at a time, so we don't try to merge them
-// These are already signed, if needed.
-⋮----
-/**
-           * No batching is supported for this product group, so we can already
-           * handle sign here and return it as is
-           */
-⋮----
-// Don't expect this to ever happen, but just to please typescript...
-⋮----
-// We're under the max topics per request limit.
-// Send operation requests as one merged request
-⋮----
-// We're over the max topics per request limit. Break into batches.
-⋮----
-// Don't expect this to ever happen, but just to please typescript...
-⋮----
-// We're over the max topics per request limit. Break into batches.
-⋮----
-// throw new Error(
-//   'CB INTX is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
-// );
-⋮----
-// Don't expect this to ever happen, but just to please typescript...
-⋮----
-// throw new Error(
-//   'CB Prime is not fully implemented yet - awaiting test environment... if you need this, please get in touch.',
-// );
-⋮----
-// throw new Error(`Not implemented for "${wsKey}" yet`);
-⋮----
-/**
-   * Events are signed per-request, so this function isn't needed for Coinbase.
-   */
-protected async getWsAuthRequestEvent(wsKey: WsKey): Promise<object>
-
-================
 File: README.md
 ================
 # Node.js & JavaScript SDK for Coinbase REST APIs & WebSockets
@@ -9221,25 +9221,61 @@ File: README.md
 
 Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and WebSockets:
 
-- Supports both retail and institutional REST clients and Websockets:
-  - [Coinbase Advanced Trade](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
-  - [Coinbase App](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome)
-  - [Coinbase Exchange](https://docs.cdp.coinbase.com/exchange/docs/welcome)
-  - [Coinbase International Exchange](https://docs.cdp.coinbase.com/intx/docs/welcome)
-  - [Coinbase Prime](https://docs.cdp.coinbase.com/prime/docs/welcome)
-  - [Coinbase Commerce](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome)
-- Complete integration with all REST APIs and WebSockets.
+- Professional, robust & performant Coinbase SDK with extensive production use in live trading environments.
+- Complete integration with all Coinbase APIs - supports both retail and institutional REST clients and WebSockets:
+  - [Coinbase Advanced Trade](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome) - Modern trading platform
+  - [Coinbase App](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome) - Consumer mobile/web application
+  - [Coinbase Exchange](https://docs.cdp.coinbase.com/exchange/docs/welcome) - Professional trading platform
+  - [Coinbase International Exchange](https://docs.cdp.coinbase.com/intx/docs/welcome) - International institutional trading
+  - [Coinbase Prime](https://docs.cdp.coinbase.com/prime/docs/welcome) - Institutional custody and trading
+  - [Coinbase Commerce](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome) - Payments and commerce solutions
+- Complete TypeScript support (with type declarations for most API requests & responses).
+  - Strongly typed requests and responses.
+  - Automated end-to-end tests ensuring reliability.
+- Actively maintained with a modern, promise-driven interface.
 - Supports both ECDSA and ED25519 API keys with automatic key type detection.
-- TypeScript support (with type declarations for most API requests & responses)
 - Robust WebSocket integration with configurable connection heartbeats & automatic reconnect then resubscribe workflows.
+  - Event driven messaging.
+  - Smart WebSocket persistence with automatic reconnection handling.
+  - Emit `reconnected` event when dropped connection is restored.
+  - Support for both public and private WebSocket streams across all platforms.
 - Automatically supports both ESM and CJS projects.
 - Proxy support via axios integration.
+- Heavy automated end-to-end testing with real API calls.
 - Active community support & collaboration in telegram: [Node.js Algo Traders](https://t.me/nodetraders).
 - Extensive examples for interacting with the Coinbase API offering in Node.js/JavaScript/TypeScript: [/examples/](./examples).
+
+## Table of Contents
+
+- [Installation](#installation)
+- [Examples](#examples)
+- [Issues & Discussion](#issues--discussion)
+- [Related Projects](#related-projects)
+- [Documentation](#documentation)
+- [Structure](#structure)
+- [Usage](#usage)
+  - [REST API Clients](#rest-api)
+    - [CBAdvancedTradeClient](#cbadvancedtradeclient)
+    - [CBAppClient](#cbappclient)
+    - [CBExchangeClient](#cbexchangeclient)
+    - [CBInternationalClient](#cbinternationalclient)
+    - [CBPrimeClient](#cbprimeclient)
+    - [CBCommerceClient](#cbcommerceclient)
+  - [WebSocket Client](#websockets)
+    - [Public WebSocket Streams](#public-websocket)
+    - [Private WebSocket Streams](#private-websocket)
+    - [WebSocket Event Handling](#listening-and-subscribing-to-websocket-events)
+- [Customise Logging](#customise-logging)
+- [LLMs & AI](#use-with-llms--ai)
+- [Contributions & Thanks](#contributions--thanks)
 
 ## Installation
 
 `npm install --save coinbase-api`
+
+## Examples
+
+Refer to the [examples](./examples) folder for implementation examples. 
 
 ## Issues & Discussion
 
@@ -9271,11 +9307,18 @@ Check out my related JavaScript/TypeScript/Node.js projects:
 
 ## Documentation
 
-Most methods accept JS objects. These can be populated using parameters specified by Coinbase's API documentation.
+Most methods accept JS objects. These can be populated using parameters specified by Coinbase's API documentation, or check the type definition in each class within this repository.
 
-- [Coinbase API Documentation](https://docs.cdp.coinbase.com/product-apis/docs/welcome)
+### API Documentation Links
+
+- [Coinbase Developer Platform - Product APIs](https://docs.cdp.coinbase.com/product-apis/docs/welcome)
+  - [Advanced Trade API](https://docs.cdp.coinbase.com/advanced-trade/docs/welcome)
+  - [Coinbase App API](https://docs.cdp.coinbase.com/coinbase-app/docs/welcome)
+  - [Exchange API](https://docs.cdp.coinbase.com/exchange/docs/welcome)
+  - [International Exchange API](https://docs.cdp.coinbase.com/intx/docs/welcome)
+  - [Prime API](https://docs.cdp.coinbase.com/prime/docs/welcome)
+  - [Commerce API](https://docs.cdp.coinbase.com/commerce-onchain/docs/welcome)
 - [REST Endpoint Function List](./docs/endpointFunctionList.md)
-<!-- - [TSDoc Documentation (autogenerated using typedoc)](https://tsdocs.dev/docs/coinbase-api) -->
 
 ## Structure
 
@@ -9288,11 +9331,13 @@ This project uses typescript. Resources are stored in 2 key structures:
 
 # Usage
 
-Create API credentials
+Create API credentials on Coinbase's website:
 
 - [Coinbase API Key Management](https://www.coinbase.com/settings/api)
 
-### REST API
+## REST API
+
+The SDK provides dedicated REST clients for each of Coinbase's API groups. Each client is designed for specific use cases and user types:
 
 To use any of Coinbase's REST APIs in JavaScript/TypeScript/Node.js, import (or require) the client you want to use. We currently support the following clients:
 
@@ -9320,7 +9365,7 @@ const advancedTradeCdpAPIKey = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
-/* 
+/*
  * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
  * Client will recognize both types of keys automatically.
  * ED25519:
@@ -9328,7 +9373,7 @@ const advancedTradeCdpAPIKey = {
  *   name: 'your-api-key-id',
  *   privateKey: 'yourExampleApiSecretEd25519Version==',
  * }
-*/
+ */
 
 const client = new CBAdvancedTradeClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -9369,7 +9414,7 @@ const CBAppKeys = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
-/* 
+/*
  * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
  * Client will recognize both types of keys automatically.
  * ED25519:
@@ -9377,7 +9422,7 @@ const CBAppKeys = {
  *   name: 'your-api-key-id',
  *   privateKey: 'yourExampleApiSecretEd25519Version==',
  * }
-*/
+ */
 
 const client = new CBAppClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -9521,7 +9566,7 @@ const advancedTradeCdpAPIKey = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
-/* 
+/*
  * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
  * Client will recognize both types of keys automatically.
  * ED25519:
@@ -9529,7 +9574,7 @@ const advancedTradeCdpAPIKey = {
  *   name: 'your-api-key-id',
  *   privateKey: 'yourExampleApiSecretEd25519Version==',
  * }
-*/
+ */
 
 const client = new WebsocketClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -9696,6 +9741,12 @@ const ws = new WebsocketClient(
   logger,
 );
 ```
+
+## Use with LLMs & AI
+
+This SDK includes a bundled `llms.txt` file in the root of the repository. If you're developing with LLMs, use the included `llms.txt` with your LLM - it will significantly improve the LLMs understanding of how to correctly use this SDK.
+
+This file contains AI optimised structure of all the functions in this package, and their parameters for easier use with any learning models or artificial intelligence.
 
 ---
 
@@ -10006,7 +10057,7 @@ File: package.json
 ================
 {
   "name": "coinbase-api",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Node.js SDK for Coinbase's REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
@@ -10030,7 +10081,8 @@ File: package.json
   },
   "type": "module",
   "files": [
-    "dist/*"
+    "dist/*",
+    "llms.txt"
   ],
   "author": "Tiago Siebler (https://github.com/tiagosiebler)",
   "contributors": [
