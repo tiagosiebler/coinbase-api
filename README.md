@@ -119,7 +119,7 @@ const advancedTradeCdpAPIKey = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
-/* 
+/*
  * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
  * Client will recognize both types of keys automatically.
  * ED25519:
@@ -127,7 +127,7 @@ const advancedTradeCdpAPIKey = {
  *   name: 'your-api-key-id',
  *   privateKey: 'yourExampleApiSecretEd25519Version==',
  * }
-*/
+ */
 
 const client = new CBAdvancedTradeClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -168,7 +168,7 @@ const CBAppKeys = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
-/* 
+/*
  * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
  * Client will recognize both types of keys automatically.
  * ED25519:
@@ -176,7 +176,7 @@ const CBAppKeys = {
  *   name: 'your-api-key-id',
  *   privateKey: 'yourExampleApiSecretEd25519Version==',
  * }
-*/
+ */
 
 const client = new CBAppClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -320,7 +320,7 @@ const advancedTradeCdpAPIKey = {
     '-----BEGIN EC PRIVATE KEY-----\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+oAoGCCqGSM49\nAwEHoUQDQgAEhtAep/ADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj+bzduY3iYXEmj/KtCk\nADFGHmkgnjdfg16k165kuu1kdtyudtyjdtyjytj\n-----END EC PRIVATE KEY-----\n',
 };
 
-/* 
+/*
  * You can add ECDSA keys like the example above, or ED25519 keys like the example below.
  * Client will recognize both types of keys automatically.
  * ED25519:
@@ -328,7 +328,7 @@ const advancedTradeCdpAPIKey = {
  *   name: 'your-api-key-id',
  *   privateKey: 'yourExampleApiSecretEd25519Version==',
  * }
-*/
+ */
 
 const client = new WebsocketClient({
   // Either pass the full JSON object that can be downloaded when creating your API keys
@@ -495,6 +495,12 @@ const ws = new WebsocketClient(
   logger,
 );
 ```
+
+## Use with LLMs & AI
+
+This SDK includes a bundled `llms.txt` file in the root of the repository. If you're developing with LLMs, use the included `llms.txt` with your LLM - it will significantly improve the LLMs understanding of how to correctly use this SDK.
+
+This file contains AI optimised structure of all the functions in this package, and their parameters for easier use with any learning models or artificial intelligence.
 
 ---
 
