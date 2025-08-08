@@ -944,6 +944,10 @@ export abstract class BaseWebsocketClient<
       // clean up any pending promises for this connection
       this.getWsStore().rejectAllDeferredPromises(wsKey, 'disconnected');
       this.setWsState(wsKey, WsConnectionStateEnum.INITIAL);
+
+      // This was an intentional close, delete all state for this connection, as if it never existed:
+      this.wsStore.delete(wsKey);
+
       this.emit('close', { wsKey, event });
     }
   }
