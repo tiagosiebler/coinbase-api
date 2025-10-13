@@ -1,4 +1,4 @@
-# Node.js & JavaScript SDK for Coinbase REST APIs & WebSockets
+# Node.js & JavaScript SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets
 
 <p align="center">
   <a href="https://www.npmjs.com/package/coinbase-api">
@@ -18,7 +18,7 @@
 
 [1]: https://www.npmjs.com/package/coinbase-api
 
-Updated & performant JavaScript & Node.js SDK for the Coinbase REST APIs and WebSockets:
+Updated & performant JavaScript & Node.js SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets:
 
 - Professional, robust & performant Coinbase SDK with extensive production use in live trading environments.
 - Complete integration with all Coinbase APIs - supports both retail and institutional REST clients and WebSockets:
