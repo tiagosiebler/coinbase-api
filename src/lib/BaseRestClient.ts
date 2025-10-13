@@ -574,7 +574,7 @@ export abstract class BaseRestClient {
             apiSecret,
             'base64',
             'SHA-256',
-            'base64:web',
+            'utf',
           );
 
           const headers = {
