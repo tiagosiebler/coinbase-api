@@ -8,6 +8,7 @@ localtest.sh
 testfile.ts
 dist
 cbtests.sh
+doc
 
 coverage
 ts-adv-trade-test-private.ts
