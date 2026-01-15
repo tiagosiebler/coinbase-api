@@ -1,3 +1,6 @@
+import type { ClientRequestArgs } from 'http';
+import WebSocket from 'isomorphic-ws';
+
 /** General configuration for the WebsocketClient */
 export interface WSClientConfigurableOptions {
   /**
@@ -37,6 +40,11 @@ export interface WSClientConfigurableOptions {
   reconnectTimeout?: number;
 
   wsUrl?: string;
+
+  wsOptions?: {
+    protocols?: string[];
+    agent?: any;
+  } & Partial<WebSocket.ClientOptions | ClientRequestArgs>;
 
   /**
    * Connect to the sandbox for supported products

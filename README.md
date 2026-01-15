@@ -65,6 +65,8 @@ Updated & performant JavaScript & Node.js SDK for Coinbase's Advanced Trade, App
     - [Private WebSocket Streams](#private-websocket)
     - [WebSocket Event Handling](#listening-and-subscribing-to-websocket-events)
 - [Customise Logging](#customise-logging)
+- [Browser/Frontend Usage](#browserfrontend-usage)
+  - [Webpack](#webpack)
 - [LLMs & AI](#use-with-llms--ai)
 - [Used By](#used-by)
 - [Contributions & Thanks](#contributions--thanks)
@@ -542,6 +544,18 @@ const ws = new WebsocketClient(
   logger,
 );
 ```
+
+## Browser/Frontend Usage
+
+### Webpack
+
+Build a bundle using webpack:
+
+- `npm install`
+- `npm run build`
+- `npm run pack`
+
+The bundle can be found in `dist/`. Altough usage should be largely consistent, smaller differences will exist. Documentation is still TODO.
 
 ## Use with LLMs & AI
 
