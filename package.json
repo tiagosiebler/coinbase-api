@@ -1,6 +1,6 @@
 {
   "name": "coinbase-api",
-  "version": "1.1.8",
+  "version": "1.1.9",
   "description": "Node.js SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
@@ -58,8 +58,8 @@
   },
   "optionalDependencies": {
     "webpack": "^5.0.0",
-    "webpack-cli": "^4.0.0",
-    "webpack-bundle-analyzer": "^4.10.2"
+    "webpack-bundle-analyzer": "^5.1.1",
+    "webpack-cli": "^4.0.0"
   },
   "keywords": [
     "coinbase",
