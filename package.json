@@ -5,6 +5,7 @@
   "scripts": {
     "clean": "rm -rf dist",
     "build": "npm run clean && tsc -p tsconfig.esm.json && tsc -p tsconfig.cjs.json && bash ./postBuild.sh",
+    "pack": "webpack --config webpack/webpack.config.cjs",
     "test": "NODE_OPTIONS='--experimental-vm-modules --no-warnings' jest --passWithNoTests --config=jest.config.ts",
     "test:watch:raw": "jest --watch --passWithNoTests",
     "test:watch": "npm run test -- --watch",
@@ -54,6 +55,11 @@
     "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.3"
+  },
+  "optionalDependencies": {
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0",
+    "webpack-bundle-analyzer": "^4.10.2"
   },
   "keywords": [
     "coinbase",
