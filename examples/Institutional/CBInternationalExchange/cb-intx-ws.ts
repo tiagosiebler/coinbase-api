@@ -1,6 +1,6 @@
 import 'dotenv/config';
 
-import { WebsocketClient, WsTopicRequest } from '../../src/index.js';
+import { WebsocketClient, WsTopicRequest } from '../../../src/index.js';
 
 /**
  * import { WebsocketClient, WsTopicRequest } from 'coinbase-api';
