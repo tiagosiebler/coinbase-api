@@ -1,4 +1,4 @@
-import { WebsocketClient } from '../../../src/index.js';
+import { WebsocketClient } from '../../../../src/index.js';
 
 /**
  * import { WebsocketClient } from 'coinbase-api';
@@ -162,7 +162,7 @@ async function start() {
       'exchangeMarketData',
     );
   } catch (e) {
-    console.error(`Subscribe exception: `, e);
+    console.error('Subscribe exception: ', e);
   }
 }
 

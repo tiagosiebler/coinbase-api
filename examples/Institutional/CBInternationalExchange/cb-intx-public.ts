@@ -1,4 +1,4 @@
-import { CBInternationalClient } from '../../src/index.js';
+import { CBInternationalClient } from '../../../src/index.js';
 
 /**
  * import { CBInternationalClient } from 'coinbase-api';
