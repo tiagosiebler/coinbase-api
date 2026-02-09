@@ -18,6 +18,9 @@
 
 [1]: https://www.npmjs.com/package/coinbase-api
 
+> [!TIP]
+> Upcoming change: As part of the [Siebly.io](https://siebly.io/?ref=ghcoinbase) brand, this SDK will soon be hosted under the [Siebly.io GitHub organisation](https://github.com/sieblyio). The migration is seamless and requires no user changes.
+
 Updated & performant JavaScript & Node.js SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets:
 
 - Professional, robust & performant Coinbase SDK with extensive production use in live trading environments.
