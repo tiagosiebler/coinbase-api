@@ -1,10 +1,12 @@
-const { CBInternationalClient } = require('coinbase-api');
+import { CBInternationalClient } from 'coinbase-api';
+// or, if require is preferred:
+// const { CBInternationalClient } = require('coinbase-api');
 
-  // This example shows how to call this coinbase API endpoint with either node.js, javascript (js) or typescript (ts) with the npm module "coinbase-api" for coinbase exchange
-  // This coinbase API SDK is available on npm via "npm install coinbase-api"
-  // ENDPOINT: /api/v1/portfolios
-  // METHOD: PATCH
-  // PUBLIC: NO
+// This example shows how to call this coinbase API endpoint with either node.js, javascript (js) or typescript (ts) with the npm module "coinbase-api" for coinbase exchange
+// This coinbase API SDK is available on npm via "npm install coinbase-api"
+// ENDPOINT: /api/v1/portfolios
+// METHOD: PATCH
+// PUBLIC: NO
 
 const client = new CBInternationalClient({
   apiKey: 'insert_api_key_here',
