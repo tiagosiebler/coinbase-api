@@ -1,10 +1,12 @@
-const { CBAdvancedTradeClient } = require('coinbase-api');
+import { CBAdvancedTradeClient } from 'coinbase-api';
+// or, if require is preferred:
+// const { CBAdvancedTradeClient } = require('coinbase-api');
 
-  // This example shows how to call this coinbase API endpoint with either node.js, javascript (js) or typescript (ts) with the npm module "coinbase-api" for coinbase exchange
-  // This coinbase API SDK is available on npm via "npm install coinbase-api"
-  // ENDPOINT: /api/v3/brokerage/accounts
-  // METHOD: GET
-  // PUBLIC: NO
+// This example shows how to call this coinbase API endpoint with either node.js, javascript (js) or typescript (ts) with the npm module "coinbase-api" for coinbase exchange
+// This coinbase API SDK is available on npm via "npm install coinbase-api"
+// ENDPOINT: /api/v3/brokerage/accounts
+// METHOD: GET
+// PUBLIC: NO
 
 const client = new CBAdvancedTradeClient({
   apiKey: 'insert_api_key_here',
