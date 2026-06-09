@@ -15,6 +15,7 @@
 [![Build & Test](https://github.com/tiagosiebler/coinbase-api/actions/workflows/e2etest.yml/badge.svg?branch=master)](https://github.com/tiagosiebler/coinbase-api/actions/workflows/e2etest.yml)
 [![last commit](https://img.shields.io/github/last-commit/tiagosiebler/coinbase-api)][1]
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/nodetraders)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tiagosiebler/coinbase-api)
 
 [1]: https://www.npmjs.com/package/coinbase-api
 
