@@ -66,6 +66,28 @@ interface TWAPLimitGTD {
   limit_price: string;
 }
 
+interface ScaledLimitGtc {
+  orders?: LimitLimitGTC[];
+  quote_size?: string;
+  base_size?: string;
+  num_orders?: number;
+  min_price?: string;
+  max_price?: string;
+  price_distribution?:
+    | 'FLAT'
+    | 'LINEAR_INCREASING'
+    | 'LINEAR_DECREASING'
+    | 'CUSTOM_PRICE_DISTRIBUTION';
+  size_distribution?:
+    | 'UNKNOWN_DISTRIBUTION'
+    | 'INCREASING'
+    | 'DECREASING'
+    | 'EVENLY_SPLIT'
+    | 'CUSTOM_SIZE_DISTRIBUTION';
+  size_diff?: string;
+  size_ratio?: string;
+}
+
 // Main order configuration type
 export interface OrderConfiguration {
   market_market_ioc?: MarketMarketIOC;
@@ -78,6 +100,7 @@ export interface OrderConfiguration {
   stop_limit_stop_limit_gtd?: StopLimitStopLimitGTD;
   trigger_bracket_gtc?: TriggerBracketGTC;
   trigger_bracket_gtd?: TriggerBracketGTD;
+  scaled_limit_gtc?: ScaledLimitGtc;
 }
 
 export type CustomOrderIdProperty = 'client_order_id' | 'client_oid';

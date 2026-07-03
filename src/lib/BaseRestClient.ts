@@ -338,6 +338,12 @@ export abstract class BaseRestClient {
 
       requestParams[orderIdProperty] = newValue;
     }
+
+    if (requestParams[orderIdProperty].length > 128) {
+      console.warn(
+        `WARNING: "${orderIdProperty}" exceeds the 128 character maximum enforced by Coinbase. Value length: ${requestParams[orderIdProperty].length}. Invalid argument errors may be returned by the API.`,
+      );
+    }
   }
 
   /**

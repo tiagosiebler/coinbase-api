@@ -41,9 +41,20 @@ export interface GetCBExchAddressBookRequest {
       destination_tag?: string;
     };
     label?: string;
+    network?: string;
     is_verified_self_hosted_wallet?: boolean;
     vasp_id?: string;
   }[];
+}
+
+export interface UpdateCBExchAddressBookEntryRequest {
+  id: string;
+  label?: string;
+  is_certified_self_send?: boolean;
+  vasp_id?: string;
+  is_verified_self_hosted_wallet?: boolean;
+  business_name?: string;
+  business_country_code?: string;
 }
 
 /**

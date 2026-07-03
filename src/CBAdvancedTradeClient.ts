@@ -22,6 +22,7 @@ import {
   PreviewAdvTradeOrderRequest,
   SubmitAdvTradeConvertQuoteRequest,
   SubmitAdvTradeOrderRequest,
+  UpdateAdvTradeOrderRequest,
 } from './types/request/advanced-trade-client.js';
 import {
   AdvTradeAccount,
@@ -300,11 +301,9 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * - If you decrease the size, you keep your place in line.
    * - A client can only send an Edit Order request after the previous request for the same order has been fully processed.
    */
-  updateOrder(params: {
-    order_id: string;
-    price?: string;
-    size?: string;
-  }): Promise<AdvTradeEditOrderResponse> {
+  updateOrder(
+    params: UpdateAdvTradeOrderRequest,
+  ): Promise<AdvTradeEditOrderResponse> {
     return this.postPrivate('/api/v3/brokerage/orders/edit', {
       body: params,
     });
@@ -316,11 +315,9 @@ export class CBAdvancedTradeClient extends BaseRestClient {
    * Preview an edit order request with a specified new size, or new price.
    *
    */
-  updateOrderPreview(params: {
-    order_id: string;
-    price?: string;
-    size?: string;
-  }): Promise<AdvTradeEditOrderPreviewResponse> {
+  updateOrderPreview(
+    params: UpdateAdvTradeOrderRequest,
+  ): Promise<AdvTradeEditOrderPreviewResponse> {
     return this.postPrivate('/api/v3/brokerage/orders/edit_preview', {
       body: params,
     });

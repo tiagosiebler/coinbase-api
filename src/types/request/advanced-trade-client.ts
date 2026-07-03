@@ -241,6 +241,16 @@ export interface GetAdvTradePublicMarketTradesRequest {
   start?: string;
   end?: string;
 }
+
+export interface UpdateAdvTradeOrderRequest {
+  order_id: string;
+  price?: string;
+  size?: string;
+  attached_order_configuration?: OrderConfiguration;
+  cancel_attached_order?: boolean;
+  stop_price?: string;
+  average_entry_price?: string;
+}
 /**
  *
  * Payment Methods Endpoints

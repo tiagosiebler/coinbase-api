@@ -14,6 +14,7 @@ import {
   CreatePrimeTransferRequest,
   CreatePrimeWalletRequest,
   CreatePrimeWithdrawalRequest,
+  EditPrimeOrderRequest,
   GetPrimeActivitiesRequest,
   GetPrimeAddressBookRequest,
   GetPrimeEntityAccrualsRequest,
@@ -41,6 +42,7 @@ import {
   GetPrimeWalletDepositInstructionsRequest,
   GetPrimeWalletTransactionsRequest,
   GetPrimeWeb3WalletBalancesRequest,
+  RotatePrimeApiKeyRequest,
   SubmitPrimeOrderRequest,
 } from './types/request/coinbase-prime.js';
 
@@ -673,6 +675,29 @@ export class CBPrimeClient extends BaseRestClient {
       `/v1/portfolios/${portfolio_id}/orders/${order_id}/fills`,
       query,
     );
+  }
+
+  /**
+   * Edit Order (Beta)
+   *
+   * Edit an open order. Supports LIMIT, STOP-LIMIT, TWAP, VWAP, and PEG orders.
+   */
+  editOrder(params: EditPrimeOrderRequest): Promise<any> {
+    const { portfolio_id, order_id, ...body } = params;
+    return this.putPrivate(
+      `/v1/portfolios/${portfolio_id}/orders/${order_id}/edit`,
+      { body: body },
+    );
+  }
+
+  /**
+   * Rotate API Key
+   *
+   * Rotate an API key programmatically, generating a new key with the same configuration.
+   * Required scope: prime.api_keys.rotate_api_key.write
+   */
+  rotateApiKey(params?: RotatePrimeApiKeyRequest): Promise<any> {
+    return this.postPrivate('/v1/api-keys/rotate', { body: params ?? {} });
   }
 
   /**
