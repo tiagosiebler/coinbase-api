@@ -188,7 +188,14 @@ export interface GetPrimePortfolioFillsRequest {
 export interface GetPrimeOpenOrdersRequest {
   portfolio_id: string;
   product_ids?: string[];
-  order_type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
+  order_type?:
+    | 'MARKET'
+    | 'LIMIT'
+    | 'TWAP'
+    | 'BLOCK'
+    | 'VWAP'
+    | 'STOP_LIMIT'
+    | 'PEG';
   sort_direction?: 'DESC' | 'ASC';
   start_date: string;
   order_side?: 'BUY' | 'SELL';
@@ -200,7 +207,7 @@ export interface SubmitPrimeOrderRequest {
   product_id: string;
   side: 'BUY' | 'SELL';
   client_order_id?: string;
-  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT';
+  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
   base_quantity?: string;
   quote_value?: string;
   limit_price?: string;
@@ -217,13 +224,42 @@ export interface SubmitPrimeOrderRequest {
   display_base_size?: string;
   is_raise_exact?: boolean;
   historical_pov?: string;
+  peg_offset_type?:
+    | 'PEG_OFFSET_TYPE_PRICE'
+    | 'PEG_OFFSET_TYPE_BPS'
+    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
+    | 'PEG_OFFSET_TYPE_DEPTH'
+    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
+  offset?: string;
+  wig_level?: string;
+}
+
+export interface EditPrimeOrderRequest {
+  portfolio_id: string;
+  order_id: string;
+  orig_client_order_id: string;
+  client_order_id: string;
+  product_id?: string;
+  base_quantity?: string;
+  quote_value?: string;
+  limit_price?: string;
+  expiry_time?: string;
+  display_quote_size?: string;
+  display_base_size?: string;
+  stop_price?: string;
+  offset?: string;
+  wig_level?: string;
+}
+
+export interface RotatePrimeApiKeyRequest {
+  api_key_id?: string;
 }
 
 export interface GetPrimeOrderPreviewRequest {
   portfolio_id: string;
   product_id: string;
   side: 'BUY' | 'SELL';
-  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
+  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
   base_quantity?: string;
   quote_value?: string;
   limit_price?: string;
@@ -237,6 +273,14 @@ export interface GetPrimeOrderPreviewRequest {
     | 'IMMEDIATE_OR_CANCEL';
   is_raise_exact?: boolean;
   historical_pov?: string;
+  peg_offset_type?:
+    | 'PEG_OFFSET_TYPE_PRICE'
+    | 'PEG_OFFSET_TYPE_BPS'
+    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
+    | 'PEG_OFFSET_TYPE_DEPTH'
+    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
+  offset?: string;
+  wig_level?: string;
 }
 
 export interface GetPrimePortfolioOrdersRequest {
@@ -249,7 +293,14 @@ export interface GetPrimePortfolioOrdersRequest {
     | 'PENDING'
   )[];
   product_ids?: string[];
-  order_type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
+  order_type?:
+    | 'MARKET'
+    | 'LIMIT'
+    | 'TWAP'
+    | 'BLOCK'
+    | 'VWAP'
+    | 'STOP_LIMIT'
+    | 'PEG';
   cursor?: string;
   limit?: number;
   sort_direction?: 'DESC' | 'ASC';

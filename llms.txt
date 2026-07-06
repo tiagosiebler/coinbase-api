@@ -1174,6 +1174,16 @@ export interface GetAdvTradePublicMarketTradesRequest {
   start?: string;
   end?: string;
 }
+⋮----
+export interface EditAdvTradeOrderRequest {
+  order_id: string;
+  price?: string;
+  size?: string;
+  attached_order_configuration?: OrderConfiguration;
+  cancel_attached_order?: boolean;
+  stop_price?: string;
+  average_entry_price?: string;
+}
 /**
  *
  * Payment Methods Endpoints
@@ -1348,9 +1358,20 @@ export interface GetCBExchAddressBookRequest {
       destination_tag?: string;
     };
     label?: string;
+    network?: string;
     is_verified_self_hosted_wallet?: boolean;
     vasp_id?: string;
   }[];
+}
+⋮----
+export interface UpdateCBExchAddressBookEntryRequest {
+  id: string;
+  label?: string;
+  is_certified_self_send?: boolean;
+  vasp_id?: string;
+  is_verified_self_hosted_wallet?: boolean;
+  business_name?: string;
+  business_country_code?: string;
 }
 ⋮----
 /**
@@ -1660,6 +1681,218 @@ export interface GetCBExchAllStakeWraps {
 }
 
 ================
+File: src/types/request/coinbase-international.ts
+================
+/**
+ *
+ * Assets Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Index Endpoints
+ *
+ */
+⋮----
+export interface GetINTXIndexCompositionHistory {
+  index: string;
+  time_from?: string;
+  result_limit?: number;
+  result_offset?: number;
+}
+⋮----
+export interface GetINTXIndexCandlesRequest {
+  index: string;
+  granularity: string;
+  start: string;
+  end?: string;
+}
+⋮----
+/**
+ *
+ * Instruments Endpoints
+ *
+ */
+⋮----
+/** Values for `underlying_type` on INTX instruments (REST, WebSocket INSTRUMENTS channel) */
+export type INTXUnderlyingType =
+  | 'PREIPO'
+  | 'COMMOD'
+  | 'COMMOD_INDEX'
+  | 'COMMOD_ETF'
+  | string;
+⋮----
+export interface GetINTXDailyTradingVolumes {
+  instruments: string;
+  result_limit?: number;
+  result_offset?: number;
+  time_from?: string;
+  show_other?: boolean;
+}
+⋮----
+export interface GetINTXAggregatedCandlesData {
+  instrument: string;
+  granularity: string;
+  start: string;
+  end?: string;
+}
+/**
+ *
+ * Position Offsets Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Orders Endpoints
+ *
+ */
+⋮----
+export interface SubmitINTXOrderRequest {
+  client_order_id?: string;
+  side: string;
+  size: string;
+  tif: string;
+  instrument: string;
+  type: string;
+  price?: string;
+  stop_price?: string;
+  stop_limit_price?: string;
+  expire_time?: string;
+  portfolio?: string;
+  user?: string;
+  stp_mode?: string;
+  post_only?: boolean;
+  close_only?: boolean;
+  algo_strategy?: boolean;
+}
+⋮----
+export interface GetINTXOpenOrdersRequest {
+  portfolio?: string;
+  instrument?: string;
+  instrument_type?: string;
+  client_order_id?: string;
+  event_type?: string;
+  order_type?: string;
+  side?: string;
+  ref_datetime?: string;
+  result_limit?: number;
+  result_offset?: number;
+}
+⋮----
+export interface CancelINTXOrdersRequest {
+  portfolio: string;
+  instrument?: string;
+  side?: string;
+  instrument_type?: string;
+}
+⋮----
+export interface UpdateINTXOpenOrderRequest {
+  id: string;
+  client_order_id?: string;
+  portfolio?: string;
+  price?: string;
+  stop_price?: string;
+  size?: string;
+}
+⋮----
+/**
+ *
+ * Portfolios Endpoints
+ *
+ */
+⋮----
+export interface UpdateINTXPortfolioParametersRequest {
+  auto_margin_enabled?: boolean;
+  cross_collateral_enabled?: boolean;
+  position_offsets_enabled?: boolean;
+  pre_launch_trading_enabled?: boolean;
+  portfolio_name?: string;
+}
+⋮----
+export interface GetINTXFillsByPortfoliosRequest {
+  portfolios?: string;
+  order_id?: string;
+  client_order_id?: string;
+  ref_datetime?: string;
+  result_limit?: number;
+  result_offset?: number;
+  time_from?: string;
+}
+⋮----
+export interface GetINTXPortfolioFillsRequest {
+  portfolio: string;
+  order_id?: string;
+  client_order_id?: string;
+  ref_datetime?: string;
+  result_limit?: number;
+  result_offset?: number;
+  time_from?: string;
+}
+⋮----
+export interface TransferINTXFundsBetweenPortfoliosRequest {
+  from: string;
+  to: string;
+  asset: string;
+  amount: string;
+}
+⋮----
+export interface TransferINTXPositionsBetweenPortfoliosRequest {
+  from: string;
+  to: string;
+  instrument: string;
+  quantity: string;
+  side: string;
+}
+⋮----
+/**
+ *
+ * Rankings Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * Transfers Endpoints
+ *
+ */
+⋮----
+export interface GetINTXMatchingTransfersRequest {
+  portfolio?: string;
+  portfolios?: string;
+  time_from?: string;
+  time_to?: string;
+  result_limit?: number;
+  result_offset?: number;
+  status?: string;
+  type?: string;
+}
+⋮----
+export interface INTXWithdrawToCryptoAddressRequest {
+  portfolio: string;
+  asset: string;
+  amount: string;
+  add_network_fee_to_total?: boolean;
+  network_arn_id: string;
+  address: string;
+  nonce: number;
+}
+⋮----
+export interface INTXWithdrawToCounterpartyIdRequest {
+  portfolio: string;
+  counterparty_id: string;
+  asset: string;
+  amount: string;
+  nonce: number;
+}
+/**
+ *
+ * Fee Rates Endpoints
+ *
+ */
+
+================
 File: src/types/request/coinbase-prime.ts
 ================
 /**
@@ -1852,7 +2085,14 @@ export interface GetPrimePortfolioFillsRequest {
 export interface GetPrimeOpenOrdersRequest {
   portfolio_id: string;
   product_ids?: string[];
-  order_type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
+  order_type?:
+    | 'MARKET'
+    | 'LIMIT'
+    | 'TWAP'
+    | 'BLOCK'
+    | 'VWAP'
+    | 'STOP_LIMIT'
+    | 'PEG';
   sort_direction?: 'DESC' | 'ASC';
   start_date: string;
   order_side?: 'BUY' | 'SELL';
@@ -1864,7 +2104,7 @@ export interface SubmitPrimeOrderRequest {
   product_id: string;
   side: 'BUY' | 'SELL';
   client_order_id?: string;
-  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT';
+  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
   base_quantity?: string;
   quote_value?: string;
   limit_price?: string;
@@ -1881,13 +2121,42 @@ export interface SubmitPrimeOrderRequest {
   display_base_size?: string;
   is_raise_exact?: boolean;
   historical_pov?: string;
+  peg_offset_type?:
+    | 'PEG_OFFSET_TYPE_PRICE'
+    | 'PEG_OFFSET_TYPE_BPS'
+    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
+    | 'PEG_OFFSET_TYPE_DEPTH'
+    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
+  offset?: string;
+  wig_level?: string;
+}
+⋮----
+export interface EditPrimeOrderRequest {
+  portfolio_id: string;
+  order_id: string;
+  orig_client_order_id: string;
+  client_order_id: string;
+  product_id?: string;
+  base_quantity?: string;
+  quote_value?: string;
+  limit_price?: string;
+  expiry_time?: string;
+  display_quote_size?: string;
+  display_base_size?: string;
+  stop_price?: string;
+  offset?: string;
+  wig_level?: string;
+}
+⋮----
+export interface RotatePrimeApiKeyRequest {
+  api_key_id?: string;
 }
 ⋮----
 export interface GetPrimeOrderPreviewRequest {
   portfolio_id: string;
   product_id: string;
   side: 'BUY' | 'SELL';
-  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
+  type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT' | 'PEG';
   base_quantity?: string;
   quote_value?: string;
   limit_price?: string;
@@ -1901,6 +2170,14 @@ export interface GetPrimeOrderPreviewRequest {
     | 'IMMEDIATE_OR_CANCEL';
   is_raise_exact?: boolean;
   historical_pov?: string;
+  peg_offset_type?:
+    | 'PEG_OFFSET_TYPE_PRICE'
+    | 'PEG_OFFSET_TYPE_BPS'
+    | 'PEG_OFFSET_TYPE_BASIS_POINTS'
+    | 'PEG_OFFSET_TYPE_DEPTH'
+    | 'PEG_OFFSET_TYPE_CUMULATIVE_DEPTH_IN_BASE_UNITS';
+  offset?: string;
+  wig_level?: string;
 }
 ⋮----
 export interface GetPrimePortfolioOrdersRequest {
@@ -1913,7 +2190,14 @@ export interface GetPrimePortfolioOrdersRequest {
     | 'PENDING'
   )[];
   product_ids?: string[];
-  order_type?: 'MARKET' | 'LIMIT' | 'TWAP' | 'BLOCK' | 'VWAP' | 'STOP_LIMIT';
+  order_type?:
+    | 'MARKET'
+    | 'LIMIT'
+    | 'TWAP'
+    | 'BLOCK'
+    | 'VWAP'
+    | 'STOP_LIMIT'
+    | 'PEG';
   cursor?: string;
   limit?: number;
   sort_direction?: 'DESC' | 'ASC';
@@ -2245,10 +2529,12 @@ interface Trade {
   price: string;
   size: string;
   time: string; // RFC3339 Timestamp
+  /** Maker side of the trade (not taker side) */
   side: 'BUY' | 'SELL';
 }
 ⋮----
 time: string; // RFC3339 Timestamp
+/** Maker side of the trade (not taker side) */
 ⋮----
 export interface AdvTradeMarketTrades {
   trades: Trade[];
@@ -2953,6 +3239,297 @@ export interface AdvTradeApiKeyPermissions {
 }
 
 ================
+File: src/types/response/coinbase-app-client.ts
+================
+export interface CBAppPagination {
+  ending_before?: string | null;
+  starting_after?: string | null;
+  limit?: number;
+  order?: string;
+  previous_uri: string | null;
+  next_uri: string | null;
+}
+⋮----
+/**
+ *
+ * Account Endpoints
+ *
+ */
+⋮----
+interface AccountCurrency {
+  address_regex: string;
+  asset_id: string;
+  code: string;
+  color: string;
+  exponent: number;
+  name: string;
+  slug: string;
+  sort_index: number;
+  type: string;
+}
+⋮----
+interface AccountBalance {
+  amount: string;
+  currency: string;
+}
+⋮----
+export interface CBAppAccount {
+  id: string;
+  name: string;
+  primary: boolean;
+  type: string;
+  currency: AccountCurrency;
+  balance: AccountBalance;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+  ready: boolean;
+}
+⋮----
+/**
+ *
+ * Address Endpoints
+ *
+ */
+⋮----
+export interface CBAppAddress {
+  id: string;
+  address: string;
+  name?: string;
+  network: string;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+}
+⋮----
+/**
+ *
+ * Transactions Endpoints
+ *
+ */
+⋮----
+interface TransactionAmount {
+  amount: string;
+  currency: string;
+}
+⋮----
+interface TransactionNetwork {
+  status: string;
+  name: string;
+  hash?: string;
+  transaction_fee?: TransactionAmount;
+  transaction_amount?: TransactionAmount;
+  network_name?: string;
+  status_description?: string | null;
+}
+⋮----
+interface TransactionFrom {
+  id: string;
+  resource: string;
+  resource_path?: string;
+}
+⋮----
+interface TransactionTo {
+  resource: string;
+  address?: string;
+  email?: string;
+  id?: string;
+  resource_path?: string;
+}
+⋮----
+interface TransactionDetails {
+  title: string;
+  subtitle: string;
+  header?: string;
+  health?: string;
+  subsidebar_label?: string | null;
+}
+⋮----
+interface AdvancedTradeFill {
+  fill_price: string;
+  product_id: string;
+  order_id: string;
+  commission: string;
+  order_side: 'BUY' | 'SELL';
+}
+⋮----
+export interface CBAppTransaction {
+  id: string;
+  type: string;
+  status: string;
+  amount: TransactionAmount;
+  native_amount: TransactionAmount;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+  network?: TransactionNetwork;
+  from?: TransactionFrom;
+  to?: TransactionTo;
+  details?: TransactionDetails;
+  instant_exchange?: boolean;
+  advanced_trade_fill?: AdvancedTradeFill;
+  cancelable?: boolean;
+  idem?: string;
+}
+⋮----
+/**
+ *
+ * Deposits/Withdrawal Endpoints
+ *
+ */
+⋮----
+interface DepositWithdrawalPaymentMethod {
+  id: string;
+  resource: string;
+  resource_path: string;
+}
+⋮----
+interface DepositWithdrawalTransaction {
+  id: string;
+  resource: string;
+  resource_path: string;
+}
+⋮----
+interface DepositWithdrawalAmountCurrency {
+  amount: string;
+  currency: string;
+}
+⋮----
+export interface CBAppDepositWithdrawal {
+  id: string;
+  status: string;
+  payment_method: DepositWithdrawalPaymentMethod;
+  transaction: DepositWithdrawalTransaction;
+  amount: DepositWithdrawalAmountCurrency;
+  subtotal: DepositWithdrawalAmountCurrency;
+  created_at: string;
+  updated_at: string;
+  resource: string;
+  resource_path: string;
+  committed: boolean;
+  fee: DepositWithdrawalAmountCurrency;
+  payout_at: string;
+}
+⋮----
+interface TransferAmount {
+  value: string;
+  currency: string;
+}
+⋮----
+interface TransferOwner {
+  id: string;
+  uuid: string;
+  user_uuid: string;
+  type: string;
+}
+⋮----
+interface TransferLedgerAccount {
+  account_id: string;
+  currency: string;
+  owner: TransferOwner;
+}
+⋮----
+interface TransferExternalPaymentMethod {
+  payment_method_id: string;
+}
+⋮----
+interface TransferSource {
+  type: string;
+  network: string;
+  payment_method_id: string;
+  external_payment_method: TransferExternalPaymentMethod;
+}
+⋮----
+interface TransferTarget {
+  type: string;
+  network: string;
+  payment_method_id: string;
+  ledger_account: TransferLedgerAccount;
+}
+⋮----
+interface TransferFee {
+  title: string;
+  description: string;
+  amount: TransferAmount;
+  type: string;
+}
+⋮----
+export interface CBAppTransferDepositWithdrawal {
+  user_entered_amount: TransferAmount;
+  amount: TransferAmount;
+  total: TransferAmount;
+  subtotal: TransferAmount;
+  idem: string;
+  committed: boolean;
+  id: string;
+  instant: boolean;
+  source: TransferSource;
+  target: TransferTarget;
+  payout_at: string;
+  status: string;
+  user_reference: string;
+  type: string;
+  created_at: string | null;
+  updated_at: string | null;
+  user_warnings: any[];
+  fees: any[];
+  total_fee: TransferFee;
+  cancellation_reason: string | null;
+  hold_days: number;
+  nextStep: any | null;
+  checkout_url: string;
+  requires_completion_step: boolean;
+}
+⋮----
+export interface CBAppTransfer {
+  transfer: CBAppTransferDepositWithdrawal;
+}
+/**
+ *
+ * DATA - Currencies Endpoints
+ *
+ */
+⋮----
+export interface CBAppFiatCurrency {
+  id: string;
+  name: string;
+  min_size: string;
+}
+⋮----
+export interface CBAppCryptocurrency {
+  code: string;
+  name: string;
+  color: string;
+  sort_index: number;
+  exponent: number;
+  type: string;
+  address_regex: string;
+  asset_id: string;
+}
+⋮----
+/**
+ *
+ * DATA- Exchange rates Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * DATA - Prices Endpoints
+ *
+ */
+⋮----
+/**
+ *
+ * DATA - Time Endpoints
+ *
+ */
+
+================
 File: src/types/response/coinbase-exchange.ts
 ================
 /**
@@ -2966,6 +3543,28 @@ File: src/types/response/coinbase-exchange.ts
  * Address book Endpoints
  *
  */
+⋮----
+export interface CBExchCounterpartyAddress {
+  id: string;
+  address: string;
+  label: string;
+  added_at: string;
+}
+⋮----
+export interface CBExchCurrencySupportedNetwork {
+  id: string;
+  name: string;
+  status: string;
+  contract_address?: string;
+  crypto_address_link?: string;
+  tx_link?: string;
+  min_withdrawal_amount?: number;
+  max_withdrawal_amount?: number;
+  network_confirmations?: number;
+  processing_time_seconds?: number;
+  destination_tag_regex?: string;
+  is_evm_network?: boolean;
+}
 ⋮----
 /**
  *
@@ -3444,6 +4043,28 @@ interface TWAPLimitGTD {
 start_time: string; // RFC3339 Timestamp
 end_time: string; // RFC3339 Timestamp
 ⋮----
+interface ScaledLimitGtc {
+  orders?: LimitLimitGTC[];
+  quote_size?: string;
+  base_size?: string;
+  num_orders?: number;
+  min_price?: string;
+  max_price?: string;
+  price_distribution?:
+    | 'FLAT'
+    | 'LINEAR_INCREASING'
+    | 'LINEAR_DECREASING'
+    | 'CUSTOM_PRICE_DISTRIBUTION';
+  size_distribution?:
+    | 'UNKNOWN_DISTRIBUTION'
+    | 'INCREASING'
+    | 'DECREASING'
+    | 'EVENLY_SPLIT'
+    | 'CUSTOM_SIZE_DISTRIBUTION';
+  size_diff?: string;
+  size_ratio?: string;
+}
+⋮----
 // Main order configuration type
 export interface OrderConfiguration {
   market_market_ioc?: MarketMarketIOC;
@@ -3456,6 +4077,7 @@ export interface OrderConfiguration {
   stop_limit_stop_limit_gtd?: StopLimitStopLimitGTD;
   trigger_bracket_gtc?: TriggerBracketGTC;
   trigger_bracket_gtd?: TriggerBracketGTD;
+  scaled_limit_gtc?: ScaledLimitGtc;
 }
 ⋮----
 export type CustomOrderIdProperty = 'client_order_id' | 'client_oid';
@@ -3629,7 +4251,9 @@ import {
   SubmitCBExchOrderRequest,
   SubmitCBExchTravelInformation,
   TransferCBExchFundsBetweenProfiles,
+  UpdateCBExchAddressBookEntryRequest,
 } from './types/request/coinbase-exchange.js';
+import { CBExchCounterpartyAddress } from './types/response/coinbase-exchange.js';
 ⋮----
 /**
  * REST client for Coinbase's Institutional Exchange API:
@@ -3723,6 +4347,22 @@ addAddresses(params: GetCBExchAddressBookRequest): Promise<any>
    * Delete address from address book.
    */
 deleteAddress(params:
+⋮----
+/**
+   * Get counterparty address book
+   *
+   * Get all counterparty addresses stored in the address book.
+   */
+getCounterpartyAddressBook(): Promise<CBExchCounterpartyAddress[]>
+⋮----
+/**
+   * Update address book entry
+   *
+   * Edit an existing address book entry. Useful for travel rule jurisdictions.
+   */
+updateAddressBookEntry(
+    params: UpdateCBExchAddressBookEntryRequest,
+): Promise<any>
 ⋮----
 /**
    *
@@ -4339,6 +4979,577 @@ getWrappedAssetConversionRate(params: {
 }): Promise<any>
 
 ================
+File: src/CBInternationalClient.ts
+================
+import { AxiosRequestConfig } from 'axios';
+⋮----
+import { BaseRestClient } from './lib/BaseRestClient.js';
+import {
+  REST_CLIENT_TYPE_ENUM,
+  RestClientOptions,
+  RestClientType,
+} from './lib/requestUtils.js';
+import {
+  CancelINTXOrdersRequest,
+  GetINTXAggregatedCandlesData,
+  GetINTXDailyTradingVolumes,
+  GetINTXFillsByPortfoliosRequest,
+  GetINTXIndexCandlesRequest,
+  GetINTXIndexCompositionHistory,
+  GetINTXMatchingTransfersRequest,
+  GetINTXOpenOrdersRequest,
+  GetINTXPortfolioFillsRequest,
+  INTXWithdrawToCounterpartyIdRequest,
+  INTXWithdrawToCryptoAddressRequest,
+  SubmitINTXOrderRequest,
+  TransferINTXFundsBetweenPortfoliosRequest,
+  TransferINTXPositionsBetweenPortfoliosRequest,
+  UpdateINTXOpenOrderRequest,
+  UpdateINTXPortfolioParametersRequest,
+} from './types/request/coinbase-international.js';
+⋮----
+/**
+ * REST client for Coinbase's Institutional International Exchange API:
+ * https://docs.cdp.coinbase.com/intx/docs/welcome
+ */
+export class CBInternationalClient extends BaseRestClient
+⋮----
+constructor(
+    restClientOptions: RestClientOptions = {},
+    requestOptions: AxiosRequestConfig = {},
+)
+⋮----
+getClientType(): RestClientType
+⋮----
+/**
+   *
+   * Assets Endpoints
+   *
+   */
+⋮----
+/**
+   * List assets
+   *
+   * Returns a list of all supported assets.
+   */
+getAssets(): Promise<any>
+⋮----
+/**
+   * Get asset details
+   *
+   * Retrieves information for a specific asset.
+   */
+getAssetDetails(params:
+⋮----
+/**
+   * Get supported networks per asset
+   *
+   * Returns a list of supported networks and network information for a specific asset.
+   */
+getSupportedNetworksPerAsset(params:
+⋮----
+/**
+   *
+   * Index Endpoints
+   *
+   */
+⋮----
+/**
+   * Get index composition
+   *
+   * Retrieves the latest index composition (metadata) with an ordered set of constituents.
+   */
+getIndexComposition(params:
+⋮----
+/**
+   * Get index composition history
+   *
+   * Retrieves a history of index composition records in a descending time order.
+   * The results are an array of index composition data recorded at different "timestamps".
+   */
+getIndexCompositionHistory(
+    params: GetINTXIndexCompositionHistory,
+): Promise<any>
+⋮----
+/**
+   * Get index price
+   *
+   * Retrieves the latest index price.
+   */
+getIndexPrice(params:
+⋮----
+/**
+   * Get index candles
+   *
+   * Retrieves the historical daily index prices in time descending order.
+   * The daily values are represented as aggregated entries for the day in typical OHLC format.
+   */
+getIndexCandles(params: GetINTXIndexCandlesRequest): Promise<any>
+⋮----
+/**
+   *
+   * Instruments Endpoints
+   *
+   */
+⋮----
+/**
+   * List instruments
+   *
+   * Returns all of the instruments available for trading.
+   */
+getInstruments(): Promise<any>
+⋮----
+/**
+   * Get instrument details
+   *
+   * Retrieves market information for a specific instrument.
+   */
+getInstrumentDetails(params:
+⋮----
+/**
+   * Get quote per instrument
+   *
+   * Retrieves the current quote for a specific instrument.
+   */
+getQuotePerInstrument(params:
+⋮----
+/**
+   * Get daily trading volumes
+   *
+   * Retrieves the trading volumes for each instrument separated by day.
+   */
+getDailyTradingVolumes(params: GetINTXDailyTradingVolumes): Promise<any>
+⋮----
+/**
+   * Get aggregated candles data per instrument
+   *
+   * Retrieves a list of aggregated candles data for a given instrument, granularity, and time range.
+   */
+getAggregatedCandlesData(params: GetINTXAggregatedCandlesData): Promise<any>
+⋮----
+/**
+   * Get historical funding rates
+   *
+   * Retrieves the historical funding rates for a specific instrument.
+   */
+getHistoricalFundingRates(params: {
+    instrument: string;
+    result_limit?: number;
+    result_offset?: number;
+}): Promise<any>
+⋮----
+/**
+   *
+   * Position Offsets Endpoints
+   *
+   */
+⋮----
+/**
+   * List position offsets
+   *
+   * Returns all active position offsets.
+   */
+getPositionOffsets(): Promise<any>
+⋮----
+/**
+   *
+   * Orders Endpoints
+   *
+   */
+⋮----
+/**
+   * Create order
+   *
+   * Creates a new order.
+   */
+submitOrder(params: SubmitINTXOrderRequest): Promise<any>
+⋮----
+/**
+   * List open orders
+   *
+   * Returns a list of active orders resting on the order book matching the requested criteria.
+   * Does not return any rejected, cancelled, or fully filled orders as they are not active.
+   */
+getOpenOrders(params?: GetINTXOpenOrdersRequest): Promise<any>
+⋮----
+/**
+   * Cancel orders
+   *
+   * Cancels all orders matching the requested criteria.
+   */
+cancelOrders(params: CancelINTXOrdersRequest): Promise<any>
+⋮----
+/**
+   * Modify open order
+   *
+   * Modifies an open order.
+   */
+updateOpenOrder(params: UpdateINTXOpenOrderRequest): Promise<any>
+⋮----
+/**
+   * Get order details
+   *
+   * Retrieves a single order. The order retrieved can be either active or inactive.
+   */
+getOrderDetails(params:
+⋮----
+/**
+   * Cancel order
+   *
+   * Cancels a single open order.
+   */
+cancelOrder(params:
+⋮----
+/**
+   *
+   * Portfolios Endpoints
+   *
+   */
+⋮----
+/**
+   * List all user portfolios
+   *
+   * Returns all of the user's portfolios.
+   */
+getUserPortfolios(): Promise<any>
+⋮----
+/**
+   * Create portfolio
+   *
+   * Create a new portfolio. Request will fail if no name is provided or if user already has max number of portfolios. Max number of portfolios is 20.
+   */
+createPortfolio(params:
+⋮----
+/**
+   * Patch portfolio
+   *
+   * Update parameters for existing portfolio.
+   */
+updatePortfolioParameters(
+    params: UpdateINTXPortfolioParametersRequest,
+): Promise<any>
+⋮----
+/**
+   * Get user portfolio
+   *
+   * Returns the user's specified portfolio.
+   */
+getUserPortfolio(params:
+⋮----
+/**
+   * Update portfolio
+   *
+   * Update existing user portfolio.
+   */
+updatePortfolio(params:
+⋮----
+/**
+   * Get portfolio details
+   *
+   * Retrieves the summary, positions, and balances of a portfolio.
+   */
+getPortfolioDetails(params:
+⋮----
+/**
+   * Get portfolio summary
+   *
+   * Retrieves the high level overview of a portfolio.
+   */
+getPortfolioSummary(params:
+⋮----
+/**
+   * List portfolio balances
+   *
+   * Returns all of the balances for a given portfolio.
+   */
+getPortfolioBalances(params:
+⋮----
+/**
+   * Get balance for portfolio/asset
+   *
+   * Retrieves the balance for a given portfolio and asset.
+   */
+getBalanceForPortfolioAsset(params: {
+    portfolio: string;
+    asset: string;
+}): Promise<any>
+⋮----
+/**
+   * List active loans for the portfolio
+   *
+   * Retrieves all loan info for a given portfolio.
+   */
+getActiveLoansForPortfolio(params:
+⋮----
+/**
+   * Get loan info for portfolio/asset
+   *
+   * Retrieves the loan info for a given portfolio and asset.
+   */
+getLoanInfoForPortfolioAsset(params: {
+    portfolio: string;
+    asset: string;
+}): Promise<any>
+⋮----
+/**
+   * Acquire/repay loan
+   *
+   * Acquire or repay loan for a given portfolio and asset.
+   */
+acquireOrRepayLoan(params: {
+    portfolio: string;
+    asset: string;
+    amount: number;
+    action: 'ACQUIRE' | 'REPAY';
+}): Promise<any>
+⋮----
+/**
+   * Preview loan update
+   *
+   * Preview acquire or repay loan for a given portfolio and asset.
+   */
+previewLoanUpdate(params: {
+    portfolio: string;
+    asset: string;
+    action: 'ACQUIRE' | 'REPAY';
+    amount: string;
+}): Promise<any>
+⋮----
+/**
+   * View max loan availability
+   *
+   * View the maximum amount of loan that could be acquired now for a given portfolio and asset.
+   */
+getMaxLoanAvailability(params: {
+    portfolio: string;
+    asset: string;
+}): Promise<any>
+⋮----
+/**
+   * List portfolio positions
+   *
+   * Returns all of the positions for a given portfolio.
+   */
+getPortfolioPositions(params:
+⋮----
+/**
+   * Get position for portfolio/instrument
+   *
+   * Retrieves the position for a given portfolio and symbol.
+   */
+getPositionForPortfolioInstrument(params: {
+    portfolio: string;
+    instrument: string;
+}): Promise<any>
+⋮----
+/**
+   * Get total open position limit
+   *
+   * Retrieves the total open position limit across instruments for a given portfolio.
+   */
+getTotalOpenPositionLimit(params:
+⋮----
+/**
+   * List open position limits for all instruments
+   *
+   * Retrieves position limits for all positions a given portfolio currently has or has opened in the past.
+   */
+getOpenPositionLimitsForAllInstruments(params: {
+    portfolio: string;
+}): Promise<any>
+⋮----
+/**
+   * Get open position limits for portfolio instrument
+   *
+   * Retrieves the position limits for a given portfolio and symbol.
+   */
+getOpenPositionLimitsForInstrument(params: {
+    portfolio: string;
+    instrument: string;
+}): Promise<any>
+⋮----
+/**
+   * List fills by portfolios
+   *
+   * Returns fills for specified portfolios or fills for all portfolios if none are provided.
+   */
+getFillsByPortfolios(params?: GetINTXFillsByPortfoliosRequest): Promise<any>
+⋮----
+/**
+   * List portfolio fills
+   *
+   * Returns all of the fills for a given portfolio.
+   */
+getPortfolioFills(params: GetINTXPortfolioFillsRequest): Promise<any>
+⋮----
+/**
+   * Enable/Disable portfolio cross collateral
+   *
+   * Enable or disable the cross collateral feature for the portfolio, which allows the portfolio to use non-USDC assets as collateral for margin trading.
+   */
+setCrossCollateral(params: {
+    portfolio: string;
+    enabled: boolean;
+}): Promise<any>
+⋮----
+/**
+   * Enable/Disable portfolio auto margin mode
+   *
+   * Enable or disable the auto margin feature, which lets the portfolio automatically
+   * post margin amounts required to exceed the high leverage position restrictions.
+   */
+setAutoMargin(params:
+⋮----
+/**
+   * Set portfolio margin override
+   *
+   * Specify the margin override value for a portfolio to either increase notional requirements or opt-in to higher leverage.
+   */
+setPortfolioMarginOverride(params: {
+    portfolio_id: string;
+    margin_override: string;
+}): Promise<any>
+⋮----
+/**
+   * Get fund transfer limit between portfolios
+   *
+   * Retrieves the maximum amount that can be transferred between portfolios for a specific asset.
+   * This applies to transfers between portfolios of the same beneficial owner.
+   */
+getFundTransferLimit(params: {
+    portfolio: string;
+    asset: string;
+}): Promise<any>
+⋮----
+/**
+   * Transfer funds between portfolios
+   *
+   * Transfer assets from one portfolio to another.
+   */
+transferFundsBetweenPortfolios(
+    params: TransferINTXFundsBetweenPortfoliosRequest,
+): Promise<any>
+⋮----
+/**
+   * Transfer positions between portfolios
+   *
+   * Transfer an existing position from one portfolio to another. The position transfer must fulfill the same portfolio-level margin requirements as submitting a new order on the opposite side for the sender's portfolio and a new order on the same side for the recipient's portfolio.
+   * Additionally, organization-level requirements must be satisfied when evaluating the outcome of the position transfer.
+   */
+transferPositionsBetweenPortfolios(
+    params: TransferINTXPositionsBetweenPortfoliosRequest,
+): Promise<any>
+⋮----
+/**
+   * List portfolio fee rates
+   *
+   * Retrieves the Perpetual Future and Spot fee rate tiers for the user.
+   */
+getPortfolioFeeRates(): Promise<any>
+/**
+   *
+   * Rankings Endpoints
+   *
+   */
+⋮----
+/**
+   * Get your rankings
+   *
+   * Retrieve your volume rankings for maker, taker, and total volume.
+   */
+getRankings(params: {
+    instrument_type: string;
+    period?: string;
+    instruments?: string;
+}): Promise<any>
+⋮----
+/**
+   *
+   * Transfers Endpoints
+   *
+   */
+⋮----
+/**
+   * List matching transfers
+   *
+   * List matching transfers.
+   */
+getMatchingTransfers(params?: GetINTXMatchingTransfersRequest): Promise<any>
+⋮----
+/**
+   * Get transfer
+   *
+   * Get transfer.
+   */
+getTransfer(params:
+⋮----
+/**
+   * Withdraw to crypto address
+   *
+   * Withdraw to crypto address.
+   */
+withdrawToCryptoAddress(
+    params: INTXWithdrawToCryptoAddressRequest,
+): Promise<any>
+⋮----
+/**
+   * Create crypto address
+   *
+   * Create crypto address.
+   */
+createCryptoAddress(params: {
+    portfolio: string;
+    asset: string;
+    network_arn_id: string;
+}): Promise<any>
+⋮----
+/**
+   * Create counterparty Id
+   *
+   * Create counterparty Id.
+   */
+createCounterpartyId(params:
+⋮----
+/**
+   * Validate counterparty Id
+   *
+   * Validate counterparty Id.
+   */
+validateCounterpartyId(params:
+⋮----
+/**
+   * Get counterparty withdrawal limit
+   *
+   * Retrieves the maximum amount that can be withdrawn to a counterparty within the Coinbase transfer network
+   * for a specific portfolio and asset.
+   */
+getCounterpartyWithdrawalLimit(params: {
+    portfolio: string;
+    asset: string;
+}): Promise<any>
+⋮----
+/**
+   * Withdraw to counterparty Id
+   *
+   * Withdraw to counterparty Id.
+   */
+withdrawToCounterpartyId(
+    params: INTXWithdrawToCounterpartyIdRequest,
+): Promise<any>
+/**
+   *
+   * Fee Rates Endpoints
+   *
+   */
+⋮----
+/**
+   * List fee rate tiers
+   *
+   * Return all the fee rate tiers.
+   */
+getFeeRateTiers(): Promise<any>
+
+================
 File: src/CBPrimeClient.ts
 ================
 import { AxiosRequestConfig } from 'axios';
@@ -4357,6 +5568,7 @@ import {
   CreatePrimeTransferRequest,
   CreatePrimeWalletRequest,
   CreatePrimeWithdrawalRequest,
+  EditPrimeOrderRequest,
   GetPrimeActivitiesRequest,
   GetPrimeAddressBookRequest,
   GetPrimeEntityAccrualsRequest,
@@ -4384,6 +5596,7 @@ import {
   GetPrimeWalletDepositInstructionsRequest,
   GetPrimeWalletTransactionsRequest,
   GetPrimeWeb3WalletBalancesRequest,
+  RotatePrimeApiKeyRequest,
   SubmitPrimeOrderRequest,
 } from './types/request/coinbase-prime.js';
 ⋮----
@@ -4846,6 +6059,21 @@ cancelOrder(params: {
    * Retrieve fills on a given order.
    */
 getOrderFills(params: GetPrimeOrderFillsRequest): Promise<any>
+⋮----
+/**
+   * Edit Order (Beta)
+   *
+   * Edit an open order. Supports LIMIT, STOP-LIMIT, TWAP, VWAP, and PEG orders.
+   */
+editOrder(params: EditPrimeOrderRequest): Promise<any>
+⋮----
+/**
+   * Rotate API Key
+   *
+   * Rotate an API key programmatically, generating a new key with the same configuration.
+   * Required scope: prime.api_keys.rotate_api_key.write
+   */
+rotateApiKey(params?: RotatePrimeApiKeyRequest): Promise<any>
 ⋮----
 /**
    *
@@ -5705,501 +6933,6 @@ topic: 'LEVEL1', // ws topic
    */
 
 ================
-File: src/types/request/coinbase-international.ts
-================
-/**
- *
- * Assets Endpoints
- *
- */
-⋮----
-/**
- *
- * Index Endpoints
- *
- */
-⋮----
-export interface GetINTXIndexCompositionHistory {
-  index: string;
-  time_from?: string;
-  result_limit?: number;
-  result_offset?: number;
-}
-⋮----
-export interface GetINTXIndexCandlesRequest {
-  index: string;
-  granularity: string;
-  start: string;
-  end?: string;
-}
-⋮----
-/**
- *
- * Instruments Endpoints
- *
- */
-⋮----
-export interface GetINTXDailyTradingVolumes {
-  instruments: string;
-  result_limit?: number;
-  result_offset?: number;
-  time_from?: string;
-  show_other?: boolean;
-}
-⋮----
-export interface GetINTXAggregatedCandlesData {
-  instrument: string;
-  granularity: string;
-  start: string;
-  end?: string;
-}
-/**
- *
- * Position Offsets Endpoints
- *
- */
-⋮----
-/**
- *
- * Orders Endpoints
- *
- */
-⋮----
-export interface SubmitINTXOrderRequest {
-  client_order_id?: string;
-  side: string;
-  size: string;
-  tif: string;
-  instrument: string;
-  type: string;
-  price?: string;
-  stop_price?: string;
-  stop_limit_price?: string;
-  expire_time?: string;
-  portfolio?: string;
-  user?: string;
-  stp_mode?: string;
-  post_only?: boolean;
-  close_only?: boolean;
-  algo_strategy?: boolean;
-}
-⋮----
-export interface GetINTXOpenOrdersRequest {
-  portfolio?: string;
-  instrument?: string;
-  instrument_type?: string;
-  client_order_id?: string;
-  event_type?: string;
-  order_type?: string;
-  side?: string;
-  ref_datetime?: string;
-  result_limit?: number;
-  result_offset?: number;
-}
-⋮----
-export interface CancelINTXOrdersRequest {
-  portfolio: string;
-  instrument?: string;
-  side?: string;
-  instrument_type?: string;
-}
-⋮----
-export interface UpdateINTXOpenOrderRequest {
-  id: string;
-  client_order_id?: string;
-  portfolio?: string;
-  price?: string;
-  stop_price?: string;
-  size?: string;
-}
-⋮----
-/**
- *
- * Portfolios Endpoints
- *
- */
-⋮----
-export interface UpdateINTXPortfolioParametersRequest {
-  auto_margin_enabled?: boolean;
-  cross_collateral_enabled?: boolean;
-  position_offsets_enabled?: boolean;
-  pre_launch_trading_enabled?: boolean;
-  portfolio_name?: string;
-}
-⋮----
-export interface GetINTXFillsByPortfoliosRequest {
-  portfolios?: string;
-  order_id?: string;
-  client_order_id?: string;
-  ref_datetime?: string;
-  result_limit?: number;
-  result_offset?: number;
-  time_from?: string;
-}
-⋮----
-export interface GetINTXPortfolioFillsRequest {
-  portfolio: string;
-  order_id?: string;
-  client_order_id?: string;
-  ref_datetime?: string;
-  result_limit?: number;
-  result_offset?: number;
-  time_from?: string;
-}
-⋮----
-export interface TransferINTXFundsBetweenPortfoliosRequest {
-  from: string;
-  to: string;
-  asset: string;
-  amount: string;
-}
-⋮----
-export interface TransferINTXPositionsBetweenPortfoliosRequest {
-  from: string;
-  to: string;
-  instrument: string;
-  quantity: string;
-  side: string;
-}
-⋮----
-/**
- *
- * Rankings Endpoints
- *
- */
-⋮----
-/**
- *
- * Transfers Endpoints
- *
- */
-⋮----
-export interface GetINTXMatchingTransfersRequest {
-  portfolio?: string;
-  portfolios?: string;
-  time_from?: string;
-  time_to?: string;
-  result_limit?: number;
-  result_offset?: number;
-  status?: string;
-  type?: string;
-}
-⋮----
-export interface INTXWithdrawToCryptoAddressRequest {
-  portfolio: string;
-  asset: string;
-  amount: string;
-  add_network_fee_to_total?: boolean;
-  network_arn_id: string;
-  address: string;
-  nonce: number;
-}
-⋮----
-export interface INTXWithdrawToCounterpartyIdRequest {
-  portfolio: string;
-  counterparty_id: string;
-  asset: string;
-  amount: string;
-  nonce: number;
-}
-/**
- *
- * Fee Rates Endpoints
- *
- */
-
-================
-File: src/types/response/coinbase-app-client.ts
-================
-export interface CBAppPagination {
-  ending_before?: string | null;
-  starting_after?: string | null;
-  limit?: number;
-  order?: string;
-  previous_uri: string | null;
-  next_uri: string | null;
-}
-⋮----
-/**
- *
- * Account Endpoints
- *
- */
-⋮----
-interface AccountCurrency {
-  address_regex: string;
-  asset_id: string;
-  code: string;
-  color: string;
-  exponent: number;
-  name: string;
-  slug: string;
-  sort_index: number;
-  type: string;
-}
-⋮----
-interface AccountBalance {
-  amount: string;
-  currency: string;
-}
-⋮----
-export interface CBAppAccount {
-  id: string;
-  name: string;
-  primary: boolean;
-  type: string;
-  currency: AccountCurrency;
-  balance: AccountBalance;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-  ready: boolean;
-}
-⋮----
-/**
- *
- * Address Endpoints
- *
- */
-⋮----
-export interface CBAppAddress {
-  id: string;
-  address: string;
-  name?: string;
-  network: string;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-}
-⋮----
-/**
- *
- * Transactions Endpoints
- *
- */
-⋮----
-interface TransactionAmount {
-  amount: string;
-  currency: string;
-}
-⋮----
-interface TransactionNetwork {
-  status: string;
-  name: string;
-  hash?: string;
-  transaction_fee?: TransactionAmount;
-  transaction_amount?: TransactionAmount;
-  network_name?: string;
-  status_description?: string | null;
-}
-⋮----
-interface TransactionFrom {
-  id: string;
-  resource: string;
-  resource_path?: string;
-}
-⋮----
-interface TransactionTo {
-  resource: string;
-  address?: string;
-  email?: string;
-  id?: string;
-  resource_path?: string;
-}
-⋮----
-interface TransactionDetails {
-  title: string;
-  subtitle: string;
-  header?: string;
-  health?: string;
-  subsidebar_label?: string | null;
-}
-⋮----
-interface AdvancedTradeFill {
-  fill_price: string;
-  product_id: string;
-  order_id: string;
-  commission: string;
-  order_side: 'BUY' | 'SELL';
-}
-⋮----
-export interface CBAppTransaction {
-  id: string;
-  type: string;
-  status: string;
-  amount: TransactionAmount;
-  native_amount: TransactionAmount;
-  description: string | null;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-  network?: TransactionNetwork;
-  from?: TransactionFrom;
-  to?: TransactionTo;
-  details?: TransactionDetails;
-  instant_exchange?: boolean;
-  advanced_trade_fill?: AdvancedTradeFill;
-  cancelable?: boolean;
-  idem?: string;
-}
-⋮----
-/**
- *
- * Deposits/Withdrawal Endpoints
- *
- */
-⋮----
-interface DepositWithdrawalPaymentMethod {
-  id: string;
-  resource: string;
-  resource_path: string;
-}
-⋮----
-interface DepositWithdrawalTransaction {
-  id: string;
-  resource: string;
-  resource_path: string;
-}
-⋮----
-interface DepositWithdrawalAmountCurrency {
-  amount: string;
-  currency: string;
-}
-⋮----
-export interface CBAppDepositWithdrawal {
-  id: string;
-  status: string;
-  payment_method: DepositWithdrawalPaymentMethod;
-  transaction: DepositWithdrawalTransaction;
-  amount: DepositWithdrawalAmountCurrency;
-  subtotal: DepositWithdrawalAmountCurrency;
-  created_at: string;
-  updated_at: string;
-  resource: string;
-  resource_path: string;
-  committed: boolean;
-  fee: DepositWithdrawalAmountCurrency;
-  payout_at: string;
-}
-⋮----
-interface TransferAmount {
-  value: string;
-  currency: string;
-}
-⋮----
-interface TransferOwner {
-  id: string;
-  uuid: string;
-  user_uuid: string;
-  type: string;
-}
-⋮----
-interface TransferLedgerAccount {
-  account_id: string;
-  currency: string;
-  owner: TransferOwner;
-}
-⋮----
-interface TransferExternalPaymentMethod {
-  payment_method_id: string;
-}
-⋮----
-interface TransferSource {
-  type: string;
-  network: string;
-  payment_method_id: string;
-  external_payment_method: TransferExternalPaymentMethod;
-}
-⋮----
-interface TransferTarget {
-  type: string;
-  network: string;
-  payment_method_id: string;
-  ledger_account: TransferLedgerAccount;
-}
-⋮----
-interface TransferFee {
-  title: string;
-  description: string;
-  amount: TransferAmount;
-  type: string;
-}
-⋮----
-export interface CBAppTransferDepositWithdrawal {
-  user_entered_amount: TransferAmount;
-  amount: TransferAmount;
-  total: TransferAmount;
-  subtotal: TransferAmount;
-  idem: string;
-  committed: boolean;
-  id: string;
-  instant: boolean;
-  source: TransferSource;
-  target: TransferTarget;
-  payout_at: string;
-  status: string;
-  user_reference: string;
-  type: string;
-  created_at: string | null;
-  updated_at: string | null;
-  user_warnings: any[];
-  fees: any[];
-  total_fee: TransferFee;
-  cancellation_reason: string | null;
-  hold_days: number;
-  nextStep: any | null;
-  checkout_url: string;
-  requires_completion_step: boolean;
-}
-⋮----
-export interface CBAppTransfer {
-  transfer: CBAppTransferDepositWithdrawal;
-}
-/**
- *
- * DATA - Currencies Endpoints
- *
- */
-⋮----
-export interface CBAppFiatCurrency {
-  id: string;
-  name: string;
-  min_size: string;
-}
-⋮----
-export interface CBAppCryptocurrency {
-  code: string;
-  name: string;
-  color: string;
-  sort_index: number;
-  exponent: number;
-  type: string;
-  address_regex: string;
-  asset_id: string;
-}
-⋮----
-/**
- *
- * DATA- Exchange rates Endpoints
- *
- */
-⋮----
-/**
- *
- * DATA - Prices Endpoints
- *
- */
-⋮----
-/**
- *
- * DATA - Time Endpoints
- *
- */
-
-================
 File: src/CBAdvancedTradeClient.ts
 ================
 import { AxiosRequestConfig } from 'axios';
@@ -6213,6 +6946,7 @@ import {
 import {
   AllocateAdvTradePortfolioRequest,
   CloseAdvTradePositionRequest,
+  EditAdvTradeOrderRequest,
   GetAdvTradeFillsRequest,
   GetAdvTradeMarketTradesRequest,
   GetAdvTradeOrdersRequest,
@@ -6412,11 +7146,9 @@ cancelOrders(params: {
    * - If you decrease the size, you keep your place in line.
    * - A client can only send an Edit Order request after the previous request for the same order has been fully processed.
    */
-updateOrder(params: {
-    order_id: string;
-    price?: string;
-    size?: string;
-}): Promise<AdvTradeEditOrderResponse>
+updateOrder(
+    params: EditAdvTradeOrderRequest,
+): Promise<AdvTradeEditOrderResponse>
 ⋮----
 /**
    * Edit Order Preview
@@ -6424,11 +7156,9 @@ updateOrder(params: {
    * Preview an edit order request with a specified new size, or new price.
    *
    */
-updateOrderPreview(params: {
-    order_id: string;
-    price?: string;
-    size?: string;
-}): Promise<AdvTradeEditOrderPreviewResponse>
+updateOrderPreview(
+    params: EditAdvTradeOrderRequest,
+): Promise<AdvTradeEditOrderPreviewResponse>
 ⋮----
 /**
    * List Orders
@@ -7178,577 +7908,6 @@ getSpotPrice(params:
    * This endpoint doesn't require authentication.
    */
 getCurrentTime(): Promise<
-
-================
-File: src/CBInternationalClient.ts
-================
-import { AxiosRequestConfig } from 'axios';
-⋮----
-import { BaseRestClient } from './lib/BaseRestClient.js';
-import {
-  REST_CLIENT_TYPE_ENUM,
-  RestClientOptions,
-  RestClientType,
-} from './lib/requestUtils.js';
-import {
-  CancelINTXOrdersRequest,
-  GetINTXAggregatedCandlesData,
-  GetINTXDailyTradingVolumes,
-  GetINTXFillsByPortfoliosRequest,
-  GetINTXIndexCandlesRequest,
-  GetINTXIndexCompositionHistory,
-  GetINTXMatchingTransfersRequest,
-  GetINTXOpenOrdersRequest,
-  GetINTXPortfolioFillsRequest,
-  INTXWithdrawToCounterpartyIdRequest,
-  INTXWithdrawToCryptoAddressRequest,
-  SubmitINTXOrderRequest,
-  TransferINTXFundsBetweenPortfoliosRequest,
-  TransferINTXPositionsBetweenPortfoliosRequest,
-  UpdateINTXOpenOrderRequest,
-  UpdateINTXPortfolioParametersRequest,
-} from './types/request/coinbase-international.js';
-⋮----
-/**
- * REST client for Coinbase's Institutional International Exchange API:
- * https://docs.cdp.coinbase.com/intx/docs/welcome
- */
-export class CBInternationalClient extends BaseRestClient
-⋮----
-constructor(
-    restClientOptions: RestClientOptions = {},
-    requestOptions: AxiosRequestConfig = {},
-)
-⋮----
-getClientType(): RestClientType
-⋮----
-/**
-   *
-   * Assets Endpoints
-   *
-   */
-⋮----
-/**
-   * List assets
-   *
-   * Returns a list of all supported assets.
-   */
-getAssets(): Promise<any>
-⋮----
-/**
-   * Get asset details
-   *
-   * Retrieves information for a specific asset.
-   */
-getAssetDetails(params:
-⋮----
-/**
-   * Get supported networks per asset
-   *
-   * Returns a list of supported networks and network information for a specific asset.
-   */
-getSupportedNetworksPerAsset(params:
-⋮----
-/**
-   *
-   * Index Endpoints
-   *
-   */
-⋮----
-/**
-   * Get index composition
-   *
-   * Retrieves the latest index composition (metadata) with an ordered set of constituents.
-   */
-getIndexComposition(params:
-⋮----
-/**
-   * Get index composition history
-   *
-   * Retrieves a history of index composition records in a descending time order.
-   * The results are an array of index composition data recorded at different "timestamps".
-   */
-getIndexCompositionHistory(
-    params: GetINTXIndexCompositionHistory,
-): Promise<any>
-⋮----
-/**
-   * Get index price
-   *
-   * Retrieves the latest index price.
-   */
-getIndexPrice(params:
-⋮----
-/**
-   * Get index candles
-   *
-   * Retrieves the historical daily index prices in time descending order.
-   * The daily values are represented as aggregated entries for the day in typical OHLC format.
-   */
-getIndexCandles(params: GetINTXIndexCandlesRequest): Promise<any>
-⋮----
-/**
-   *
-   * Instruments Endpoints
-   *
-   */
-⋮----
-/**
-   * List instruments
-   *
-   * Returns all of the instruments available for trading.
-   */
-getInstruments(): Promise<any>
-⋮----
-/**
-   * Get instrument details
-   *
-   * Retrieves market information for a specific instrument.
-   */
-getInstrumentDetails(params:
-⋮----
-/**
-   * Get quote per instrument
-   *
-   * Retrieves the current quote for a specific instrument.
-   */
-getQuotePerInstrument(params:
-⋮----
-/**
-   * Get daily trading volumes
-   *
-   * Retrieves the trading volumes for each instrument separated by day.
-   */
-getDailyTradingVolumes(params: GetINTXDailyTradingVolumes): Promise<any>
-⋮----
-/**
-   * Get aggregated candles data per instrument
-   *
-   * Retrieves a list of aggregated candles data for a given instrument, granularity, and time range.
-   */
-getAggregatedCandlesData(params: GetINTXAggregatedCandlesData): Promise<any>
-⋮----
-/**
-   * Get historical funding rates
-   *
-   * Retrieves the historical funding rates for a specific instrument.
-   */
-getHistoricalFundingRates(params: {
-    instrument: string;
-    result_limit?: number;
-    result_offset?: number;
-}): Promise<any>
-⋮----
-/**
-   *
-   * Position Offsets Endpoints
-   *
-   */
-⋮----
-/**
-   * List position offsets
-   *
-   * Returns all active position offsets.
-   */
-getPositionOffsets(): Promise<any>
-⋮----
-/**
-   *
-   * Orders Endpoints
-   *
-   */
-⋮----
-/**
-   * Create order
-   *
-   * Creates a new order.
-   */
-submitOrder(params: SubmitINTXOrderRequest): Promise<any>
-⋮----
-/**
-   * List open orders
-   *
-   * Returns a list of active orders resting on the order book matching the requested criteria.
-   * Does not return any rejected, cancelled, or fully filled orders as they are not active.
-   */
-getOpenOrders(params?: GetINTXOpenOrdersRequest): Promise<any>
-⋮----
-/**
-   * Cancel orders
-   *
-   * Cancels all orders matching the requested criteria.
-   */
-cancelOrders(params: CancelINTXOrdersRequest): Promise<any>
-⋮----
-/**
-   * Modify open order
-   *
-   * Modifies an open order.
-   */
-updateOpenOrder(params: UpdateINTXOpenOrderRequest): Promise<any>
-⋮----
-/**
-   * Get order details
-   *
-   * Retrieves a single order. The order retrieved can be either active or inactive.
-   */
-getOrderDetails(params:
-⋮----
-/**
-   * Cancel order
-   *
-   * Cancels a single open order.
-   */
-cancelOrder(params:
-⋮----
-/**
-   *
-   * Portfolios Endpoints
-   *
-   */
-⋮----
-/**
-   * List all user portfolios
-   *
-   * Returns all of the user's portfolios.
-   */
-getUserPortfolios(): Promise<any>
-⋮----
-/**
-   * Create portfolio
-   *
-   * Create a new portfolio. Request will fail if no name is provided or if user already has max number of portfolios. Max number of portfolios is 20.
-   */
-createPortfolio(params:
-⋮----
-/**
-   * Patch portfolio
-   *
-   * Update parameters for existing portfolio.
-   */
-updatePortfolioParameters(
-    params: UpdateINTXPortfolioParametersRequest,
-): Promise<any>
-⋮----
-/**
-   * Get user portfolio
-   *
-   * Returns the user's specified portfolio.
-   */
-getUserPortfolio(params:
-⋮----
-/**
-   * Update portfolio
-   *
-   * Update existing user portfolio.
-   */
-updatePortfolio(params:
-⋮----
-/**
-   * Get portfolio details
-   *
-   * Retrieves the summary, positions, and balances of a portfolio.
-   */
-getPortfolioDetails(params:
-⋮----
-/**
-   * Get portfolio summary
-   *
-   * Retrieves the high level overview of a portfolio.
-   */
-getPortfolioSummary(params:
-⋮----
-/**
-   * List portfolio balances
-   *
-   * Returns all of the balances for a given portfolio.
-   */
-getPortfolioBalances(params:
-⋮----
-/**
-   * Get balance for portfolio/asset
-   *
-   * Retrieves the balance for a given portfolio and asset.
-   */
-getBalanceForPortfolioAsset(params: {
-    portfolio: string;
-    asset: string;
-}): Promise<any>
-⋮----
-/**
-   * List active loans for the portfolio
-   *
-   * Retrieves all loan info for a given portfolio.
-   */
-getActiveLoansForPortfolio(params:
-⋮----
-/**
-   * Get loan info for portfolio/asset
-   *
-   * Retrieves the loan info for a given portfolio and asset.
-   */
-getLoanInfoForPortfolioAsset(params: {
-    portfolio: string;
-    asset: string;
-}): Promise<any>
-⋮----
-/**
-   * Acquire/repay loan
-   *
-   * Acquire or repay loan for a given portfolio and asset.
-   */
-acquireOrRepayLoan(params: {
-    portfolio: string;
-    asset: string;
-    amount: number;
-    action: 'ACQUIRE' | 'REPAY';
-}): Promise<any>
-⋮----
-/**
-   * Preview loan update
-   *
-   * Preview acquire or repay loan for a given portfolio and asset.
-   */
-previewLoanUpdate(params: {
-    portfolio: string;
-    asset: string;
-    action: 'ACQUIRE' | 'REPAY';
-    amount: string;
-}): Promise<any>
-⋮----
-/**
-   * View max loan availability
-   *
-   * View the maximum amount of loan that could be acquired now for a given portfolio and asset.
-   */
-getMaxLoanAvailability(params: {
-    portfolio: string;
-    asset: string;
-}): Promise<any>
-⋮----
-/**
-   * List portfolio positions
-   *
-   * Returns all of the positions for a given portfolio.
-   */
-getPortfolioPositions(params:
-⋮----
-/**
-   * Get position for portfolio/instrument
-   *
-   * Retrieves the position for a given portfolio and symbol.
-   */
-getPositionForPortfolioInstrument(params: {
-    portfolio: string;
-    instrument: string;
-}): Promise<any>
-⋮----
-/**
-   * Get total open position limit
-   *
-   * Retrieves the total open position limit across instruments for a given portfolio.
-   */
-getTotalOpenPositionLimit(params:
-⋮----
-/**
-   * List open position limits for all instruments
-   *
-   * Retrieves position limits for all positions a given portfolio currently has or has opened in the past.
-   */
-getOpenPositionLimitsForAllInstruments(params: {
-    portfolio: string;
-}): Promise<any>
-⋮----
-/**
-   * Get open position limits for portfolio instrument
-   *
-   * Retrieves the position limits for a given portfolio and symbol.
-   */
-getOpenPositionLimitsForInstrument(params: {
-    portfolio: string;
-    instrument: string;
-}): Promise<any>
-⋮----
-/**
-   * List fills by portfolios
-   *
-   * Returns fills for specified portfolios or fills for all portfolios if none are provided.
-   */
-getFillsByPortfolios(params?: GetINTXFillsByPortfoliosRequest): Promise<any>
-⋮----
-/**
-   * List portfolio fills
-   *
-   * Returns all of the fills for a given portfolio.
-   */
-getPortfolioFills(params: GetINTXPortfolioFillsRequest): Promise<any>
-⋮----
-/**
-   * Enable/Disable portfolio cross collateral
-   *
-   * Enable or disable the cross collateral feature for the portfolio, which allows the portfolio to use non-USDC assets as collateral for margin trading.
-   */
-setCrossCollateral(params: {
-    portfolio: string;
-    enabled: boolean;
-}): Promise<any>
-⋮----
-/**
-   * Enable/Disable portfolio auto margin mode
-   *
-   * Enable or disable the auto margin feature, which lets the portfolio automatically
-   * post margin amounts required to exceed the high leverage position restrictions.
-   */
-setAutoMargin(params:
-⋮----
-/**
-   * Set portfolio margin override
-   *
-   * Specify the margin override value for a portfolio to either increase notional requirements or opt-in to higher leverage.
-   */
-setPortfolioMarginOverride(params: {
-    portfolio_id: string;
-    margin_override: string;
-}): Promise<any>
-⋮----
-/**
-   * Get fund transfer limit between portfolios
-   *
-   * Retrieves the maximum amount that can be transferred between portfolios for a specific asset.
-   * This applies to transfers between portfolios of the same beneficial owner.
-   */
-getFundTransferLimit(params: {
-    portfolio: string;
-    asset: string;
-}): Promise<any>
-⋮----
-/**
-   * Transfer funds between portfolios
-   *
-   * Transfer assets from one portfolio to another.
-   */
-transferFundsBetweenPortfolios(
-    params: TransferINTXFundsBetweenPortfoliosRequest,
-): Promise<any>
-⋮----
-/**
-   * Transfer positions between portfolios
-   *
-   * Transfer an existing position from one portfolio to another. The position transfer must fulfill the same portfolio-level margin requirements as submitting a new order on the opposite side for the sender's portfolio and a new order on the same side for the recipient's portfolio.
-   * Additionally, organization-level requirements must be satisfied when evaluating the outcome of the position transfer.
-   */
-transferPositionsBetweenPortfolios(
-    params: TransferINTXPositionsBetweenPortfoliosRequest,
-): Promise<any>
-⋮----
-/**
-   * List portfolio fee rates
-   *
-   * Retrieves the Perpetual Future and Spot fee rate tiers for the user.
-   */
-getPortfolioFeeRates(): Promise<any>
-/**
-   *
-   * Rankings Endpoints
-   *
-   */
-⋮----
-/**
-   * Get your rankings
-   *
-   * Retrieve your volume rankings for maker, taker, and total volume.
-   */
-getRankings(params: {
-    instrument_type: string;
-    period?: string;
-    instruments?: string;
-}): Promise<any>
-⋮----
-/**
-   *
-   * Transfers Endpoints
-   *
-   */
-⋮----
-/**
-   * List matching transfers
-   *
-   * List matching transfers.
-   */
-getMatchingTransfers(params?: GetINTXMatchingTransfersRequest): Promise<any>
-⋮----
-/**
-   * Get transfer
-   *
-   * Get transfer.
-   */
-getTransfer(params:
-⋮----
-/**
-   * Withdraw to crypto address
-   *
-   * Withdraw to crypto address.
-   */
-withdrawToCryptoAddress(
-    params: INTXWithdrawToCryptoAddressRequest,
-): Promise<any>
-⋮----
-/**
-   * Create crypto address
-   *
-   * Create crypto address.
-   */
-createCryptoAddress(params: {
-    portfolio: string;
-    asset: string;
-    network_arn_id: string;
-}): Promise<any>
-⋮----
-/**
-   * Create counterparty Id
-   *
-   * Create counterparty Id.
-   */
-createCounterpartyId(params:
-⋮----
-/**
-   * Validate counterparty Id
-   *
-   * Validate counterparty Id.
-   */
-validateCounterpartyId(params:
-⋮----
-/**
-   * Get counterparty withdrawal limit
-   *
-   * Retrieves the maximum amount that can be withdrawn to a counterparty within the Coinbase transfer network
-   * for a specific portfolio and asset.
-   */
-getCounterpartyWithdrawalLimit(params: {
-    portfolio: string;
-    asset: string;
-}): Promise<any>
-⋮----
-/**
-   * Withdraw to counterparty Id
-   *
-   * Withdraw to counterparty Id.
-   */
-withdrawToCounterpartyId(
-    params: INTXWithdrawToCounterpartyIdRequest,
-): Promise<any>
-/**
-   *
-   * Fee Rates Endpoints
-   *
-   */
-⋮----
-/**
-   * List fee rate tiers
-   *
-   * Return all the fee rate tiers.
-   */
-getFeeRateTiers(): Promise<any>
 
 ================
 File: webpack/webpack.config.cjs
@@ -9227,6 +9386,280 @@ protected async assertIsConnected(wsKey: TWSKey): Promise<unknown>
 // Start connection, it should automatically store/return a promise.
 
 ================
+File: src/lib/BaseRestClient.ts
+================
+import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
+// NOTE: https.Agent is Node.js-only and not available in browser environments
+// Browser builds (via webpack) exclude this module - see webpack.config.js fallback settings
+import https from 'https';
+import { nanoid } from 'nanoid';
+⋮----
+import {
+  CloseAdvTradePositionRequest,
+  SubmitAdvTradeOrderRequest,
+} from '../types/request/advanced-trade-client.js';
+import { SubmitCBExchOrderRequest } from '../types/request/coinbase-exchange.js';
+import { SubmitINTXOrderRequest } from '../types/request/coinbase-international.js';
+import { SubmitPrimeOrderRequest } from '../types/request/coinbase-prime.js';
+import { CustomOrderIdProperty } from '../types/shared.types.js';
+import { signJWT } from './jwtNode.js';
+import { neverGuard } from './misc-util.js';
+import {
+  APIIDPrefix,
+  getRestBaseUrl,
+  logInvalidOrderId,
+  REST_CLIENT_TYPE_ENUM,
+  RestClientOptions,
+  RestClientType,
+  serializeParams,
+} from './requestUtils.js';
+import { signMessage } from './webCryptoAPI.js';
+⋮----
+interface SignedRequest<T extends object | undefined = {}> {
+  originalParams: T;
+  paramsWithSign?: T & { sign: string };
+  serializedParams: string;
+  sign: string;
+  queryParamsWithSign: string;
+  timestamp: number;
+  recvWindow: number;
+  headers: object;
+}
+⋮----
+interface UnsignedRequest<T extends object | undefined = {}> {
+  originalParams: T;
+  paramsWithSign: T;
+}
+⋮----
+type SignMethod = 'coinbase';
+⋮----
+/**
+ * Some requests require some params to be in the query string, some in the body, some even in the headers.
+ * This type anticipates either are possible in any combination.
+ *
+ * The request builder will automatically handle where parameters should go.
+ */
+type ParamsInRequest = {
+  query?: object;
+  body?: object;
+  headers?: object;
+};
+⋮----
+// request: {
+//   url: response.config.url,
+//   method: response.config.method,
+//   data: response.config.data,
+//   headers: response.config.headers,
+// },
+⋮----
+/**
+ * Impure, mutates params to remove any values that have a key but are undefined.
+ */
+function deleteUndefinedValues(params?: any): void
+⋮----
+export abstract class BaseRestClient
+⋮----
+/** Defines the client type (affecting how requests & signatures behave) */
+abstract getClientType(): RestClientType;
+⋮----
+/**
+   * Create an instance of the REST client. Pass API credentials in the object in the first parameter.
+   * @param {RestClientOptions} [restClientOptions={}] options to configure REST API connectivity
+   * @param {AxiosRequestConfig} [networkOptions={}] HTTP networking options for axios
+   */
+constructor(
+    restClientOptions: RestClientOptions = {},
+    networkOptions: AxiosRequestConfig = {},
+)
+⋮----
+/** Throw errors if any request params are empty */
+⋮----
+/** in ms == 5 minutes by default */
+⋮----
+/** inject custom rquest options based on axios specs - see axios docs for more guidance on AxiosRequestConfig: https://github.com/axios/axios#request-config */
+⋮----
+// If enabled, configure a https agent with keepAlive enabled
+// NOTE: This is Node.js-only functionality. In browser environments, this code is skipped
+// as the 'https' module is excluded via webpack fallback configuration.
+// Browser connection pooling is handled automatically by the browser itself.
+⋮----
+// Extract existing https agent parameters, if provided, to prevent the keepAlive flag from overwriting an existing https agent completely
+⋮----
+// For more advanced configuration, raise an issue on GitHub or use the "networkOptions"
+// parameter to define a custom httpsAgent with the desired properties
+⋮----
+// Newline escapes needed, if passed as env vars
+⋮----
+// Throw if one of these values is missing, and at least one of them is set
+⋮----
+// commerce only needs keys, not key and secret
+⋮----
+/**
+   * Timestamp used to sign the request. Override this method to implement your own timestamp/sync mechanism
+   */
+getSignTimestampMs(): number
+⋮----
+get(endpoint: string, params?: object)
+⋮----
+post(endpoint: string, params?: ParamsInRequest)
+⋮----
+getPrivate(endpoint: string, params?: object)
+⋮----
+postPrivate(endpoint: string, params?: ParamsInRequest)
+⋮----
+deletePrivate(endpoint: string, params?: ParamsInRequest)
+⋮----
+putPrivate(endpoint: string, params?: ParamsInRequest)
+⋮----
+patchPrivate(endpoint: string, params?: ParamsInRequest)
+⋮----
+/**
+   * @private Make a HTTP request to a specific endpoint. Private endpoint API calls are automatically signed.
+   */
+private async _call(
+    method: Method,
+    endpoint: string,
+    params?: ParamsInRequest,
+    isPublicApi?: boolean,
+): Promise<any>
+⋮----
+// Sanity check to make sure it's only ever prefixed by one forward slash
+⋮----
+// Build a request and handle signature process
+⋮----
+// Dispatch request
+⋮----
+// Throw if API returns an error (e.g. insufficient balance)
+⋮----
+public generateNewOrderId(): string
+⋮----
+/**
+   * Validate syntax meets requirements set by coinbase. Log warning if not.
+   */
+protected validateOrderId(
+    params:
+      | SubmitAdvTradeOrderRequest
+      | CloseAdvTradePositionRequest
+      | SubmitCBExchOrderRequest
+      | SubmitINTXOrderRequest
+      | SubmitPrimeOrderRequest,
+    orderIdProperty: CustomOrderIdProperty,
+): void
+⋮----
+// Not the cleanest but strict checks aren't quite necessary here either
+⋮----
+/**
+   * @private generic handler to parse request exceptions
+   */
+parseException(e: any, requestParams: any): unknown
+⋮----
+// Something happened in setting up the request that triggered an error
+⋮----
+// request made but no response received
+⋮----
+// The request was made and the server responded with a status code
+// that falls out of the range of 2xx
+⋮----
+// console.error('err: ', response?.data);
+⋮----
+// Prevent credentials from leaking into error messages
+⋮----
+/**
+   * @private sign request and set recv window
+   */
+private async signRequest<T extends ParamsInRequest | undefined = {}>(
+    data: T,
+    url: string,
+    endpoint: string,
+    method: Method,
+    signMethod: SignMethod,
+): Promise<SignedRequest<T>>
+⋮----
+// if there is body, use body - otherwise empty string
+⋮----
+// https://docs.cdp.coinbase.com/product-apis/docs/welcome
+⋮----
+// Both adv trade & app API use the same JWT auth mechanism
+// Advanced Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/rest-api-auth
+// App: https://docs.cdp.coinbase.com/coinbase-app/docs/api-key-authentication
+⋮----
+// TODO: is there demand for oauth support?
+// Docs: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-integration
+// See: https://github.com/tiagosiebler/coinbase-api/issues/24
+⋮----
+// Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
+⋮----
+const timestampInSeconds = timestampInMs / 1000; // decimals are OK
+⋮----
+// console.log('sign res: ', { signInput, ...headers });
+⋮----
+// For CB Exchange, is there demand for FIX
+// Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
+⋮----
+// Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
+⋮----
+const timestampInSeconds = timestampInMs / 1000; // decimals are OK
+⋮----
+// For CB International, no query params are used in the signature
+⋮----
+// console.log('sign res: ', { signInput, ...headers });
+⋮----
+// For CB International, is there demand for FIX
+// Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
+⋮----
+// Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
+⋮----
+const timestampInSeconds = Math.floor(timestampInMs / 1000); // decimal not allowed
+⋮----
+// For CB Prime, is there demand for FIX
+// Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
+⋮----
+// https://docs.cdp.coinbase.com/commerce-onchain/docs/getting-started
+// No auth?
+⋮----
+private async prepareSignParams<TParams extends object | undefined>(
+    method: Method,
+    url: string,
+    endpoint: string,
+    signMethod: SignMethod,
+    params?: TParams,
+    isPublicApi?: true,
+  ): Promise<UnsignedRequest<TParams>>;
+⋮----
+private async prepareSignParams<TParams extends object | undefined>(
+    method: Method,
+    url: string,
+    endpoint: string,
+    signMethod: SignMethod,
+    params?: TParams,
+    isPublicApi?: false | undefined,
+  ): Promise<SignedRequest<TParams>>;
+⋮----
+private async prepareSignParams<TParams extends object | undefined>(
+    method: Method,
+    url: string,
+    endpoint: string,
+    signMethod: SignMethod,
+    params?: TParams,
+    isPublicApi?: boolean,
+)
+⋮----
+/** Returns an axios request object. Handles signing process automatically if this is a private API call */
+private async buildRequest(
+    method: Method,
+    endpoint: string,
+    url: string,
+    params?: any | undefined,
+    isPublicApi?: boolean,
+): Promise<AxiosRequestConfig>
+⋮----
+// request parameter headers for this request
+⋮----
+// auth headers for this request
+⋮----
+// global headers for every request
+
+================
 File: README.md
 ================
 # Node.js & JavaScript SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets
@@ -9246,6 +9679,7 @@ File: README.md
 [![Build & Test](https://github.com/tiagosiebler/coinbase-api/actions/workflows/e2etest.yml/badge.svg?branch=master)](https://github.com/tiagosiebler/coinbase-api/actions/workflows/e2etest.yml)
 [![last commit](https://img.shields.io/github/last-commit/tiagosiebler/coinbase-api)][1]
 [![Telegram](https://img.shields.io/badge/chat-on%20telegram-blue.svg)](https://t.me/nodetraders)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/tiagosiebler/coinbase-api)
 
 [1]: https://www.npmjs.com/package/coinbase-api
 
@@ -9847,285 +10281,11 @@ Contributions are encouraged, I will review any incoming pull requests. See the 
 <!-- template_star_history_end -->
 
 ================
-File: src/lib/BaseRestClient.ts
-================
-import axios, { AxiosRequestConfig, AxiosResponse, Method } from 'axios';
-// NOTE: https.Agent is Node.js-only and not available in browser environments
-// Browser builds (via webpack) exclude this module - see webpack.config.js fallback settings
-import https from 'https';
-import { nanoid } from 'nanoid';
-⋮----
-import {
-  CloseAdvTradePositionRequest,
-  SubmitAdvTradeOrderRequest,
-} from '../types/request/advanced-trade-client.js';
-import { SubmitCBExchOrderRequest } from '../types/request/coinbase-exchange.js';
-import { SubmitINTXOrderRequest } from '../types/request/coinbase-international.js';
-import { SubmitPrimeOrderRequest } from '../types/request/coinbase-prime.js';
-import { CustomOrderIdProperty } from '../types/shared.types.js';
-import { signJWT } from './jwtNode.js';
-import { neverGuard } from './misc-util.js';
-import {
-  APIIDPrefix,
-  getRestBaseUrl,
-  logInvalidOrderId,
-  REST_CLIENT_TYPE_ENUM,
-  RestClientOptions,
-  RestClientType,
-  serializeParams,
-} from './requestUtils.js';
-import { signMessage } from './webCryptoAPI.js';
-⋮----
-interface SignedRequest<T extends object | undefined = {}> {
-  originalParams: T;
-  paramsWithSign?: T & { sign: string };
-  serializedParams: string;
-  sign: string;
-  queryParamsWithSign: string;
-  timestamp: number;
-  recvWindow: number;
-  headers: object;
-}
-⋮----
-interface UnsignedRequest<T extends object | undefined = {}> {
-  originalParams: T;
-  paramsWithSign: T;
-}
-⋮----
-type SignMethod = 'coinbase';
-⋮----
-/**
- * Some requests require some params to be in the query string, some in the body, some even in the headers.
- * This type anticipates either are possible in any combination.
- *
- * The request builder will automatically handle where parameters should go.
- */
-type ParamsInRequest = {
-  query?: object;
-  body?: object;
-  headers?: object;
-};
-⋮----
-// request: {
-//   url: response.config.url,
-//   method: response.config.method,
-//   data: response.config.data,
-//   headers: response.config.headers,
-// },
-⋮----
-/**
- * Impure, mutates params to remove any values that have a key but are undefined.
- */
-function deleteUndefinedValues(params?: any): void
-⋮----
-export abstract class BaseRestClient
-⋮----
-/** Defines the client type (affecting how requests & signatures behave) */
-abstract getClientType(): RestClientType;
-⋮----
-/**
-   * Create an instance of the REST client. Pass API credentials in the object in the first parameter.
-   * @param {RestClientOptions} [restClientOptions={}] options to configure REST API connectivity
-   * @param {AxiosRequestConfig} [networkOptions={}] HTTP networking options for axios
-   */
-constructor(
-    restClientOptions: RestClientOptions = {},
-    networkOptions: AxiosRequestConfig = {},
-)
-⋮----
-/** Throw errors if any request params are empty */
-⋮----
-/** in ms == 5 minutes by default */
-⋮----
-/** inject custom rquest options based on axios specs - see axios docs for more guidance on AxiosRequestConfig: https://github.com/axios/axios#request-config */
-⋮----
-// If enabled, configure a https agent with keepAlive enabled
-// NOTE: This is Node.js-only functionality. In browser environments, this code is skipped
-// as the 'https' module is excluded via webpack fallback configuration.
-// Browser connection pooling is handled automatically by the browser itself.
-⋮----
-// Extract existing https agent parameters, if provided, to prevent the keepAlive flag from overwriting an existing https agent completely
-⋮----
-// For more advanced configuration, raise an issue on GitHub or use the "networkOptions"
-// parameter to define a custom httpsAgent with the desired properties
-⋮----
-// Newline escapes needed, if passed as env vars
-⋮----
-// Throw if one of these values is missing, and at least one of them is set
-⋮----
-// commerce only needs keys, not key and secret
-⋮----
-/**
-   * Timestamp used to sign the request. Override this method to implement your own timestamp/sync mechanism
-   */
-getSignTimestampMs(): number
-⋮----
-get(endpoint: string, params?: object)
-⋮----
-post(endpoint: string, params?: ParamsInRequest)
-⋮----
-getPrivate(endpoint: string, params?: object)
-⋮----
-postPrivate(endpoint: string, params?: ParamsInRequest)
-⋮----
-deletePrivate(endpoint: string, params?: ParamsInRequest)
-⋮----
-putPrivate(endpoint: string, params?: ParamsInRequest)
-⋮----
-patchPrivate(endpoint: string, params?: ParamsInRequest)
-⋮----
-/**
-   * @private Make a HTTP request to a specific endpoint. Private endpoint API calls are automatically signed.
-   */
-private async _call(
-    method: Method,
-    endpoint: string,
-    params?: ParamsInRequest,
-    isPublicApi?: boolean,
-): Promise<any>
-⋮----
-// Sanity check to make sure it's only ever prefixed by one forward slash
-⋮----
-// Build a request and handle signature process
-⋮----
-// Dispatch request
-⋮----
-// Throw if API returns an error (e.g. insufficient balance)
-⋮----
-public generateNewOrderId(): string
-⋮----
-/**
-   * Validate syntax meets requirements set by coinbase. Log warning if not.
-   */
-protected validateOrderId(
-    params:
-      | SubmitAdvTradeOrderRequest
-      | CloseAdvTradePositionRequest
-      | SubmitCBExchOrderRequest
-      | SubmitINTXOrderRequest
-      | SubmitPrimeOrderRequest,
-    orderIdProperty: CustomOrderIdProperty,
-): void
-⋮----
-// Not the cleanest but strict checks aren't quite necessary here either
-⋮----
-/**
-   * @private generic handler to parse request exceptions
-   */
-parseException(e: any, requestParams: any): unknown
-⋮----
-// Something happened in setting up the request that triggered an error
-⋮----
-// request made but no response received
-⋮----
-// The request was made and the server responded with a status code
-// that falls out of the range of 2xx
-⋮----
-// console.error('err: ', response?.data);
-⋮----
-// Prevent credentials from leaking into error messages
-⋮----
-/**
-   * @private sign request and set recv window
-   */
-private async signRequest<T extends ParamsInRequest | undefined = {}>(
-    data: T,
-    url: string,
-    endpoint: string,
-    method: Method,
-    signMethod: SignMethod,
-): Promise<SignedRequest<T>>
-⋮----
-// if there is body, use body - otherwise empty string
-⋮----
-// https://docs.cdp.coinbase.com/product-apis/docs/welcome
-⋮----
-// Both adv trade & app API use the same JWT auth mechanism
-// Advanced Trade: https://docs.cdp.coinbase.com/advanced-trade/docs/rest-api-auth
-// App: https://docs.cdp.coinbase.com/coinbase-app/docs/api-key-authentication
-⋮----
-// TODO: is there demand for oauth support?
-// Docs: https://docs.cdp.coinbase.com/coinbase-app/docs/coinbase-app-integration
-// See: https://github.com/tiagosiebler/coinbase-api/issues/24
-⋮----
-// Docs: https://docs.cdp.coinbase.com/exchange/docs/rest-auth
-⋮----
-const timestampInSeconds = timestampInMs / 1000; // decimals are OK
-⋮----
-// console.log('sign res: ', { signInput, ...headers });
-⋮----
-// For CB Exchange, is there demand for FIX
-// Docs, FIX: https://docs.cdp.coinbase.com/exchange/docs/fix-connectivity
-⋮----
-// Docs: https://docs.cdp.coinbase.com/intx/docs/rest-auth
-⋮----
-const timestampInSeconds = timestampInMs / 1000; // decimals are OK
-⋮----
-// For CB International, no query params are used in the signature
-⋮----
-// console.log('sign res: ', { signInput, ...headers });
-⋮----
-// For CB International, is there demand for FIX
-// Docs, FIX: https://docs.cdp.coinbase.com/intx/docs/fix-overview
-⋮----
-// Docs: https://docs.cdp.coinbase.com/prime/docs/rest-authentication
-⋮----
-const timestampInSeconds = Math.floor(timestampInMs / 1000); // decimal not allowed
-⋮----
-// For CB Prime, is there demand for FIX
-// Docs, FIX: https://docs.cdp.coinbase.com/prime/docs/fix-connectivity
-⋮----
-// https://docs.cdp.coinbase.com/commerce-onchain/docs/getting-started
-// No auth?
-⋮----
-private async prepareSignParams<TParams extends object | undefined>(
-    method: Method,
-    url: string,
-    endpoint: string,
-    signMethod: SignMethod,
-    params?: TParams,
-    isPublicApi?: true,
-  ): Promise<UnsignedRequest<TParams>>;
-⋮----
-private async prepareSignParams<TParams extends object | undefined>(
-    method: Method,
-    url: string,
-    endpoint: string,
-    signMethod: SignMethod,
-    params?: TParams,
-    isPublicApi?: false | undefined,
-  ): Promise<SignedRequest<TParams>>;
-⋮----
-private async prepareSignParams<TParams extends object | undefined>(
-    method: Method,
-    url: string,
-    endpoint: string,
-    signMethod: SignMethod,
-    params?: TParams,
-    isPublicApi?: boolean,
-)
-⋮----
-/** Returns an axios request object. Handles signing process automatically if this is a private API call */
-private async buildRequest(
-    method: Method,
-    endpoint: string,
-    url: string,
-    params?: any | undefined,
-    isPublicApi?: boolean,
-): Promise<AxiosRequestConfig>
-⋮----
-// request parameter headers for this request
-⋮----
-// auth headers for this request
-⋮----
-// global headers for every request
-
-================
 File: package.json
 ================
 {
   "name": "coinbase-api",
-  "version": "1.1.11",
+  "version": "1.1.13",
   "description": "Node.js SDK for Coinbase's Advanced Trade, App, Exchange, International, Prime & Commerce REST APIs and WebSockets, with TypeScript & strong end to end tests.",
   "scripts": {
     "clean": "rm -rf dist",
@@ -10179,9 +10339,7 @@ File: package.json
     "prettier": "^3.3.3",
     "ts-jest": "^29.2.4",
     "ts-node": "^10.9.2",
-    "typescript": "^5.7.3"
-  },
-  "optionalDependencies": {
+    "typescript": "^5.7.3",
     "webpack": "^5.0.0",
     "webpack-bundle-analyzer": "^5.1.1",
     "webpack-cli": "^4.0.0"

@@ -143,6 +143,7 @@ interface Trade {
   price: string;
   size: string;
   time: string; // RFC3339 Timestamp
+  /** Maker side of the trade (not taker side) */
   side: 'BUY' | 'SELL';
 }
 

@@ -36,7 +36,9 @@ import {
   SubmitCBExchOrderRequest,
   SubmitCBExchTravelInformation,
   TransferCBExchFundsBetweenProfiles,
+  UpdateCBExchAddressBookEntryRequest,
 } from './types/request/coinbase-exchange.js';
+import { CBExchCounterpartyAddress } from './types/response/coinbase-exchange.js';
 
 /**
  * REST client for Coinbase's Institutional Exchange API:
@@ -152,6 +154,27 @@ export class CBExchangeClient extends BaseRestClient {
    */
   deleteAddress(params: { id: string }): Promise<any> {
     return this.deletePrivate(`/address-book/${params.id}`);
+  }
+
+  /**
+   * Get counterparty address book
+   *
+   * Get all counterparty addresses stored in the address book.
+   */
+  getCounterpartyAddressBook(): Promise<CBExchCounterpartyAddress[]> {
+    return this.getPrivate('/address-book/counterparty');
+  }
+
+  /**
+   * Update address book entry
+   *
+   * Edit an existing address book entry. Useful for travel rule jurisdictions.
+   */
+  updateAddressBookEntry(
+    params: UpdateCBExchAddressBookEntryRequest,
+  ): Promise<any> {
+    const { id, ...body } = params;
+    return this.putPrivate(`/address-book/${id}`, { body: body });
   }
 
   /**

@@ -30,6 +30,14 @@ export interface GetINTXIndexCandlesRequest {
  *
  */
 
+/** Values for `underlying_type` on INTX instruments (REST, WebSocket INSTRUMENTS channel) */
+export type INTXUnderlyingType =
+  | 'PREIPO'
+  | 'COMMOD'
+  | 'COMMOD_INDEX'
+  | 'COMMOD_ETF'
+  | string;
+
 export interface GetINTXDailyTradingVolumes {
   instruments: string;
   result_limit?: number;
