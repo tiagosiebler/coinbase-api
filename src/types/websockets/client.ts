@@ -44,7 +44,10 @@ export interface WSClientConfigurableOptions {
   wsOptions?: {
     protocols?: string[];
     agent?: any;
-  } & Partial<WebSocket.ClientOptions | ClientRequestArgs>;
+  } & (
+    | Omit<Partial<WebSocket.ClientOptions>, 'agent'>
+    | Omit<Partial<ClientRequestArgs>, 'agent'>
+  );
 
   /**
    * Connect to the sandbox for supported products
